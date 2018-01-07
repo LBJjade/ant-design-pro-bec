@@ -37,12 +37,11 @@ function RouterConfig({ history, app }) {
           />
           <AuthorizedRoute
             path="/"
+            authority={['admin', 'user']}
             // Min 2018-01-08
             // render={props => <BasicLayout {...props} />}
-            // authority={['admin', 'user']}
             // redirectPath="/user/login"
             render={props => <BecLayout {...props} />}
-            authority={['admin', 'account']}
             redirectPath="/account/login"
           />
         </Switch>
