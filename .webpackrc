@@ -16,12 +16,5 @@
   "html": {
     "template": "./src/index.ejs"
   },
-  "hash": true,
-  "proxy": {
-     "/api": {
-       "target": "http://localhost:3000/",
-       "changeOrigin": true,
-       "pathRewrite": { "^/api":"" }
-     }
-  }
+  "hash": true
 }
