@@ -151,6 +151,11 @@ const proxy = {
     });
   },
 
+  'POST /api/account/register': (req, res) => {
+    const { email, mobile } = req.body;
+
+  },
+
 };
 
 export default noProxy ? {} : delay(proxy, 1000);

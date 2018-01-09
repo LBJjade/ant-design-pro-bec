@@ -62,7 +62,7 @@ export default class LoginPage extends Component {
               login.submitting === false &&
               this.renderMessage('账户或密码错误')
             }
-            <UserName name="userName" placeholder="admin/user" />
+            <UserName name="email" placeholder="admin@becheer.com/user@becheer.com" />
             <Password name="password" placeholder="888888/123456" />
           </Tab>
           <Tab key="mobile" tab="手机号登录">

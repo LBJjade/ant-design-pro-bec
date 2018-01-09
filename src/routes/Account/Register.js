@@ -22,6 +22,7 @@ const passwordProgressMap = {
 
 @connect(state => ({
   register: state.register,
+  validating: state.register.userValidating,
 }))
 @Form.create()
 export default class Register extends Component {
@@ -66,6 +67,24 @@ export default class Register extends Component {
     }
     return 'pool';
   };
+
+  handleValidate = (rule, value, callback) => {
+    if (!value) {
+      callback([new Error('请输入邮箱地址！')]);
+    } else {
+      this.props.dispatch({
+        type: 'register/validate',
+        payload: { email: value },
+      });
+      setTimeout(() => {
+        if (this.props.validating.length > 0) {
+          callback([new Error('该邮箱已被注册。')]);
+        } else {
+          callback();
+        }
+      }, 800);
+    }
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -156,7 +175,7 @@ export default class Register extends Component {
         <h3>注册</h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
-            {getFieldDecorator('mail', {
+            {getFieldDecorator('email', {
               rules: [
                 {
                   required: true,
@@ -166,7 +185,12 @@ export default class Register extends Component {
                   type: 'email',
                   message: '邮箱地址格式错误！',
                 },
+                {
+                  required: true,
+                  validator: this.handleValidate,
+                },
               ],
+              validateTrigger: 'onBlur',
             })(<Input size="large" placeholder="邮箱" />)}
           </FormItem>
           <FormItem help={this.state.help}>
