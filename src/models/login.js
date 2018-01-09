@@ -1,4 +1,4 @@
-import { fakeAccountLogin } from '../services/api';
+import { accountLogin } from '../services/account';
 import { setAuthority } from '../utils/authority';
 
 export default {
@@ -14,7 +14,7 @@ export default {
         type: 'changeSubmitting',
         payload: true,
       });
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(accountLogin, payload);
       yield put({
         type: 'changeLoginStatus',
         payload: response,

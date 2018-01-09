@@ -123,6 +123,39 @@ const proxy = {
       "path": "/base/category/list"
     });
   },
+
+
+  // Min 2018-01-08 Begin
+  'POST /api/account/login': (req, res) => {
+    const { password, userName, type } = req.body;
+    if(password === '888888' && userName === 'admin'){
+      res.send({
+        status: 'ok',
+        type,
+        currentAuthority: 'admin'
+      });
+      return ;
+    }
+    if(password === '123456' && userName === 'user'){
+      res.send({
+        status: 'ok',
+        type,
+        currentAuthority: 'user'
+      });
+      return ;
+    }
+    res.send({
+      status: 'error',
+      type,
+      currentAuthority: 'guest'
+    });
+  },
+
+  'POST /api/account/register': (req, res) => {
+    const { email, mobile } = req.body;
+
+  },
+
 };
 
 export default noProxy ? {} : delay(proxy, 1000);
