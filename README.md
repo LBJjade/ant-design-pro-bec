@@ -11,6 +11,7 @@ An out-of-box UI solution for enterprise applications as a React boilerplate.
 - Preview: http://preview.pro.ant.design
 - Home Page: http://pro.ant.design
 - Documentation: http://pro.ant.design/docs/getting-started
+- ChangeLog: http://pro.ant.design/docs/changelog
 - FAQ: http://pro.ant.design/docs/faq
 
 ## Translation Recruitment :loudspeaker:
@@ -78,7 +79,7 @@ $ mkdir pro-demo && cd pro-demo
 $ pro new
 ```
 
-More instruction at [documentation](http://pro.ant.design/docs/getting-started)。
+More instruction at [documentation](http://pro.ant.design/docs/getting-started).
 
 ## Compatibility
 
