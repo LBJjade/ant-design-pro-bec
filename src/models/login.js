@@ -25,7 +25,7 @@ export default {
         // Login success after permission changes to admin or user
         // The refresh will automatically redirect to the home page
         // yield put(routerRedux.push('/'));
-        location.reload();
+        window.location.reload();
       }
     },
     *logout(_, { put }) {
@@ -39,7 +39,7 @@ export default {
       // yield put(routerRedux.push('/user/login'));
       // Login out after permission changes to admin or user
       // The refresh will automatically redirect to the login page
-      location.reload();
+      window.location.reload();
     },
   },
 
