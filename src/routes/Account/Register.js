@@ -69,20 +69,30 @@ export default class Register extends Component {
   };
 
   handleValidate = (rule, value, callback) => {
-    if (!value) {
-      callback([new Error('请输入邮箱地址！')]);
-    } else {
-      this.props.dispatch({
-        type: 'register/validate',
-        payload: { email: value },
-      });
-      setTimeout(() => {
-        if (this.props.validating.length > 0) {
-          callback([new Error('该邮箱已被注册。')]);
-        } else {
-          callback();
+    if (rule.fieldname !== undefined) {
+      if (!value) {
+        callback([new Error(rule.message)]);
+      } else {
+        if (rule.fieldname === 'email') {
+          this.props.dispatch({
+            type: 'register/validate',
+            payload: { email: value },
+          });
         }
-      }, 800);
+        if (rule.fieldname === 'mobile') {
+          this.props.dispatch({
+            type: 'register/validate',
+            payload: { mobile: value },
+          });
+        }
+        setTimeout(() => {
+          if (this.props.validating.length > 0) {
+            callback([new Error(rule.message)]);
+          } else {
+            callback();
+          }
+        }, 800);
+      }
     }
   }
 
@@ -178,15 +188,19 @@ export default class Register extends Component {
             {getFieldDecorator('email', {
               rules: [
                 {
+                  fieldname: 'email',
                   required: true,
                   message: '请输入邮箱地址！',
                 },
                 {
+                  fieldname: 'email',
                   type: 'email',
                   message: '邮箱地址格式错误！',
                 },
                 {
+                  fieldname: 'email',
                   required: true,
+                  message: '该邮箱已被注册。',
                   validator: this.handleValidate,
                 },
               ],
@@ -250,14 +264,23 @@ export default class Register extends Component {
               {getFieldDecorator('mobile', {
                 rules: [
                   {
+                    fieldname: 'mobile',
                     required: true,
                     message: '请输入手机号！',
                   },
                   {
+                    fieldname: 'mobile',
+                    required: true,
                     pattern: /^1\d{10}$/,
                     message: '手机号格式错误！',
                   },
+                  {
+                    fieldname: 'mobile',
+                    message: '该手机号码已被注册',
+                    validator: this.handleValidate,
+                  },
                 ],
+                validateTrigger: 'onBlur',
               })(
                 <Input
                   size="large"

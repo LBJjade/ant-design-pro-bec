@@ -4,5 +4,7 @@ export function getAuthority() {
 }
 
 export function setAuthority(authority) {
-  return localStorage.setItem('antd-pro-authority', authority);
+  if (authority !== undefined) {
+    return localStorage.setItem('antd-pro-authority', authority);
+  }
 }

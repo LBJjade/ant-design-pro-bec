@@ -13,7 +13,7 @@ const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
 export default class LoginPage extends Component {
   state = {
     type: 'account',
-    autoLogin: true,
+    autoLogin: false,
   }
 
   onTabChange = (type) => {
@@ -62,8 +62,8 @@ export default class LoginPage extends Component {
               login.submitting === false &&
               this.renderMessage('账户或密码错误')
             }
-            <UserName name="email" placeholder="admin@becheer.com/user@becheer.com" />
-            <Password name="password" placeholder="888888/123456" />
+            <UserName name="email" placeholder="请输入邮箱" />
+            <Password name="password" placeholder="请输入密码" />
           </Tab>
           <Tab key="mobile" tab="手机号登录">
             {
