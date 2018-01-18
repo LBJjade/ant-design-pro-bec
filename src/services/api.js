@@ -2,7 +2,8 @@ import { stringify } from 'qs';
 import request from '../utils/request';
 
 export async function queryProjectNotice() {
-  return request('/api/project/notice');
+  // return request('/api/project/notice');
+  return request('/api/notice');
 }
 
 export async function queryActivities() {
