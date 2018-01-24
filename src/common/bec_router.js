@@ -116,17 +116,26 @@ export const getRouterData = (app) => {
     '/account/login': {
       component: dynamicWrapper(app, ['login'], () => import('../routes/Account/Login')),
     },
-    '/account/register': {
-      component: dynamicWrapper(app, ['register'], () => import('../routes/Account/Register')),
+    // '/account/register': {
+    //   component: dynamicWrapper(app, ['register'], () => import('../routes/Account/Register')),
+    // },
+    // '/account/register-result': {
+    //   component: dynamicWrapper(app, [], () => import('../routes/Account/RegisterResult')),
+    // },
+    '/account/signup': {
+      component: dynamicWrapper(app, ['signup'], () => import('../routes/Account/Signup')),
     },
-    '/account/register-result': {
-      component: dynamicWrapper(app, [], () => import('../routes/Account/RegisterResult')),
+    '/account/signup-result': {
+      component: dynamicWrapper(app, [], () => import('../routes/Account/SignupResult')),
     },
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },
     '/system/userlist': {
-      component: dynamicWrapper(app, ['userlist'], () => import('../routes/System/UserList')),
+      component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/UserList')),
+    },
+    '/system/usertable': {
+      component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/UserTable')),
     },
   };
   // Get name from ./menu.js or just set it in the router data.

@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { accountLogin } from '../services/account';
+import { getLogin } from '../services/account';
 import { setAuthority } from '../utils/authority';
 
 export default {
@@ -15,14 +15,14 @@ export default {
         type: 'changeSubmitting',
         payload: true,
       });
-      const response = yield call(accountLogin, payload);
+      const response = yield call(getLogin, payload);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
-      // if (response !== undefined && response.length > 0) {
+      if (response.error === undefined) {
+        // if (response !== undefined && response.length > 0) {
         message.success('登录成功！', 5);
         // 非常粗暴的跳转,登陆成功之后权限会变成user或admin,会自动重定向到主页
         // Login success after permission changes to admin or user

@@ -10,7 +10,5 @@ export async function queryCurrent() {
 }
 
 export async function queryUserList(params) {
-  // return request('/api/users');
-  console.log(`/api/users?${stringify(params)}`);
   return request(`/api/users?${stringify(params)}`);
 }

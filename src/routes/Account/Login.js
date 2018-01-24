@@ -55,14 +55,14 @@ export default class LoginPage extends Component {
           onTabChange={this.onTabChange}
           onSubmit={this.handleSubmit}
         >
-          <Tab key="account" tab="账户密码登录">
+          <Tab key="account" tab="帐户密码登录">
             {
               login.status === 'error' &&
               login.type === 'account' &&
               login.submitting === false &&
-              this.renderMessage('账户或密码错误')
+              this.renderMessage('帐户或密码错误')
             }
-            <UserName name="email" placeholder="请输入邮箱" />
+            <UserName name="username" placeholder="请输入帐号" />
             <Password name="password" placeholder="请输入密码" />
           </Tab>
           <Tab key="mobile" tab="手机号登录">
@@ -85,7 +85,7 @@ export default class LoginPage extends Component {
             <Icon className={styles.icon} type="alipay-circle" />
             <Icon className={styles.icon} type="taobao-circle" />
             <Icon className={styles.icon} type="weibo-circle" />
-            <Link className={styles.register} to="/account/register">注册账户</Link>
+            <Link className={styles.register} to="/account/signup">注册账户</Link>
           </div>
         </Login>
       </div>

@@ -9,9 +9,9 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
 
-@connect(({ userlist, loading }) => ({
-  userlist,
-  loading: loading.models.userlist,
+@connect(({ usermodel, loading }) => ({
+  usermodel,
+  loading: loading.models.usermodel,
 }))
 export default class UserList extends PureComponent {
   state = {
@@ -25,7 +25,7 @@ export default class UserList extends PureComponent {
     const { dispatch } = this.props;
     const pager = this.state.pagination;
     dispatch({
-      type: 'userlist/fetch',
+      type: 'usermodel/fetch',
       payload: pager,
     });
   }
@@ -36,7 +36,7 @@ export default class UserList extends PureComponent {
       _limit: pageSize,
     };
     this.props.dispatch({
-      type: 'userlist/fetch',
+      type: 'usermodel/fetch',
       payload: pager,
     });
 
@@ -65,7 +65,7 @@ export default class UserList extends PureComponent {
   // }
 
   render() {
-    const { userlist: { list }, loading } = this.props;
+    const { usermodel: { list }, loading } = this.props;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -98,15 +98,15 @@ export default class UserList extends PureComponent {
       onChange: this.handlePageChange,
     };
 
-    const ListContent = ({ data: { userName, createdAt } }) => (
+    const ListContent = ({ data: { createdAt } }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
-          <span>用户名</span>
-          <p>{userName}</p>
+          <span>注册时间</span>
+          <p><Icon type="clock-circle-o" /> {moment(createdAt).format('YYYY-MM-DD hh:mm')}</p>
         </div>
         <div className={styles.listContentItem}>
-          <span>注册时间</span>
-          <p>{moment(createdAt).format('YYYY-MM-DD hh:mm')}</p>
+          <span>最后登录IP</span>
+          <p><Icon type="environment-o" /> 128.129.130.131</p>
         </div>
       </div>
     );
@@ -117,7 +117,7 @@ export default class UserList extends PureComponent {
           <a>编辑</a>
         </Menu.Item>
         <Menu.Item>
-          <a>删除</a>
+          <a>禁用</a>
         </Menu.Item>
       </Menu>
     );
@@ -166,8 +166,8 @@ export default class UserList extends PureComponent {
                 >
                   <List.Item.Meta
                     avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                    title={<a href={item.userNo}>{item.userName}</a>}
-                    description={item.email}
+                    title={<a href={item.id}><Icon type="mobile" /> {item.mobile}</a>}
+                    description={<span><Icon type="mail" /> {item.email}</span>}
                   />
                   <ListContent data={item} />
                 </List.Item>
