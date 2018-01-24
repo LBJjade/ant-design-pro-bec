@@ -6,7 +6,7 @@ const codeMessage = {
   201: '新建或修改数据成功。',
   202: '一个请求已经进入后台排队（异步任务）',
   204: '删除数据成功。',
-  400: '发出的请求有错误，服务器没有进行新建或修改数据,的操作。',
+  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
   401: '用户没有权限（令牌、用户名、密码错误）。',
   403: '用户得到授权，但是访问是被禁止的。',
   404: '发出的请求针对的是不存在的记录，服务器没有进行操作',
@@ -45,13 +45,17 @@ export default function request(url, options) {
     credentials: 'include',
   };
   const newOptions = { ...defaultOptions, ...options };
-  if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
+
+  if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT') {
     newOptions.headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
+      'X-Parse-Application-Id': 'bec',
       ...newOptions.headers,
     };
-    newOptions.body = JSON.stringify(newOptions.body);
+    if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
+      newOptions.body = JSON.stringify(newOptions.body);
+    }
   }
 
   return fetch(url, newOptions)
