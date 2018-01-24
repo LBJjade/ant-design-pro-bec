@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { routerRedux, Link } from 'dva/router';
-import { Form, Input, Button, Select, Row, Col, Popover, Progress } from 'antd';
+import { Form, Input, Button, Select, Row, Col, Popover, Progress, Icon } from 'antd';
 import styles from './Signup.less';
 
 const FormItem = Form.Item;
@@ -199,7 +199,7 @@ export default class Signup extends Component {
               ],
               validateFirst: true,
               validateTrigger: 'onBlur',
-            })(<Input size="large" placeholder="帐号" />)}
+            })(<Input size="large" placeholder="帐号" prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
           </FormItem>
           <FormItem>
             {getFieldDecorator('email', {
@@ -210,7 +210,7 @@ export default class Signup extends Component {
               ],
               validateFirst: true,
               validateTrigger: 'onBlur',
-            })(<Input size="large" placeholder="邮箱" />)}
+            })(<Input size="large" placeholder="邮箱" prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
           </FormItem>
           <FormItem help={this.state.help}>
             <Popover
@@ -238,6 +238,7 @@ export default class Signup extends Component {
                   size="large"
                   type="password"
                   placeholder="至少6位密码，区分大小写"
+                  prefix={<Icon type="key" style={{ color: 'rgba(0,0,0,.25)' }} />}
                 />
               )}
             </Popover>
@@ -253,7 +254,14 @@ export default class Signup extends Component {
                   validator: this.checkConfirm,
                 },
               ],
-            })(<Input size="large" type="password" placeholder="确认密码" />)}
+            })(
+              <Input
+                size="large"
+                type="password"
+                placeholder="确认密码"
+                prefix={<Icon type="key" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              />
+            )}
           </FormItem>
           <FormItem>
             <InputGroup compact>
