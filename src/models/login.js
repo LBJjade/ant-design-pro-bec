@@ -1,6 +1,7 @@
-import { message } from 'antd';
+import { routerRedux } from 'dva/router';
 import { getLogin } from '../services/account';
 import { setAuthority } from '../utils/authority';
+import { reloadAuthorized } from '../utils/Authorized';
 
 export default {
   namespace: 'login',
@@ -11,40 +12,36 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
-      yield put({
-        type: 'changeSubmitting',
-        payload: true,
-      });
       const response = yield call(getLogin, payload);
       yield put({
         type: 'changeLoginStatus',
-        payload: response,
+        payload: { ...response, currentAuthority: 'admin' },
       });
       // Login successfully
       if (response.error === undefined) {
-        // if (response !== undefined && response.length > 0) {
-        message.success('登录成功！', 5);
-        // 非常粗暴的跳转,登陆成功之后权限会变成user或admin,会自动重定向到主页
-        // Login success after permission changes to admin or user
-        // The refresh will automatically redirect to the home page
-        // yield put(routerRedux.push('/'));
-        window.location.reload();
-      } else {
-        message.error('登录失败！帐号或密码错误！', 5);
+        reloadAuthorized();
+        yield put(routerRedux.push('/'));
       }
     },
-    *logout(_, { put }) {
-      yield put({
-        type: 'changeLoginStatus',
-        payload: {
-          status: false,
-          currentAuthority: 'guest',
-        },
-      });
-      // yield put(routerRedux.push('/user/login'));
-      // Login out after permission changes to admin or user
-      // The refresh will automatically redirect to the login page
-      window.location.reload();
+    *logout(_, { put, select }) {
+      try {
+        // get location pathname
+        const urlParams = new URL(window.location.href);
+        const pathname = yield select(state => state.routing.location.pathname);
+        // add the parameters in the url
+        urlParams.searchParams.set('redirect', pathname);
+        window.history.replaceState(null, 'login', urlParams.href);
+      } finally {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            status: false,
+            currentAuthority: 'guest',
+          },
+        });
+        reloadAuthorized();
+        yield put(routerRedux.push('/account/login'));
+      }
     },
   },
 
@@ -55,13 +52,6 @@ export default {
         ...state,
         status: payload.status,
         type: payload.type,
-        submitting: false,
-      };
-    },
-    changeSubmitting(state, { payload }) {
-      return {
-        ...state,
-        submitting: payload,
       };
     },
   },
