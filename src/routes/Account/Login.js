@@ -21,13 +21,13 @@ export default class LoginPage extends Component {
   }
 
   handleSubmit = (err, values) => {
-    const { type } = this.state;
+    // const { type } = this.state;
     if (!err) {
       this.props.dispatch({
         type: 'login/login',
         payload: {
           ...values,
-          type,
+          // type,
         },
       });
     }

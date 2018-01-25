@@ -1,14 +1,13 @@
 import React from 'react';
-import { Router, Switch } from 'dva/router';
+import { routerRedux, Switch } from 'dva/router';
 import { LocaleProvider, Spin } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import dynamic from 'dva/dynamic';
-// Min 2018-01-08
-// import { getRouterData } from './common/router';
 import { getRouterData } from './common/bec_router';
 import Authorized from './utils/Authorized';
 import styles from './index.less';
 
+const { ConnectedRouter } = routerRedux;
 const { AuthorizedRoute } = Authorized;
 dynamic.setDefaultLoadingComponent(() => {
   return <Spin size="large" className={styles.globalSpin} />;
@@ -17,19 +16,14 @@ dynamic.setDefaultLoadingComponent(() => {
 function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
 
-  // Min 2018-01-08
-  // const UserLayout = routerData['/user'].component;
-  // const BasicLayout = routerData['/'].component;
   const UserLayout = routerData['/account'].component;
   const BecLayout = routerData['/'].component;
 
   return (
     <LocaleProvider locale={zhCN}>
-      <Router history={history}>
+      <ConnectedRouter history={history}>
         <Switch>
           <AuthorizedRoute
-            // Min 2018-01-08
-            // path="/user"
             path="/account"
             render={props => <UserLayout {...props} />}
             authority="guest"
@@ -38,14 +32,11 @@ function RouterConfig({ history, app }) {
           <AuthorizedRoute
             path="/"
             authority={['admin', 'user']}
-            // Min 2018-01-08
-            // render={props => <BasicLayout {...props} />}
-            // redirectPath="/user/login"
             render={props => <BecLayout {...props} />}
             redirectPath="/account/login"
           />
         </Switch>
-      </Router>
+      </ConnectedRouter>
     </LocaleProvider>
   );
 }
