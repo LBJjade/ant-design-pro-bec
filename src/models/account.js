@@ -1,4 +1,4 @@
-import { query as queryUsers, queryCurrent } from '../services/account';
+import { getUsers, getCurrentUser } from '../services/account';
 
 export default {
   namespace: 'account',
@@ -15,7 +15,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryUsers);
+      const response = yield call(getUsers);
       yield put({
         type: 'save',
         payload: response,
@@ -26,7 +26,7 @@ export default {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+      const response = yield call(getCurrentUser);
       yield put({
         type: 'saveCurrentUser',
         payload: response,
