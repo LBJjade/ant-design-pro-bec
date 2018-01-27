@@ -35,8 +35,14 @@ export default class Signup extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    const account = this.props.form.getFieldValue('email');
     if (nextProps.signup.status === 'ok') {
-      this.props.dispatch(routerRedux.push('/account/signup-result'));
+      this.props.dispatch(routerRedux.push({
+        pathname: '/account/signup-result',
+        state: {
+          account,
+        },
+      }));
     }
   }
 

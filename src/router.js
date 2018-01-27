@@ -16,7 +16,7 @@ dynamic.setDefaultLoadingComponent(() => {
 function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
 
-  const UserLayout = routerData['/account'].component;
+  const AccountLayout = routerData['/account'].component;
   const BecLayout = routerData['/'].component;
 
   return (
@@ -25,7 +25,7 @@ function RouterConfig({ history, app }) {
         <Switch>
           <AuthorizedRoute
             path="/account"
-            render={props => <UserLayout {...props} />}
+            render={props => <AccountLayout {...props} />}
             authority="guest"
             redirectPath="/"
           />

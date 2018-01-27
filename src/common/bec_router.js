@@ -35,6 +35,9 @@ export const getRouterData = (app) => {
     '/': {
       component: dynamicWrapper(app, ['account', 'login'], () => import('../layouts/BecLayout')),
     },
+    '/dashboard/workspace': {
+      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/Dashboard/Workspace')),
+    },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },
@@ -111,7 +114,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['error'], () => import('../routes/Exception/triggerException')),
     },
     '/account': {
-      component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
+      component: dynamicWrapper(app, [], () => import('../layouts/AccountLayout')),
     },
     '/account/login': {
       component: dynamicWrapper(app, ['login'], () => import('../routes/Account/Login')),
@@ -127,6 +130,9 @@ export const getRouterData = (app) => {
     },
     '/account/signup-result': {
       component: dynamicWrapper(app, [], () => import('../routes/Account/SignupResult')),
+    },
+    '/account/verify-result': {
+      component: dynamicWrapper(app, [], () => import('../routes/Account/VerifyResult')),
     },
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),

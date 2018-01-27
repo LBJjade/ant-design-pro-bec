@@ -3,6 +3,9 @@ const menuData = [{
   icon: 'dashboard',
   path: 'dashboard',
   children: [{
+    name: '工作台',
+    path: 'workspace',
+  }, {
     name: '分析页',
     path: 'analysis',
   }, {
