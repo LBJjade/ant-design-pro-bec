@@ -26,7 +26,6 @@ export default class UserTable extends PureComponent {
     // Todo 组件装载前
   }
   componentDidMount() {
-    // Todo 组件装载后、渲染后
     const { dispatch } = this.props;
     const pager = this.state.pagination;
     dispatch({

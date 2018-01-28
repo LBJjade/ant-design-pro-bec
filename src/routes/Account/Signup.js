@@ -11,18 +11,20 @@ const InputGroup = Input.Group;
 const passwordStatusMap = {
   ok: <div className={styles.success}>强度：强</div>,
   pass: <div className={styles.warning}>强度：中</div>,
-  pool: <div className={styles.error}>强度：太短</div>,
+  poor: <div className={styles.error}>强度：太短</div>,
 };
 
 const passwordProgressMap = {
   ok: 'success',
   pass: 'normal',
-  pool: 'exception',
+  poor: 'exception',
 };
 
-@connect(state => ({
-  signup: state.signup,
-  validating: state.signup.userValidating,
+@connect(({ signup, loading }) => ({
+  signup,
+  submitting: loading.effects['register/submit'],
+  validating: signup.userValidating,
+  res: signup.res,
 }))
 @Form.create()
 export default class Signup extends Component {
@@ -35,12 +37,12 @@ export default class Signup extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    const account = this.props.form.getFieldValue('email');
-    if (nextProps.signup.status === 'ok') {
+    const email = this.props.form.getFieldValue('email');
+    if (nextProps.signup.res.sessionToken !== undefined) {
       this.props.dispatch(routerRedux.push({
         pathname: '/account/signup-result',
         state: {
-          account,
+          email,
         },
       }));
     }
@@ -71,7 +73,7 @@ export default class Signup extends Component {
     if (value && value.length > 5) {
       return 'pass';
     }
-    return 'pool';
+    return 'poor';
   };
 
   handleValidate = (rule, value, callback) => {
@@ -111,6 +113,7 @@ export default class Signup extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields({ force: true }, (err, values) => {
+      // if (err === null || !err) {
       if (err === null || !err) {
         this.props.dispatch({
           type: 'signup/submit',
@@ -189,7 +192,7 @@ export default class Signup extends Component {
   };
 
   render() {
-    const { form, signup } = this.props;
+    const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
     const { count, prefix } = this.state;
     return (
@@ -324,7 +327,7 @@ export default class Signup extends Component {
           <FormItem>
             <Button
               size="large"
-              loading={signup.submitting}
+              loading={submitting}
               className={styles.submit}
               type="primary"
               htmlType="submit"

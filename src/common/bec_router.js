@@ -131,6 +131,18 @@ export const getRouterData = (app) => {
     '/account/signup-result': {
       component: dynamicWrapper(app, [], () => import('../routes/Account/SignupResult')),
     },
+    '/account/forgetpassword': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword')),
+    },
+    '/account/forgetpassword/info': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step1')),
+    },
+    '/account/forgetpassword/confirm': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step2')),
+    },
+    '/account/forgetpassword/result': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step3')),
+    },
     '/account/verify-result': {
       component: dynamicWrapper(app, [], () => import('../routes/Account/VerifyResult')),
     },
