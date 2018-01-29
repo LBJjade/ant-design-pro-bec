@@ -13,9 +13,10 @@ import Rollbar from 'rollbar';
 // }
 
 // Track error by https://sentry.io/
+// Google Login rollbar.com
 // hequnmin@gmail.com
 Rollbar.init({
-  accessToken: '287e78bef05711e781fd4201c0a8d032',
+  accessToken: 'bb4a03e69377488c9b34ed08b5905c53',
   captureUncaught: true,
   captureUnhandledRejections: true,
   payload: {
