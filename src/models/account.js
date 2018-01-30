@@ -1,4 +1,4 @@
-import { getUsers, getCurrentUser } from '../services/account';
+import { getUsers, getCurrentUser, getVerifyEmail } from '../services/account';
 
 export default {
   namespace: 'account',
@@ -7,6 +7,7 @@ export default {
     list: [],
     loading: false,
     currentUser: {},
+    verifyResult: [],
   },
 
   effects: {
@@ -30,6 +31,13 @@ export default {
       yield put({
         type: 'saveCurrentUser',
         payload: response,
+      });
+    },
+    *verifyEmail({ payload }, { call, put }) {
+      const ret = yield call(getVerifyEmail, payload);
+      yield put({
+        type: 'changeVerifying',
+        payload: ret,
       });
     },
   },
@@ -60,6 +68,12 @@ export default {
           ...state.currentUser,
           notifyCount: action.payload,
         },
+      };
+    },
+    changeVerifying(state, { payload }) {
+      return {
+        ...state,
+        verifyResult: payload,
       };
     },
   },

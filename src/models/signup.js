@@ -1,6 +1,6 @@
 // import { routerRedux } from 'dva/router';
 import { Message } from 'antd';
-import { postUsers, getUsers } from '../services/account';
+import { postUser, getUsers } from '../services/account';
 
 export default {
   namespace: 'signup',
@@ -16,7 +16,7 @@ export default {
         type: 'changeSubmitting',
         payload: true,
       });
-      const response = yield call(postUsers, payload);
+      const response = yield call(postUser, payload);
       yield put({
         type: 'signupHandle',
         payload: response,

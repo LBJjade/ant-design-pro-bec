@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'dva';
 import { Form, Input, Button, Alert, Divider } from 'antd';
 import { routerRedux } from 'dva/router';
-import { digitUppercase } from '../../../utils/utils';
 import styles from './Style.less';
 
 const formItemLayout = {
@@ -14,8 +13,13 @@ const formItemLayout = {
   },
 };
 
+@connect(({ forgetpassword, loading }) => ({
+  submitting: loading.effects['forgetpassword/submitStepForm'],
+  data: forgetpassword.step,
+}))
 @Form.create()
-class Step2 extends React.PureComponent {
+export default class Step2 extends React.PureComponent {
+  state = {};
   render() {
     const { form, data, dispatch, submitting } = this.props;
     const { getFieldDecorator, validateFields } = form;
@@ -41,48 +45,61 @@ class Step2 extends React.PureComponent {
         <Alert
           closable
           showIcon
-          message="确认转账后，资金将直接打入对方账户，无法退回。"
+          message="已发送验证码到邮箱/手机，请输入验收码和密码进行改密。"
           style={{ marginBottom: 24 }}
         />
         <Form.Item
           {...formItemLayout}
           className={styles.stepFormText}
-          label="付款账户"
+          label="接收邮箱"
         >
-          {data.payAccount}
+          {data.email}
         </Form.Item>
         <Form.Item
           {...formItemLayout}
           className={styles.stepFormText}
-          label="收款账户"
+          label="接收手机号码"
         >
-          {data.receiverAccount}
-        </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          className={styles.stepFormText}
-          label="收款人姓名"
-        >
-          {data.receiverName}
-        </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          className={styles.stepFormText}
-          label="转账金额"
-        >
-          <span className={styles.money}>{data.amount}</span>
-          <span className={styles.uppercase}>（{digitUppercase(data.amount)}）</span>
+          {data.mobile}
         </Form.Item>
         <Divider style={{ margin: '24px 0' }} />
         <Form.Item
           {...formItemLayout}
-          label="支付密码"
+          label="验证码"
+          required={false}
+        >
+          {getFieldDecorator('verifycode', {
+            initialValue: '1234',
+            rules: [{
+              required: true, message: '请输入邮件或短信接收到的验证码',
+            }],
+          })(
+            <Input autoComplete="off" style={{ width: '80%' }} />
+          )}
+        </Form.Item>
+        <Form.Item
+          {...formItemLayout}
+          label="新密码"
           required={false}
         >
           {getFieldDecorator('password', {
             initialValue: '123456',
             rules: [{
-              required: true, message: '需要支付密码才能进行支付',
+              required: true, message: '请输入新密码',
+            }],
+          })(
+            <Input type="password" autoComplete="off" style={{ width: '80%' }} />
+          )}
+        </Form.Item>
+        <Form.Item
+          {...formItemLayout}
+          label="确认新密码"
+          required={false}
+        >
+          {getFieldDecorator('confirm', {
+            initialValue: '123456',
+            rules: [{
+              required: true, message: '请输入新密码',
             }],
           })(
             <Input type="password" autoComplete="off" style={{ width: '80%' }} />
@@ -96,19 +113,14 @@ class Step2 extends React.PureComponent {
           }}
           label=""
         >
-          <Button type="primary" onClick={onValidateForm} loading={submitting}>
-            提交
-          </Button>
-          <Button onClick={onPrev} style={{ marginLeft: 8 }}>
+          <Button onClick={onPrev}>
             上一步
+          </Button>
+          <Button type="primary" onClick={onValidateForm} loading={submitting} style={{ marginLeft: 20 }}>
+            提交
           </Button>
         </Form.Item>
       </Form>
     );
   }
 }
-
-export default connect(({ form, loading }) => ({
-  submitting: loading.effects['form/submitStepForm'],
-  data: form.step,
-}))(Step2);

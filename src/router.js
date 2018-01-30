@@ -30,6 +30,12 @@ function RouterConfig({ history, app }) {
             redirectPath="/"
           />
           <AuthorizedRoute
+            path="/apps/bec"
+            render={props => <AccountLayout {...props} />}
+            authority="guest"
+            redirectPath="/"
+          />
+          <AuthorizedRoute
             path="/"
             authority={['admin', 'user']}
             render={props => <BecLayout {...props} />}

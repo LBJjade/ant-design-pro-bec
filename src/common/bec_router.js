@@ -144,7 +144,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step3')),
     },
     '/account/verify-result': {
-      component: dynamicWrapper(app, [], () => import('../routes/Account/VerifyResult')),
+      component: dynamicWrapper(app, [], () => import('../routes/Account/VerifyEmail')),
+    },
+    '/apps/bec/verify_email': {
+      component: dynamicWrapper(app, ['account'], () => import('../routes/Account/VerifyEmail')),
     },
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),

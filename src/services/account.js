@@ -15,10 +15,20 @@ export async function getUsers2(params) {
   });
 }
 
-export async function postUsers(params) {
+export async function postUser(params) {
   return request('/api/users', {
     method: 'POST',
     body: params,
+  });
+}
+
+export async function putUser(objectId, sessionToken, bodyReset) {
+  return request(`/api/users/${objectId}`, {
+    method: 'PUT',
+    headers: {
+      'X-Parse-Session-Token': sessionToken,
+    },
+    body: bodyReset,
   });
 }
 
@@ -35,9 +45,22 @@ export async function getCurrentUser() {
   });
 }
 
-export async function queryUsers(params) {
-  // return request(`/api/users?${stringify(params)}`);
-  return request(`/api/users?where=${JSON.stringify(params)}`, {
+// export async function queryUsers(params) {
+//   // return request(`/api/users?${stringify(params)}`);
+//   return request(`/api/users?where=${JSON.stringify(params)}`, {
+//     method: 'GET',
+//   });
+// }
+
+export async function postPasswordReset(params) {
+  return request('/api/users', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function getVerifyEmail(params) {
+  return request(`/apps/bec/verify_email${params}`, {
     method: 'GET',
   });
 }
