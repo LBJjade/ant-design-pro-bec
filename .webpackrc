@@ -27,10 +27,10 @@
       "changeOrigin": true,
       "pathRewrite": { "^/api":"parse" }
     },
-    "/apps/bec": {
+    "/mail": {
       "target": "http://localhost:1337/",
       "changeOrigin": true,
-      "pathRewrite": { "^/apps/bec":"parse/apps/bec" }
+      "pathRewrite": { "^/mail":"parse/apps/bec" }
     }
   }
 }

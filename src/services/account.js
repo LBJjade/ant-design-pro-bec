@@ -60,7 +60,7 @@ export async function postPasswordReset(params) {
 }
 
 export async function getVerifyEmail(params) {
-  return request(`/apps/bec/verify_email${params}`, {
+  return request(`/mail/verify_email${params}`, {
     method: 'GET',
   });
 }
