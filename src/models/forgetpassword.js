@@ -1,17 +1,13 @@
 import { routerRedux } from 'dva/router';
 import { Message } from 'antd';
-import { getUsers, postUser, putUser } from '../services/account';
+import { getUsers, postUser, putUser, postPasswordReset } from '../services/account';
 
 export default {
   namespace: 'forgetpassword',
 
   state: {
-    step: {
-      verify: 'email',
-      email: 'hequnmin@gmail.com',
-      mobile: '13927301011',
-    },
     userValidating: [],
+    email: '',
   },
 
   effects: {
@@ -22,43 +18,36 @@ export default {
         payload: ret,
       });
     },
-    *submitVerifyCode({ payload }, { call, put }) {
+
+    *submitEmail({ payload }, { call, put }) {
+      yield put({ type: 'saveStepFormData', payload });
       yield put({ type: 'changeSubmitting', payload: true });
       const resUser = yield call(getUsers, payload);
       yield put({ type: 'changeSubmitting', payload: false });
       if (resUser.error !== undefined) {
-        Message.error(`发送验证码失败！用户邮箱或手机号码不存在。${resUser.error}`, 3);
+        Message.error(`帐户邮箱不存在。${resUser.error}`, 3);
       } else {
-        const { objectId } = resUser.results;
-        const { sessionToken } = resUser.results;
-        const verifyCode = { verifyCode: '1234' };
         yield put({ type: 'changeSubmitting', payload: true });
-        const response = yield call(putUser, objectId, sessionToken, verifyCode);
+        yield call(postPasswordReset, payload);
         yield put({ type: 'changeSubmitting', payload: false });
-        if (response.error === undefined) {
-          yield put({ type: 'saveStepFormData', payload });
-          yield put(routerRedux.push('/account/forgetpassword/confirm'));
-        } else {
-          Message.error(`发送验证码失败！${response.error}`, 3);
-        }
+        Message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱进行激活。', 5);
       }
     },
     *submitPasswordReset({ payload }, { call, put }) {
-      yield put({
-        type: 'changeSubmitting',
-        payload: true,
-      });
-      const response = yield call(postUser, payload);
-      yield put({
-        type: 'handleReset',
-        payload: response,
-      });
-      yield put({
-        type: 'changeSubmitting',
-        payload: false,
-      });
-      if (response.error !== undefined) {
-        Message.error(`重置密码失败！${response.error}`, 3);
+      yield put({ type: 'changeSubmitting', payload: true });
+      const resUser = yield call(getUsers, { objectId: payload.objectid });
+      yield put({ type: 'changeSubmitting', payload: false });
+      if (resUser.error !== undefined) {
+        Message.error(`帐户邮箱不存在。${resUser.error}`, 3);
+      } else {
+        yield put({ type: 'changeSubmitting', payload: true });
+        const ret = yield call(putUser, payload);
+        yield put({ type: 'changeSubmitting', payload: false });
+        if (ret.error === undefined) {
+          Message.success('密码重置成功！', 5);
+        } else {
+          Message.error(`密码重置失败！${ret.error}`, 5);
+        }
       }
     },
     *submitStepForm({ payload }, { call, put }) {
@@ -93,10 +82,7 @@ export default {
     saveStepFormData(state, { payload }) {
       return {
         ...state,
-        step: {
-          ...state.step,
-          ...payload,
-        },
+        payload,
       };
     },
   },

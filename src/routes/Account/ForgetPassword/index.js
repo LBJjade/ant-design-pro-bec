@@ -9,6 +9,10 @@ import styles from './index.less';
 const { Step } = Steps;
 
 export default class ForgetPassword extends PureComponent {
+  componentWillMount() {
+
+  }
+
   getCurrentStep() {
     const { location } = this.props;
     const { pathname } = location;
@@ -16,10 +20,22 @@ export default class ForgetPassword extends PureComponent {
     switch (pathList[pathList.length - 1]) {
       case 'info': return 0;
       case 'confirm': return 1;
+      case 'request_password_reset': return 1;
       case 'result': return 2;
       default: return 0;
     }
   }
+
+  toRedirect = () => {
+    const curentStep = this.getCurrentStep();
+    switch (curentStep) {
+      case 0: return '/account/forgetpassword/info';
+      case 1: return '/account/forgetpassword/cofirm';
+      case 2: return '/account/forgetpassword/result';
+      default: return '/account/forgetpassword/info';
+    }
+  }
+
   render() {
     const { match, routerData } = this.props;
     return (
@@ -27,7 +43,7 @@ export default class ForgetPassword extends PureComponent {
         <h2>重置密码</h2>
         <div>
           <Steps current={this.getCurrentStep()} className={styles.steps}>
-            <Step title="发送验证码" />
+            <Step title="发送请求" />
             <Step title="重置密码" />
             <Step title="完成" />
           </Steps>
@@ -42,7 +58,7 @@ export default class ForgetPassword extends PureComponent {
                 />
               ))
             }
-            <Redirect exact from="/account/forgetpassword" to="/account/forgetpassword/info" />
+            <Redirect exact from="/account/forgetpassword" to={this.toRedirect()} />
             <Route render={NotFound} />
           </Switch>
         </div>

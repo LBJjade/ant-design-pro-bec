@@ -22,13 +22,14 @@ export async function postUser(params) {
   });
 }
 
-export async function putUser(objectId, sessionToken, bodyReset) {
-  return request(`/api/users/${objectId}`, {
+export async function putUser(params) {
+  const { objectid, token, data } = params;
+  return request(`/api/users/${objectid}`, {
     method: 'PUT',
     headers: {
-      'X-Parse-Session-Token': sessionToken,
+      'X-Parse-Session-Token': token,
     },
-    body: bodyReset,
+    body: data,
   });
 }
 
@@ -52,10 +53,10 @@ export async function getCurrentUser() {
 //   });
 // }
 
-export async function postPasswordReset(params) {
-  return request('/api/users', {
+export async function postPasswordReset(email) {
+  return request('/api/requestPasswordReset', {
     method: 'POST',
-    body: params,
+    body: email,
   });
 }
 

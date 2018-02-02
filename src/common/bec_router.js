@@ -143,6 +143,9 @@ export const getRouterData = (app) => {
     '/account/forgetpassword/result': {
       component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step3')),
     },
+    '/apps/bec/request_password_reset': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/ReceivePasswordReset')),
+    },
     '/account/verify-result': {
       component: dynamicWrapper(app, [], () => import('../routes/Account/VerifyEmail')),
     },

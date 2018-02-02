@@ -1,10 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Divider, Radio, Icon } from 'antd';
-import { routerRedux } from 'dva/router';
+import { Form, Input, Button, Divider, Icon } from 'antd';
 import styles from './Style.less';
-
-const RadioGroup = Radio.Group;
 
 const formItemLayout = {
   labelCol: {
@@ -52,54 +49,30 @@ export default class Step1 extends React.PureComponent {
       }
     }
   }
-  // handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   this.props.form.validateFields({ force: true }, (err, values) => {
-  //     if (!err) {
-  //       this.props.dispatch({
-  //         type: 'forgetpassword/submitVerifyCode',
-  //         payload: values,
-  //       });
-  //       // this.props.dispatch({
-  //       //   type: 'forgetpassword/saveStepFormData',
-  //       //   payload: values,
-  //       // });
-  //       // this.props.dispatch(routerRedux.push('/account/forgetpassword/confirm'));
-  //     }
-  //   });
-  // };
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields({ force: true }, (err, values) => {
+      if (!err) {
+        this.props.dispatch({
+          type: 'forgetpassword/submitEmail',
+          payload: values,
+        });
+      }
+    });
+  };
   render() {
-    const { form, dispatch, data } = this.props;
-    const { getFieldDecorator, validateFields } = form;
-    const onValidateForm = () => {
-      validateFields({ force: true }, (err, values) => {
-        if (!err) {
-          dispatch({
-            type: 'forgetpassword/saveStepFormData',
-            payload: values,
-          });
-          dispatch(routerRedux.push('/account/forgetpassword/confirm'));
-        }
-      });
-    };
+    const { form, email } = this.props;
+    const { getFieldDecorator } = form;
+
     return (
       <div>
         <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
           <Form.Item
             {...formItemLayout}
-            label="发送验证码"
-          >
-            <RadioGroup defaultValue="email">
-              <Radio value="email">邮件验证码</Radio>
-              <Radio value="mobile">短信验证码</Radio>
-            </RadioGroup>
-          </Form.Item>
-          <Form.Item
-            {...formItemLayout}
             label="注册邮箱"
           >
             {getFieldDecorator('email', {
-              initialValue: data.email,
+              initialValue: email,
               rules: [
                 { fieldname: 'email', required: true, message: '请输入邮箱地址！' },
                 { fieldname: 'email', required: true, type: 'email', message: '邮箱地址格式错误！' },
@@ -112,30 +85,13 @@ export default class Step1 extends React.PureComponent {
             )}
           </Form.Item>
           <Form.Item
-            {...formItemLayout}
-            label="注册手机号码"
-          >
-            {getFieldDecorator('mobile', {
-              initialValue: data.mobile,
-              rules: [
-                { fieldname: 'mobile', required: true, message: '请输入手机号！' },
-                { fieldname: 'mobile', required: true, pattern: /^1\d{10}$/, message: '手机号格式错误！' },
-                { fieldname: 'mobile', required: true, message: '该手机号码未注册', validator: this.handleValidate },
-              ],
-              validateFirst: true,
-              validateTrigger: 'onBlur',
-            })(
-              <Input placeholder="请输入您的注册手机号码" prefix={<Icon type="mobile" style={{ color: 'rgba(0,0,0,.25)' }} />} />
-            )}
-          </Form.Item>
-          <Form.Item
             wrapperCol={{
               xs: { span: 24, offset: 0 },
               sm: { span: formItemLayout.wrapperCol.span, offset: formItemLayout.labelCol.span },
             }}
             label=""
           >
-            <Button type="primary" onClick={onValidateForm}>
+            <Button type="primary" onClick={this.handleSubmit}>
               下一步
             </Button>
           </Form.Item>

@@ -15,68 +15,116 @@ const formItemLayout = {
 
 @connect(({ forgetpassword, loading }) => ({
   submitting: loading.effects['forgetpassword/submitStepForm'],
-  data: forgetpassword.step,
+  email: forgetpassword.email,
+  validating: forgetpassword.userValidating,
 }))
 @Form.create()
 export default class Step2 extends React.PureComponent {
-  state = {};
+  state = {
+    token: null,
+    objectid: null,
+    username: null,
+  };
+
+  // Todo componentWillMount
+  componentWillMount() {
+    // const { dispatch, location } = this.props;
+    // dispatch({
+    //   type: '',
+    //   payload: location.search,
+    // });
+    const userName = this.getUrlPara('username');
+    if (userName !== null) {
+      this.props.dispatch({
+        type: 'forgetpassword/validate',
+        payload: {
+          username: userName,
+        },
+      });
+    }
+    this.setState({
+      token: this.getUrlPara('token'),
+    });
+  }
+  // Todo componentWillReceiveProps
+  componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps');
+    if (nextProps.validating.results !== undefined && nextProps.validating.results.length > 0) {
+      this.setState({
+        token: this.getUrlPara('token'),
+        objectid: nextProps.validating.results[0].objectId,
+        username: nextProps.validating.results[0].username,
+      });
+    } else {
+      this.setState({
+        token: null,
+        objectid: null,
+        username: null,
+      });
+    }
+  }
+
+  getUrlPara = (name) => {
+    const { location } = this.props;
+    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+    const r = location.search.substr(1).match(reg);
+    if (r != null) {
+      return (r[2]);
+    }
+    return null;
+  }
+
+  getInfo = () => {
+    const token = this.getUrlPara('token');
+    const userName = this.getUrlPara('username');
+    if (token !== null && token.length > 0 && userName !== null && userName.length > 0) {
+      return '已接收到重置密码请求并验证通过，请输入密码进行重置密码。';
+    } else {
+      return '验证失败！请重新发送重置密码请求。';
+    }
+  }
+
   render() {
-    const { form, data, dispatch, submitting } = this.props;
+    const { form, dispatch, submitting } = this.props;
     const { getFieldDecorator, validateFields } = form;
     const onPrev = () => {
       dispatch(routerRedux.push('/account/forgetpassword'));
     };
-    const onValidateForm = (e) => {
+
+    const handleSubmit = (e) => {
       e.preventDefault();
       validateFields((err, values) => {
         if (!err) {
           dispatch({
-            type: 'forgetpassword/submitStepForm',
+            type: 'forgetpassword/submitPasswordReset',
             payload: {
-              ...data,
-              ...values,
+              token: this.state.token,
+              objectid: this.state.objectid,
+              data: {
+                ...values,
+              },
             },
           });
         }
       });
     };
+
     return (
       <Form layout="horizontal" className={styles.stepForm}>
         <Alert
           closable
           showIcon
-          message="已发送验证码到邮箱/手机，请输入验收码和密码进行改密。"
+          message={this.getInfo()}
           style={{ marginBottom: 24 }}
         />
         <Form.Item
           {...formItemLayout}
           className={styles.stepFormText}
-          label="接收邮箱"
+          label="帐号"
         >
-          {data.email}
-        </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          className={styles.stepFormText}
-          label="接收手机号码"
-        >
-          {data.mobile}
+          { this.state.username }
         </Form.Item>
         <Divider style={{ margin: '24px 0' }} />
-        <Form.Item
-          {...formItemLayout}
-          label="验证码"
-          required={false}
-        >
-          {getFieldDecorator('verifycode', {
-            initialValue: '1234',
-            rules: [{
-              required: true, message: '请输入邮件或短信接收到的验证码',
-            }],
-          })(
-            <Input autoComplete="off" style={{ width: '80%' }} />
-          )}
-        </Form.Item>
         <Form.Item
           {...formItemLayout}
           label="新密码"
@@ -116,7 +164,12 @@ export default class Step2 extends React.PureComponent {
           <Button onClick={onPrev}>
             上一步
           </Button>
-          <Button type="primary" onClick={onValidateForm} loading={submitting} style={{ marginLeft: 20 }}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            loading={submitting}
+            style={{ marginLeft: 20 }}
+          >
             提交
           </Button>
         </Form.Item>
