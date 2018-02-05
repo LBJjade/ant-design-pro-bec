@@ -126,8 +126,8 @@ const menuData = [{
   }, {
     name: '用户管理',
     icon: 'user',
-    // path: 'userlist',
-    path: 'usertable',
+    path: 'userlist',
+    // path: 'usertable',
   }, {
     name: '角色管理',
     icon: 'usergroup-add',
