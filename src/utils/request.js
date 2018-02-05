@@ -55,6 +55,7 @@ export default function request(url, options) {
       Accept: 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
       'X-Parse-Application-Id': 'bec',
+      'X-Parse-Session-Token': localStorage.token,
       ...newOptions.headers,
     };
     if (newOptions.method === 'POST' || newOptions.method === 'PUT') {

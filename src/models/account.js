@@ -1,4 +1,4 @@
-import { getUsers, getCurrentUser, getVerifyEmail } from '../services/account';
+import { getUsers, getUserMe, getVerifyEmail } from '../services/account';
 
 export default {
   namespace: 'account',
@@ -27,7 +27,7 @@ export default {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(getCurrentUser);
+      const response = yield call(getUserMe);
       yield put({
         type: 'saveCurrentUser',
         payload: response,

@@ -22,6 +22,7 @@ export default {
               type: 'changeLoginStatus',
               payload: { ...response, currentAuthority: 'admin' },
             });
+            localStorage.token = response.sessionToken;
             reloadAuthorized();
             yield put(routerRedux.push('/'));
           } else {

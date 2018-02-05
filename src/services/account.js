@@ -39,19 +39,11 @@ export async function getLogin(params) {
   });
 }
 
-export async function getCurrentUser() {
+export async function getUserMe() {
   return request('/api/users/me', {
     method: 'GET',
-    headers: { 'X-Parse-Session-Token': 'r:ec7fa31146bc5f8aece74b5b225533df' },
   });
 }
-
-// export async function queryUsers(params) {
-//   // return request(`/api/users?${stringify(params)}`);
-//   return request(`/api/users?where=${JSON.stringify(params)}`, {
-//     method: 'GET',
-//   });
-// }
 
 export async function postPasswordReset(email) {
   return request('/api/requestPasswordReset', {
