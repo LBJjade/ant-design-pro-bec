@@ -1,4 +1,4 @@
-import { query as queryUsers, queryCurrent } from '../services/account';
+import { getUsers, getUserMe, getVerifyEmail } from '../services/account';
 
 export default {
   namespace: 'account',
@@ -7,6 +7,7 @@ export default {
     list: [],
     loading: false,
     currentUser: {},
+    verifyResult: [],
   },
 
   effects: {
@@ -15,7 +16,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryUsers);
+      const response = yield call(getUsers);
       yield put({
         type: 'save',
         payload: response,
@@ -26,10 +27,17 @@ export default {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+      const response = yield call(getUserMe);
       yield put({
         type: 'saveCurrentUser',
         payload: response,
+      });
+    },
+    *verifyEmail({ payload }, { call, put }) {
+      const ret = yield call(getVerifyEmail, payload);
+      yield put({
+        type: 'changeVerifying',
+        payload: ret,
       });
     },
   },
@@ -60,6 +68,12 @@ export default {
           ...state.currentUser,
           notifyCount: action.payload,
         },
+      };
+    },
+    changeVerifying(state, { payload }) {
+      return {
+        ...state,
+        verifyResult: payload,
       };
     },
   },

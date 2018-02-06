@@ -3,6 +3,9 @@ const menuData = [{
   icon: 'dashboard',
   path: 'dashboard',
   children: [{
+    name: '工作台',
+    path: 'workspace',
+  }, {
     name: '分析页',
     path: 'analysis',
   }, {
@@ -123,8 +126,8 @@ const menuData = [{
   }, {
     name: '用户管理',
     icon: 'user',
-    // path: 'userlist',
-    path: 'usertable',
+    path: 'userlist',
+    // path: 'usertable',
   }, {
     name: '角色管理',
     icon: 'usergroup-add',

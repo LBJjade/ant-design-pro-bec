@@ -4,6 +4,7 @@ import { routerRedux } from 'dva/router';
 import store from '../index';
 
 const codeMessage = {
+  101: '无效的用户名/密码',
   200: '服务器成功返回请求的数据',
   201: '新建或修改数据成功。',
   202: '一个请求已经进入后台排队（异步任务）',
@@ -21,7 +22,8 @@ const codeMessage = {
   504: '网关超时',
 };
 function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
+  // if (response.status >= 200 && response.status < 300) {
+  if (response.status < 500) {
     return response;
   }
   const errortext = codeMessage[response.status] || response.statusText;
@@ -53,6 +55,7 @@ export default function request(url, options) {
       Accept: 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
       'X-Parse-Application-Id': 'bec',
+      'X-Parse-Session-Token': localStorage.token,
       ...newOptions.headers,
     };
     if (newOptions.method === 'POST' || newOptions.method === 'PUT') {

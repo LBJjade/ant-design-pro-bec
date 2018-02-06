@@ -1,4 +1,5 @@
 import { routerRedux } from 'dva/router';
+import { Message } from 'antd';
 import { getLogin } from '../services/account';
 import { setAuthority } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
@@ -13,14 +14,25 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(getLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: { ...response, currentAuthority: 'admin' },
-      });
       // Login successfully
       if (response.error === undefined) {
-        reloadAuthorized();
-        yield put(routerRedux.push('/'));
+        if (response.sessionToken !== undefined) {
+          if (response.emailVerified) {
+            yield put({
+              type: 'changeLoginStatus',
+              payload: { ...response, currentAuthority: 'admin' },
+            });
+            localStorage.token = response.sessionToken;
+            reloadAuthorized();
+            yield put(routerRedux.push('/'));
+          } else {
+            Message.error('登录失败！帐号未验证！', 5);
+          }
+        } else {
+          Message.error('登录失败！无法获取Token！', 5);
+        }
+      } else {
+        Message.error(`登录失败！${response.error}`, 5);
       }
     },
     *logout(_, { put, select }) {

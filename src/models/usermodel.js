@@ -1,27 +1,27 @@
-import { queryUserList } from '../services/user';
+import { getUsers } from '../services/user';
 
 export default {
   namespace: 'usermodel',
 
   state: {
     data: {
-      list: [],
-      pagination: {},
+      results: [],
+      count: 0,
     },
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryUserList, payload);
+      const response = yield call(getUsers, payload);
       yield put({
-        type: 'queryList',
+        type: 'changeUsers',
         payload: response,
       });
     },
   },
 
   reducers: {
-    queryList(state, action) {
+    changeUsers(state, action) {
       return {
         ...state,
         data: action.payload,

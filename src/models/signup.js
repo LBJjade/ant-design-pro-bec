@@ -1,12 +1,12 @@
-import { routerRedux } from 'dva/router';
-import { message } from 'antd';
-import { postUsers, getUsers } from '../services/account';
+// import { routerRedux } from 'dva/router';
+import { Message } from 'antd';
+import { postUser, getUsers } from '../services/account';
 
 export default {
   namespace: 'signup',
 
   state: {
-    status: undefined,
+    res: [],
     userValidating: [],
   },
 
@@ -16,7 +16,7 @@ export default {
         type: 'changeSubmitting',
         payload: true,
       });
-      const response = yield call(postUsers, payload);
+      const response = yield call(postUser, payload);
       yield put({
         type: 'signupHandle',
         payload: response,
@@ -26,10 +26,7 @@ export default {
         payload: false,
       });
       if (response.error !== undefined) {
-        message.success('注册成功！', 3);
-        yield put(routerRedux.push('/account/login'));
-      } else {
-        message.error(`注册失败！${response.error}`, 3);
+        Message.error(`注册失败！${response.error}`, 3);
       }
     },
     *validate({ payload }, { call, put }) {
@@ -45,7 +42,7 @@ export default {
     signupHandle(state, { payload }) {
       return {
         ...state,
-        status: payload.status,
+        res: payload,
       };
     },
     changeSubmitting(state, { payload }) {

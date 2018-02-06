@@ -27,6 +27,7 @@ export default class LoginPage extends Component {
         type: 'login/login',
         payload: {
           ...values,
+          emailVerified: true,
           // type,
         },
       });
@@ -75,9 +76,9 @@ export default class LoginPage extends Component {
             <Mobile name="mobile" />
             <Captcha name="captcha" />
           </Tab>
-          <div>
+          <div className={styles.password}>
             <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>自动登录</Checkbox>
-            <a style={{ float: 'right' }} href="">忘记密码</a>
+            <Link className={styles.forgetpassword} to="/account/forgetpassword">忘记密码</Link>
           </div>
           <Submit loading={login.submitting}>登录</Submit>
           <div className={styles.other}>
@@ -85,7 +86,7 @@ export default class LoginPage extends Component {
             <Icon className={styles.icon} type="alipay-circle" />
             <Icon className={styles.icon} type="taobao-circle" />
             <Icon className={styles.icon} type="weibo-circle" />
-            <Link className={styles.register} to="/account/signup">注册账户</Link>
+            <Link className={styles.signup} to="/account/signup">注册账户</Link>
           </div>
         </Login>
       </div>

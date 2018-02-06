@@ -16,56 +16,46 @@ const { Search } = Input;
 export default class UserList extends PureComponent {
   state = {
     pagination: {
-      _page: 1,
-      _limit: 4,
+      pageSize: 3,
+      current: 1,
+      total: 0,
     },
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
-    const pager = this.state.pagination;
+    const parsedata = {
+      limit: this.state.pagination.pageSize,
+      skip: (this.state.pagination.current - 1) * this.state.pagination.pageSize,
+      count: true,
+    };
     dispatch({
       type: 'usermodel/fetch',
-      payload: pager,
+      payload: parsedata,
     });
   }
 
-  handlePageChange = (page, pageSize) => {
-    const pager = {
-      _page: page,
-      _limit: pageSize,
+  handlePageChange = (page, pagesize) => {
+    const { dispatch } = this.props;
+    const parsedata = {
+      limit: pagesize,
+      skip: (page - 1) * pagesize,
+      count: true,
     };
-    this.props.dispatch({
+    dispatch({
       type: 'usermodel/fetch',
-      payload: pager,
+      payload: parsedata,
     });
-
     this.setState({
-      pagination: pager,
+      pagination: {
+        current: page,
+        pageSize: pagesize,
+      },
     });
   }
-
-  // handleListChange(pagination, filters, sorter) {
-  //   const pager = this.state.pagination;
-  //   pager.current = pagination.current;
-  //   pager.total = pagination.total;
-  //   pager.showTotal = ((total) => {
-  //     return `共 ${total} 条`;
-  //   });
-  //   this.setState({
-  //     pagination: pager,
-  //   });
-  //   this.fetch({
-  //     size: pagination.pageSize,
-  //     page: pagination.current,
-  //     sortField: sorter.field,
-  //     sortOrder: sorter.order,
-  //     ...filters,
-  //   });
-  // }
 
   render() {
-    const { usermodel: { list }, loading } = this.props;
+    const { usermodel: { data }, loading } = this.props;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -93,8 +83,8 @@ export default class UserList extends PureComponent {
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: 4,
-      total: 10,
+      pageSize: this.state.pagination.pageSize,
+      total: data.count,
       onChange: this.handlePageChange,
     };
 
@@ -136,13 +126,13 @@ export default class UserList extends PureComponent {
           <Card bordered={false}>
             <Row>
               <Col sm={8} xs={24}>
-                <Info title="所有用户" value="128个用户" bordered />
+                <Info title="所有用户" value={`${data.count}个用户`} bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="活跃用户" value="32个用户" bordered />
+                <Info title="活跃用户" value="0个用户" bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="本月新增用户" value="24个用户" />
+                <Info title="本月新增用户" value="0个用户" />
               </Col>
             </Row>
           </Card>
@@ -156,18 +146,18 @@ export default class UserList extends PureComponent {
           >
             <List
               size="large"
-              rowKey="id"
+              rowKey="objectId"
               loading={loading}
               pagination={paginationProps}
-              dataSource={list}
+              dataSource={data.results}
               renderItem={item => (
                 <List.Item
                   actions={[<a>认证</a>, <MoreBtn />]}
                 >
                   <List.Item.Meta
                     avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                    title={<a href={item.id}><Icon type="mobile" /> {item.mobile}</a>}
-                    description={<span><Icon type="mail" /> {item.email}</span>}
+                    title={<a href={item.id}>{item.username}</a>}
+                    description={<span><Icon type="mobile" /> {item.mobile} </span>}
                   />
                   <ListContent data={item} />
                 </List.Item>

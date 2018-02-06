@@ -35,6 +35,9 @@ export const getRouterData = (app) => {
     '/': {
       component: dynamicWrapper(app, ['account', 'login'], () => import('../layouts/BecLayout')),
     },
+    '/dashboard/workspace': {
+      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/Dashboard/Workspace')),
+    },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },
@@ -111,7 +114,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['error'], () => import('../routes/Exception/triggerException')),
     },
     '/account': {
-      component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
+      component: dynamicWrapper(app, [], () => import('../layouts/AccountLayout')),
     },
     '/account/login': {
       component: dynamicWrapper(app, ['login'], () => import('../routes/Account/Login')),
@@ -127,6 +130,27 @@ export const getRouterData = (app) => {
     },
     '/account/signup-result': {
       component: dynamicWrapper(app, [], () => import('../routes/Account/SignupResult')),
+    },
+    '/account/forgetpassword': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword')),
+    },
+    '/account/forgetpassword/info': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step1')),
+    },
+    '/account/forgetpassword/confirm': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step2')),
+    },
+    '/account/forgetpassword/result': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/Step3')),
+    },
+    '/apps/bec/request_password_reset': {
+      component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/ReceivePasswordReset')),
+    },
+    '/account/verify-result': {
+      component: dynamicWrapper(app, [], () => import('../routes/Account/VerifyEmail')),
+    },
+    '/apps/bec/verify_email': {
+      component: dynamicWrapper(app, ['account'], () => import('../routes/Account/VerifyEmail')),
     },
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),

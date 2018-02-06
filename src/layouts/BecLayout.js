@@ -178,7 +178,7 @@ class BecLayout extends React.PureComponent {
                     <Redirect key={item.from} exact from={item.from} to={item.to} />
                   )
                 }
-                <Redirect exact from="/" to="/dashboard/analysis" />
+                <Redirect exact from="/" to="/dashboard/workspace" />
                 <Route render={NotFound} />
               </Switch>
             </div>
