@@ -141,6 +141,9 @@ class BecLayout extends React.PureComponent {
     if (visible) {
       this.props.dispatch({
         type: 'global/fetchNotices',
+        payload: {
+          userId: localStorage.currentUserId,
+        },
       });
     }
   }

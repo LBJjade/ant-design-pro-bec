@@ -9,8 +9,8 @@ export default {
   },
 
   effects: {
-    *fetchNotices(_, { call, put }) {
-      const data = yield call(getNotices);
+    *fetchNotices({ payload }, { call, put }) {
+      const data = yield call(getNotices, payload);
       yield put({
         type: 'saveNotices',
         payload: data.results,
