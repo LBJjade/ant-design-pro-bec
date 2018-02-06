@@ -1,5 +1,5 @@
 import React from 'react';
-import { routerRedux, Switch } from 'dva/router';
+import { routerRedux, Route, Switch } from 'dva/router';
 import { LocaleProvider, Spin } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import dynamic from 'dva/dynamic';
@@ -23,22 +23,14 @@ function RouterConfig({ history, app }) {
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
-          <AuthorizedRoute
+          <Route
             path="/account"
-            render={props => <AccountLayout {...props} />}
-            authority="guest"
-            redirectPath="/"
-          />
-          <AuthorizedRoute
-            path="/apps/bec"
-            render={props => <AccountLayout {...props} />}
-            authority="guest"
-            redirectPath="/"
+            component={AccountLayout}
           />
           <AuthorizedRoute
             path="/"
-            authority={['admin', 'user']}
             render={props => <BecLayout {...props} />}
+            authority={['admin', 'user']}
             redirectPath="/account/login"
           />
         </Switch>
