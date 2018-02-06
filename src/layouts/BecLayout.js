@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Layout, Icon, message } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
-import { Route, Redirect, Switch } from 'dva/router';
+import { Route, Redirect, Switch, routerRedux } from 'dva/router';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import { enquireScreen } from 'enquire-js';
@@ -16,7 +16,7 @@ import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/bec_menu';
 import logo from '../assets/logo.svg';
 
-const { Content } = Layout;
+const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute } = Authorized;
 
 /**
@@ -98,6 +98,21 @@ class BecLayout extends React.PureComponent {
     }
     return title;
   }
+  getBashRedirect = () => {
+    // According to the url parameter to redirect
+    // 这里是重定向的,重定向到 url 的 redirect 参数所示地址
+    const urlParams = new URL(window.location.href);
+
+    const redirect = urlParams.searchParams.get('redirect');
+    // Remove the parameters in the url
+    if (redirect) {
+      urlParams.searchParams.delete('redirect');
+      window.history.replaceState(null, 'redirect', urlParams.href);
+    } else {
+      return '/dashboard/analysis';
+    }
+    return redirect;
+  }
   handleMenuCollapse = (collapsed) => {
     this.props.dispatch({
       type: 'global/changeLayoutCollapsed',
@@ -112,6 +127,10 @@ class BecLayout extends React.PureComponent {
     });
   }
   handleMenuClick = ({ key }) => {
+    if (key === 'triggerError') {
+      this.props.dispatch(routerRedux.push('/exception/trigger'));
+      return;
+    }
     if (key === 'logout') {
       this.props.dispatch({
         type: 'login/logout',
@@ -122,6 +141,9 @@ class BecLayout extends React.PureComponent {
     if (visible) {
       this.props.dispatch({
         type: 'global/fetchNotices',
+        payload: {
+          userId: localStorage.currentUserId,
+        },
       });
     }
   }
@@ -129,6 +151,7 @@ class BecLayout extends React.PureComponent {
     const {
       currentUser, collapsed, fetchingNotices, notices, routerData, match, location,
     } = this.props;
+    const bashRedirect = this.getBashRedirect();
     const layout = (
       <Layout>
         <SiderMenu
@@ -144,65 +167,70 @@ class BecLayout extends React.PureComponent {
           onCollapse={this.handleMenuCollapse}
         />
         <Layout>
-          <GlobalHeader
-            logo={logo}
-            currentUser={currentUser}
-            fetchingNotices={fetchingNotices}
-            notices={notices}
-            collapsed={collapsed}
-            isMobile={this.state.isMobile}
-            onNoticeClear={this.handleNoticeClear}
-            onCollapse={this.handleMenuCollapse}
-            onMenuClick={this.handleMenuClick}
-            onNoticeVisibleChange={this.handleNoticeVisibleChange}
-          />
+          <Header style={{ padding: 0 }}>
+            <GlobalHeader
+              logo={logo}
+              currentUser={currentUser}
+              fetchingNotices={fetchingNotices}
+              notices={notices}
+              collapsed={collapsed}
+              isMobile={this.state.isMobile}
+              onNoticeClear={this.handleNoticeClear}
+              onCollapse={this.handleMenuCollapse}
+              onMenuClick={this.handleMenuClick}
+              onNoticeVisibleChange={this.handleNoticeVisibleChange}
+            />
+          </Header>
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
-            <div style={{ minHeight: 'calc(100vh - 260px)' }}>
-              <Switch>
-                {
-                  getRoutes(match.path, routerData).map(item =>
-                    (
-                      <AuthorizedRoute
-                        key={item.key}
-                        path={item.path}
-                        component={item.component}
-                        exact={item.exact}
-                        authority={item.authority}
-                        redirectPath="/exception/403"
-                      />
-                    )
+            <Switch>
+              {
+                redirectData.map(item =>
+                  <Redirect key={item.from} exact from={item.from} to={item.to} />
+                )
+              }
+              {
+                getRoutes(match.path, routerData).map(item =>
+                  (
+                    <AuthorizedRoute
+                      key={item.key}
+                      path={item.path}
+                      component={item.component}
+                      exact={item.exact}
+                      authority={item.authority}
+                      redirectPath="/exception/403"
+                    />
                   )
-                }
-                {
-                  redirectData.map(item =>
-                    <Redirect key={item.from} exact from={item.from} to={item.to} />
-                  )
-                }
-                <Redirect exact from="/" to="/dashboard/workspace" />
-                <Route render={NotFound} />
-              </Switch>
-            </div>
+                )
+              }
+              <Redirect exact from="/" to={bashRedirect} />
+              <Route render={NotFound} />
+            </Switch>
+          </Content>
+          <Footer style={{ padding: 0 }}>
             <GlobalFooter
               links={[{
+                key: 'Pro 首页',
                 title: 'Pro 首页',
                 href: 'http://pro.ant.design',
                 blankTarget: true,
               }, {
-                title: 'GitHub',
+                key: 'github',
+                title: <Icon type="github" />,
                 href: 'https://github.com/ant-design/ant-design-pro',
                 blankTarget: true,
               }, {
+                key: 'Ant Design',
                 title: 'Ant Design',
                 href: 'http://ant.design',
                 blankTarget: true,
               }]}
               copyright={
                 <div>
-                  Copyright <Icon type="copyright" /> 2017 蚂蚁金服体验技术部出品
+                  Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
                 </div>
               }
             />
-          </Content>
+          </Footer>
         </Layout>
       </Layout>
     );
@@ -217,9 +245,9 @@ class BecLayout extends React.PureComponent {
   }
 }
 
-export default connect(state => ({
-  currentUser: state.account.currentUser,
-  collapsed: state.global.collapsed,
-  fetchingNotices: state.global.fetchingNotices,
-  notices: state.global.notices,
+export default connect(({ account, global, loading }) => ({
+  currentUser: account.currentUser,
+  collapsed: global.collapsed,
+  fetchingNotices: loading.effects['global/fetchNotices'],
+  notices: global.notices,
 }))(BecLayout);

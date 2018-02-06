@@ -9,10 +9,6 @@
       "extraBabelPlugins": [
         "dva-hmr"
       ]
-    },
-    "app": {
-      "appId":"bec",
-      "appName":"Becheer Web Front-end"
     }
   },
   "ignoreMomentLocale": true,
@@ -20,6 +16,8 @@
   "html": {
     "template": "./src/index.ejs"
   },
+  "publicPath": "/",
+  "disableDynamicImport": true,
   "hash": true,
   "proxy": {
     "/api": {

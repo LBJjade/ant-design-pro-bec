@@ -23,12 +23,10 @@ export async function postUser(params) {
 }
 
 export async function putUser(params) {
-  const { objectid, token, data } = params;
+  const { objectid, data } = params;
   return request(`/api/users/${objectid}`, {
     method: 'PUT',
-    headers: {
-      'X-Parse-Session-Token': token,
-    },
+    headers: { 'X-Parse-Session-Token': localStorage.token },
     body: data,
   });
 }
@@ -42,12 +40,14 @@ export async function getLogin(params) {
 export async function getUserMe() {
   return request('/api/users/me', {
     method: 'GET',
+    headers: { 'X-Parse-Session-Token': localStorage.token },
   });
 }
 
 export async function postPasswordReset(email) {
   return request('/api/requestPasswordReset', {
     method: 'POST',
+    headers: { 'X-Parse-Session-Token': localStorage.token },
     body: email,
   });
 }

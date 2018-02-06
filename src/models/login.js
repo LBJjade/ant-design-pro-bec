@@ -23,6 +23,7 @@ export default {
               payload: { ...response, currentAuthority: 'admin' },
             });
             localStorage.token = response.sessionToken;
+            localStorage.currentUserId = response.objectId;
             reloadAuthorized();
             yield put(routerRedux.push('/'));
           } else {
