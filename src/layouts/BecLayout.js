@@ -120,6 +120,19 @@ class BecLayout extends React.PureComponent {
     });
   }
   handleNoticeClear = (type) => {
+    const { notices } = this.props;
+    const noticesSelect = notices.filter(item => item.type === type);
+    noticesSelect.map((item) => {
+      return this.props.dispatch({
+        type: 'account/noticeClear',
+        payload: {
+          objectId: item.objectId,
+          data: {
+            clear: true,
+          },
+        },
+      });
+    });
     message.success(`清空了${type}`);
     this.props.dispatch({
       type: 'global/clearNotices',
@@ -143,6 +156,7 @@ class BecLayout extends React.PureComponent {
         type: 'global/fetchNotices',
         payload: {
           userId: localStorage.currentUserId,
+          clear: false,
         },
       });
     }
