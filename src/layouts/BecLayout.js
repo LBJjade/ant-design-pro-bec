@@ -122,8 +122,8 @@ class BecLayout extends React.PureComponent {
   handleNoticeClear = (type) => {
     const { notices } = this.props;
     const noticesSelect = notices.filter(item => item.type === type);
-    noticesSelect.map((item) => {
-      return this.props.dispatch({
+    noticesSelect.forEach((item) => {
+      this.props.dispatch({
         type: 'account/noticeClear',
         payload: {
           objectId: item.objectId,
@@ -140,6 +140,10 @@ class BecLayout extends React.PureComponent {
     });
   }
   handleMenuClick = ({ key }) => {
+    if (key === 'personalCenter') {
+      this.props.dispatch(routerRedux.push('/dashboard/workspace'));
+      return;
+    }
     if (key === 'triggerError') {
       this.props.dispatch(routerRedux.push('/exception/trigger'));
       return;
