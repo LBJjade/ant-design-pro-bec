@@ -121,8 +121,7 @@ class BecLayout extends React.PureComponent {
   }
   handleNoticeClear = (type) => {
     const { notices } = this.props;
-    const noticesSelect = notices.filter(item => item.type === type);
-    noticesSelect.forEach((item) => {
+    notices.filter(item => item.type === type).forEach((item) => {
       this.props.dispatch({
         type: 'account/noticeClear',
         payload: {
