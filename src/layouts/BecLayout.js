@@ -164,6 +164,17 @@ class BecLayout extends React.PureComponent {
       });
     }
   }
+  handleItemClick = (item) => {
+    this.props.dispatch({
+      type: 'account/noticeRead',
+      payload: {
+        objectId: item.objectId,
+        data: {
+          read: true,
+        },
+      },
+    });
+  }
   render() {
     const {
       currentUser, collapsed, fetchingNotices, notices, routerData, match, location,
@@ -196,6 +207,7 @@ class BecLayout extends React.PureComponent {
               onCollapse={this.handleMenuCollapse}
               onMenuClick={this.handleMenuClick}
               onNoticeVisibleChange={this.handleNoticeVisibleChange}
+              onItemClick={this.handleItemClick}
             />
           </Header>
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>

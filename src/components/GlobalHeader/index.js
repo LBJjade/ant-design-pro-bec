@@ -53,7 +53,7 @@ export default class GlobalHeader extends PureComponent {
   render() {
     const {
       currentUser, collapsed, fetchingNotices, isMobile, logo,
-      onNoticeVisibleChange, onMenuClick, onNoticeClear,
+      onNoticeVisibleChange, onMenuClick, onNoticeClear, onItemClick,
     } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
@@ -107,9 +107,7 @@ export default class GlobalHeader extends PureComponent {
           <NoticeIcon
             className={styles.action}
             count={currentUser.notifyCount}
-            onItemClick={(item, tabProps) => {
-              console.log(item, tabProps); // eslint-disable-line
-            }}
+            onItemClick={(item, tabProps) => onItemClick(item, tabProps)}
             onClear={onNoticeClear}
             onPopupVisibleChange={onNoticeVisibleChange}
             loading={fetchingNotices}

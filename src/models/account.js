@@ -61,6 +61,9 @@ export default {
     *noticeClear({ payload }, { call }) {
       yield call(putNotice, payload);
     },
+    *noticeRead({ payload }, { call }) {
+      yield call(putNotice, payload);
+    },
   },
 
   reducers: {

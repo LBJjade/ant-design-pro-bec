@@ -122,6 +122,16 @@ const menuData = [{
   path: 'http://pro.ant.design/docs/getting-started',
   target: '_blank',
 }, {
+  name: '人力资源',
+  icon: 'team',
+  path: 'humanresources',
+  authority: ['admin'],
+  children: [{
+    name: '人事档案',
+    icon: 'user',
+    path: 'employee',
+  }],
+}, {
   name: '系统管理',
   icon: 'setting',
   path: 'system',
