@@ -49,6 +49,7 @@ export default {
         yield put({ type: 'changeSubmitting', payload: false });
         if (ret.error === undefined) {
           Message.success('密码重置成功！', 5);
+          yield put(routerRedux.push('/account/forgetpassword/result'));
         } else {
           Message.error(`密码重置失败！${ret.error}`, 5);
         }
