@@ -28,9 +28,13 @@ export default {
         Message.error(`帐户邮箱不存在。${resUser.error}`, 3);
       } else {
         yield put({ type: 'changeSubmitting', payload: true });
-        yield call(postPasswordReset, payload);
+        const resReset = yield call(postPasswordReset, payload);
         yield put({ type: 'changeSubmitting', payload: false });
-        Message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱进行激活。', 5);
+        if (resReset.error !== undefined) {
+          Message.error(`重置密码验证邮件发送失败！${resReset.error}`, 5);
+        } else {
+          Message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱进行激活。', 5);
+        }
       }
     },
     *submitPasswordReset({ payload }, { call, put }) {
@@ -38,7 +42,7 @@ export default {
       const resUser = yield call(getUsers, { objectId: payload.objectid });
       yield put({ type: 'changeSubmitting', payload: false });
       if (resUser.error !== undefined) {
-        Message.error(`帐户邮箱不存在。${resUser.error}`, 3);
+        Message.error(`帐户邮箱不存在。${resUser.error}`, 5);
       } else {
         yield put({ type: 'changeSubmitting', payload: true });
         const ret = yield call(putUser, payload);

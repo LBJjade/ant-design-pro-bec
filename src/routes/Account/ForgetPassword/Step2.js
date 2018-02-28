@@ -78,7 +78,7 @@ export default class Step2 extends React.PureComponent {
     const token = this.getUrlPara('token');
     const userName = this.getUrlPara('username');
     if (token !== null && token.length > 0 && userName !== null && userName.length > 0) {
-      return '已接收到重置密码请求并验证通过，请输入密码进行重置密码。';
+      return '已接收到重置密码请求，请输入密码进行重置密码。';
     } else {
       return '验证失败！请重新发送重置密码请求。';
     }
