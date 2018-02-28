@@ -34,11 +34,12 @@ export default class Signup extends Component {
     visible: false,
     help: '',
     prefix: '86',
+    submitComplete: false,
   };
 
   componentWillReceiveProps(nextProps) {
     const email = this.props.form.getFieldValue('email');
-    if (nextProps.signup.res.sessionToken !== undefined) {
+    if (nextProps.signup.res.sessionToken !== undefined && this.state.submitComplete) {
       this.props.dispatch(routerRedux.push({
         pathname: '/account/signup-result',
         state: {
@@ -122,6 +123,7 @@ export default class Signup extends Component {
             prefix: this.state.prefix,
           },
         });
+        this.setState({ submitComplete: true });
       }
     });
   };

@@ -131,7 +131,6 @@ export default class Step2 extends React.PureComponent {
           required={false}
         >
           {getFieldDecorator('password', {
-            initialValue: '123456',
             rules: [{
               required: true, message: '请输入新密码',
             }],
@@ -145,7 +144,6 @@ export default class Step2 extends React.PureComponent {
           required={false}
         >
           {getFieldDecorator('confirm', {
-            initialValue: '123456',
             rules: [{
               required: true, message: '请输入新密码',
             }],
