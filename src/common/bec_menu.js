@@ -154,6 +154,43 @@ const menuData = [{
     icon: 'team',
     path: 'roleuser',
   }],
+}, {
+  name: '板块管理',
+  icon: 'api',
+  path: 'module',
+  authority: ['admin'],
+  children: [{
+    name: '基础表格',
+    icon: 'bars',
+    path: 'list',
+  }, {
+    name: '卡片表格',
+    icon: 'folder-open',
+    path: 'cart',
+  }, {
+    name: '标准表格',
+    icon: 'folder-open',
+    path: 'base',
+  }],
+}, {
+  name: '板块监控',
+  icon: 'dashboard',
+  path: 'moduleDashboard',
+  authority: ['admin'],
+  children: [{
+    name: '工作台',
+    path: 'workspace',
+  }, {
+    name: '分析页',
+    path: 'analysis',
+  }, {
+    name: '监控页',
+    path: 'monitor',
+  }, {
+    name: '工作台',
+    path: 'workplace',
+    // hideInMenu: true,
+  }],
 }];
 
 function formatter(data, parentPath = '', parentAuthority) {

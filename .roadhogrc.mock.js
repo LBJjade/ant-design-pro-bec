@@ -132,6 +132,9 @@ const proxy = {
       "path": "/base/category/list"
     });
   },
+  'POST /api/classes/role': (req, res) => {
+    res.send({ message: 'Ok' });
+  }
 };
 
 export default noProxy ? {} : delay(proxy, 1000);

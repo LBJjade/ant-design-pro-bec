@@ -208,6 +208,30 @@ export const getRouterData = (app) => {
     '/humanresources/employee': {
       component: dynamicWrapper(app, [], () => import('../routes/HumanResources/Employee')),
     },
+    '/module/list': {
+      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/Module/TableList')),
+    },
+    '/module/base': {
+      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/Module/BasicList')),
+    },
+    '/module/cart': {
+      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/Module/CardList')),
+    },
+    '/moduleDashboard/workspace': {
+      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workspace')),
+    },
+    '/moduleDashboard/analysis': {
+      component: dynamicWrapper(app, ['chart'], () => import('../routes/ModuleDashBoard/Analysis')),
+    },
+    '/moduleDashboard/monitor': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/ModuleDashBoard/Monitor')),
+    },
+    '/moduleDashboard/workplace': {
+      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workplace')),
+      // hideInBreadcrumb: true,
+      // name: '工作台',
+      // authority: 'admin',
+    },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());
