@@ -14,6 +14,14 @@ export async function brandAdd(params) {
   });
 }
 
+export async function brandEdit(params) {
+  const { ids, data } = params;
+  return request(`/api/classes/brand?${stringify(ids)}`, {
+    method: 'PUT',
+    body: data,
+  });
+}
+
 export async function queryCurrent() {
   return request('/api/currentUser');
 }
