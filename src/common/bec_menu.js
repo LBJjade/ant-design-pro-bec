@@ -160,17 +160,21 @@ const menuData = [{
   path: 'set',
   authority: ['admin'],
   children: [{
-    name: '品牌管理',
+    name: '品牌管理基础表格',
     icon: 'star',
     path: 'brand',
   }, {
-    name: '品牌管理',
+    name: '品牌管理标准表格',
     icon: 'star',
     path: 'table',
   }, {
-    name: '品牌管理',
+    name: '品牌管理卡片表格',
     icon: 'star',
     path: 'card',
+  }, {
+    name: '大区管理标准表格',
+    icon: 'layout',
+    path: 'bigArea',
   }],
 }];
 

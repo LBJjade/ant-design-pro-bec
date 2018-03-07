@@ -217,6 +217,9 @@ export const getRouterData = (app) => {
     '/set/card': {
       component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/CardList')),
     },
+    '/set/bigArea': {
+      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/BigAreaTableList')),
+    },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());
