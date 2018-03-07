@@ -220,6 +220,9 @@ export const getRouterData = (app) => {
     '/module/cart': {
       component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/Module/CardList')),
     },
+    '/module/resource': {
+      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/Module/ResourceTableList')),
+    },
     '/moduleDashboard/workspace': {
       component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workspace')),
     },

@@ -1,5 +1,5 @@
 import { getUsers } from '../services/user';
-import { getModule, postModule } from '../services/module';
+import { getModule, getSource, postModule } from '../services/module';
 
 export default {
   namespace: 'moduleManage',
@@ -29,6 +29,13 @@ export default {
         payload: response,
       });
     },
+    *getResource(_, { call, put }) {
+      const response = yield call(getSource);
+      yield put({
+        type: 'returnResource',
+        payload: response,
+      });
+    },
     *postModule({ payload }, { call }) {
       yield call(postModule, payload);
     },
@@ -42,6 +49,12 @@ export default {
       };
     },
     returnModule(state, action) {
+      return {
+        ...state,
+        data: action.payload,
+      };
+    },
+    returnResource(state, action) {
       return {
         ...state,
         data: action.payload,

@@ -6,6 +6,12 @@ export async function getModule() {
   });
 }
 
+export async function getSource() {
+  return request('/api/classes/moduleResource', {
+    method: 'GET',
+  });
+}
+
 
 export async function postModule(params) {
   return request('/api/classes/role', {

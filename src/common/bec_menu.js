@@ -155,12 +155,12 @@ const menuData = [{
     path: 'roleuser',
   }],
 }, {
-  name: '板块管理',
+  name: '分类管理',
   icon: 'api',
   path: 'module',
   authority: ['admin'],
   children: [{
-    name: '基础表格',
+    name: '板块管理',
     icon: 'bars',
     path: 'list',
   }, {
@@ -171,6 +171,10 @@ const menuData = [{
     name: '标准表格',
     icon: 'folder-open',
     path: 'base',
+  }, {
+    name: '数字资源管理',
+    icon: 'folder-open',
+    path: 'resource',
   }],
 }, {
   name: '板块监控',
