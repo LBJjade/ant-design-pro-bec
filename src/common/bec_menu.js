@@ -154,6 +154,24 @@ const menuData = [{
     icon: 'team',
     path: 'roleuser',
   }],
+}, {
+  name: ' 平台设置',
+  icon: 'car',
+  path: 'set',
+  authority: ['admin'],
+  children: [{
+    name: '品牌管理',
+    icon: 'star',
+    path: 'brand',
+  }, {
+    name: '品牌管理',
+    icon: 'star',
+    path: 'table',
+  }, {
+    name: '品牌管理',
+    icon: 'star',
+    path: 'card',
+  }],
 }];
 
 function formatter(data, parentPath = '', parentAuthority) {
