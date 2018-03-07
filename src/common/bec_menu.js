@@ -148,7 +148,7 @@ const menuData = [{
   }, {
     name: '角色管理',
     icon: 'usergroup-add',
-    path: 'role',
+    path: 'userCartlist',
   }, {
     name: '角色权限',
     icon: 'team',

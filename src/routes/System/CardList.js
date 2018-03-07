@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* eslint-disable eol-last */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Card, Button, Icon, List } from 'antd';
@@ -8,88 +8,22 @@ import Ellipsis from '../../components/Ellipsis';
 
 import styles from './CardList.less';
 
-@connect(({ brandManage, loading }) => ({
-  brandManage,
-  loading: loading.models.brandManage,
+@connect(({ moduleManage, loading }) => ({
+  moduleManage,
+  loading: loading.models.moduleManage,
 }))
 export default class CardList extends PureComponent {
-  state = {
-    pagination: {
-      pageSize: 6,
-      current: 1,
-      total: 0,
-    },
-  };
-
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'brandManage/fetch',
-    });
-  }
-
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
-
-    const params = {
-      skip: ((pagination.current - 1) * pagination.pageSize) + 1,
-      limit: pagination.pageSize,
-      count: true,
-      ...formValues,
-      ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
-    dispatch({
-      type: 'brandManage/fetch',
-      payload: params,
-    });
-    this.setState({
-      pagination: {
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-      },
-    });
-  }
-
-  handlePageChange = (page, pagesize) => {
-    const { dispatch } = this.props;
-    const parsedata = {
-      limit: pagesize,
-      skip: ((page - 1) * pagesize) + 1,
-      count: true,
-    };
-    dispatch({
-      type: 'usermodel/fetch',
-      payload: parsedata,
-    });
-    this.setState({
-      pagination: {
-        current: page,
-        pageSize: pagesize,
+    this.props.dispatch({
+      type: 'moduleManage/fetch',
+      payload: {
+        count: 8,
       },
     });
   }
 
   render() {
-    const { brandManage: { data }, loading } = this.props;
-
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      pageSize: this.state.pagination.pageSize,
-      total: data.count,
-      onChange: this.handlePageChange,
-    };
+    const { moduleManage: { data }, loading } = this.props;
 
     const content = (
       <div className={styles.pageHeaderContent}>
@@ -119,7 +53,7 @@ export default class CardList extends PureComponent {
 
     return (
       <PageHeaderLayout
-        title="品牌卡片"
+        title="卡片列表"
         content={content}
         extraContent={extraContent}
       >
@@ -127,21 +61,21 @@ export default class CardList extends PureComponent {
           <List
             rowKey="objectId"
             loading={loading}
-            // pagination={paginationProps}
             grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
-            dataSource={data.results}
+            dataSource={['', ...data.results]}
             renderItem={item => (item ? (
-              <List.Item key={item.ObjectId}>
-                <Card hoverable className={styles.orderNumber} actions={[<a>编辑</a>, <a>删除</a>]}>
-                  <Card.Meta
-                    avatar={<img alt="" className={styles.cardAvatar} src="src/static/img/timg.jpeg" />}
-                    title={<a href="#">{item.brandName}</a>}
-                    description={(
-                      <Ellipsis className={styles.item} lines={3}>{item.brandName}</Ellipsis>
-                    )}
-                  />
-                </Card>
-              </List.Item>
+// eslint-disable-next-line react/jsx-indent
+                <List.Item key={item.id}>
+                  <Card hoverable className={styles.card} actions={[<a>操作一</a>, <a>操作二</a>]}>
+                    <Card.Meta
+                      avatar={<img alt="" className={styles.cardAvatar} src={item.avatar} />}
+                      title={<a href="#">{item.username}</a>}
+                      description={(
+                        <Ellipsis className={styles.item} lines={3}>{item.mobile}</Ellipsis>
+                      )}
+                    />
+                  </Card>
+                </List.Item>
               ) : (
                 <List.Item>
                   <Button type="dashed" className={styles.newButton}>

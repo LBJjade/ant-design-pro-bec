@@ -202,6 +202,9 @@ export const getRouterData = (app) => {
     '/system/userlist': {
       component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/UserList')),
     },
+    '/system/userCartlist': {
+      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/System/CardList')),
+    },
     '/system/usertable': {
       component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/UserTable')),
     },
