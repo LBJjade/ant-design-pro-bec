@@ -30,7 +30,7 @@ const menuData = [{
     path: 'step-form',
   }, {
     name: '高级表单',
-    authority: 'admin',
+    authority: 'guest',
     path: 'advanced-form',
   }],
 }, {
@@ -70,7 +70,7 @@ const menuData = [{
   }, {
     name: '高级详情页',
     path: 'advanced',
-    authority: 'admin',
+    authority: 'guest',
   }],
 }, {
   name: '结果页',
@@ -125,7 +125,7 @@ const menuData = [{
   name: '人力资源',
   icon: 'team',
   path: 'humanresources',
-  authority: ['admin'],
+  authority: ['guest'],
   children: [{
     name: '人事档案',
     icon: 'user',

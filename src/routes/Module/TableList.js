@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Table } from 'antd';
-// import StandardTable from '../../components/StandardTable';
+import { Row, Col, Card, Form, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
@@ -10,73 +9,30 @@ import styles from './TableList.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-// const statusMap = ['default', 'processing', 'success', 'error'];
-// const status = ['关闭', '运行中', '已上线', '异常'];
 const columns = [
   {
-    title: 'id号',
-    dataIndex: 'objectId',
+    title: '浏览次数',
+    dataIndex: 'viewTimes',
   },
   {
-    title: '模块名',
-    dataIndex: 'playerName',
+    title: '模版名称',
+    dataIndex: 'moduleName',
   },
   {
-    title: '分数',
-    dataIndex: 'score',
-    sorter: true,
-    align: 'right',
-    render: val => `${val} 万`,
-    // mark to display a total number
-    needTotal: true,
+    title: '状态',
+    dataIndex: 'status',
   },
-  // {
-  //   title: '状态',
-  //   dataIndex: 'status',
-  //   filters: [
-  //     {
-  //       text: status[0],
-  //       value: 0,
-  //     },
-  //     {
-  //       text: status[1],
-  //       value: 1,
-  //     },
-  //     {
-  //       text: status[2],
-  //       value: 2,
-  //     },
-  //     {
-  //       text: status[3],
-  //       value: 3,
-  //     },
-  //   ],
-  //   render(val) {
-  //     return <Badge status={statusMap[val]} text={status[val]} />;
-  //   },
-  // },
   {
     title: '更新时间',
     dataIndex: 'updatedAt',
     sorter: true,
     render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-  },
-  {
+  }, {
     title: '创建时间',
     dataIndex: 'createdAt',
     sorter: true,
     render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
   },
-  // {
-  //   title: '操作',
-  //   render: () => (
-  //     <Fragment>
-  //       <a href="">配置</a>
-  //       <Divider type="vertical" />
-  //       <a href="">订阅警报</a>
-  //     </Fragment>
-  //   ),
-  // },
 ];
 
 const CreateForm = Form.create()((props) => {
@@ -89,7 +45,7 @@ const CreateForm = Form.create()((props) => {
   };
   return (
     <Modal
-      title="新建规则"
+      title="新增"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
@@ -97,10 +53,21 @@ const CreateForm = Form.create()((props) => {
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="模块名"
+        label="浏览次数"
       >
-        {form.getFieldDecorator('desc', {
-          rules: [{ required: true, message: 'Please input some playerName...' }],
+        {form.getFieldDecorator('viewTimes', {
+          rules: [{ required: true, message: '请输入浏览次数...' }],
+        })(
+          <InputNumber placeholder="请输入" />
+        )}
+      </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="模版名称"
+      >
+        {form.getFieldDecorator('moduleName', {
+          rules: [{ required: true, message: '请输入模版名称...' }],
         })(
           <Input placeholder="请输入" />
         )}
@@ -109,6 +76,7 @@ const CreateForm = Form.create()((props) => {
   );
 });
 
+
 @connect(({ moduleManage, loading }) => ({
   moduleManage,
   loading: loading.models.moduleManage,
@@ -116,6 +84,11 @@ const CreateForm = Form.create()((props) => {
 @Form.create()
 export default class TableList extends PureComponent {
   state = {
+    pagination: {
+      pageSize: 5,
+      current: 1,
+      total: 0,
+    },
     modalVisible: false,
     expandForm: false,
     selectedRows: [],
@@ -140,8 +113,9 @@ export default class TableList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
+      skip: ((pagination.current - 1) * pagination.pageSize) + 1,
+      limit: pagination.pageSize,
+      count: true,
       ...formValues,
       ...filters,
     };
@@ -151,17 +125,24 @@ export default class TableList extends PureComponent {
 
     dispatch({
       type: 'moduleManage/getModule',
+      payload: params,
+    });
+    this.setState({
+      pagination: {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+      },
     });
   }
 
-  handleFormReset = () => {
+  handleFormAdd = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
     this.setState({
       formValues: {},
     });
     dispatch({
-      type: 'moduleManage/fetch',
+      type: 'moduleManage/getModule',
       payload: {},
     });
   }
@@ -183,7 +164,7 @@ export default class TableList extends PureComponent {
         dispatch({
           type: 'moduleManage/remove',
           payload: {
-            objectId: selectedRows.map(row => row.objectId).join(','),
+            no: selectedRows.map(row => row.no).join(','),
           },
           callback: () => {
             this.setState({
@@ -221,7 +202,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'moduleManage/fetch',
+        type: 'moduleManage/getModule',
         payload: values,
       });
     });
@@ -236,9 +217,7 @@ export default class TableList extends PureComponent {
   handleAdd = (fields) => {
     this.props.dispatch({
       type: 'moduleManage/add',
-      payload: {
-        playerName: fields.desc,
-      },
+      payload: fields,
     });
 
     message.success('添加成功');
@@ -253,15 +232,15 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="id号">
-              {getFieldDecorator('objectId')(
+            <FormItem label="浏览次数">
+              {getFieldDecorator('no')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status')(
+            <FormItem label="模版名称">
+              {getFieldDecorator('moduleName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
@@ -272,7 +251,7 @@ export default class TableList extends PureComponent {
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
                 展开 <Icon type="down" />
               </a>
@@ -289,15 +268,15 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="id号">
-              {getFieldDecorator('objectId')(
+            <FormItem label="浏览次数">
+              {getFieldDecorator('no')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status')(
+            <FormItem label="模版名称">
+              {getFieldDecorator('moduleName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
@@ -306,51 +285,31 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="调用次数">
-              {getFieldDecorator('number')(
-                <InputNumber style={{ width: '100%' }} />
+            <FormItem label="更新日期">
+              {getFieldDecorator('updatedAt')(
+                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
               )}
             </FormItem>
           </Col>
         </Row>
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="更新日期">
-              {getFieldDecorator('date')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
+            <FormItem label="创建时间">
+              {getFieldDecorator('createdAt')(
+                <DatePicker style={{ width: '100%' }} placeholder="请输入创建时间" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status3')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status4')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
+            <span className={styles.submitButtons}>
+              <Button type="primary" htmlType="submit">查询</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>新增</Button>
+              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+              收起 <Icon type="up" />
+              </a>
+            </span>
           </Col>
         </Row>
-        <div style={{ overflow: 'hidden' }}>
-          <span style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">查询</Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-              收起 <Icon type="up" />
-            </a>
-          </span>
-        </div>
       </Form>
     );
   }
@@ -375,8 +334,16 @@ export default class TableList extends PureComponent {
       handleModalVisible: this.handleModalVisible,
     };
 
+    const paginationProps = {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      pageSize: this.state.pagination.pageSize,
+      total: data.count,
+      // onChange: this.handlePageChange,
+    };
+
     return (
-      <PageHeaderLayout title="查询表格">
+      <PageHeaderLayout title="品牌管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
@@ -384,29 +351,34 @@ export default class TableList extends PureComponent {
             </div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
-                新建
+                新增
               </Button>
               {
                 selectedRows.length > 0 && (
                   <span>
-                    <Button>批量操作</Button>
+                    <Button>批量状态</Button>
                     <Dropdown overlay={menu}>
                       <Button>
-                        更多操作 <Icon type="down" />
+                        更多状态 <Icon type="down" />
                       </Button>
                     </Dropdown>
                   </span>
                 )
               }
             </div>
-            <Table
-              selectedRows={selectedRows}
-              loading={loading}
-              data={data}
-              columns={columns}
-              onSelectRow={this.handleSelectRows}
-              onChange={this.handleStandardTableChange}
-            />
+            <div className={styles.standardList}>
+              <Card>
+                <div>
+                  <Table
+                    columns={columns}
+                    loading={loading}
+                    pagination={paginationProps}
+                    dataSource={data.results}
+                    onChange={this.handleStandardTableChange}
+                  />
+                </div>
+              </Card>
+            </div>
           </div>
         </Card>
         <CreateForm

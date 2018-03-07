@@ -1,7 +1,7 @@
 import request from '../utils/request';
 
 export async function getModule() {
-  return request('/api/classes/GameScore', {
+  return request('/api/classes/module', {
     method: 'GET',
   });
 }
