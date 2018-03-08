@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Row, Col, Card, Form, a, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './BigAreaTableList.less';
+import styles from './CityTableList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -12,16 +12,24 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const columns = [
   {
     title: '序号',
-    dataIndex: 'orderNumber',
+    dataIndex: 'cityNo',
   },
   {
-    title: '品牌名称',
-    dataIndex: 'brandName',
+    title: '小区名称',
+    dataIndex: 'cityName',
+  },
+  {
+    title: '关联品牌',
+    dataIndex: 'descript',
+  },
+  {
+    title: '关联大区',
+    dataIndex: 'descript',
   },
   {
     title: '操作',
     dataIndex: 'operate',
-    render: val => <span><a href="brandManage/fetch">{val}</a></span>,
+    render: val => <span><a href="cityManage/fetch">{val}</a></span>,
   },
   {
     title: '更新时间',
@@ -66,19 +74,19 @@ const CreateAddForm = Form.create()((props) => {
         wrapperCol={{ span: 15 }}
         label="序号"
       >
-        {form.getFieldDecorator('orderNumber', {
+        {form.getFieldDecorator('cityNo', {
           rules: [{ required: true, message: '请输入序号...' }],
         })(
-          <InputNumber placeholder="请输入" />
+          <Input placeholder="请输入" />
         )}
       </FormItem>
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="品牌名称"
+        label="小区名称"
       >
-        {form.getFieldDecorator('brandName', {
-          rules: [{ required: true, message: '请输入品牌名称...' }],
+        {form.getFieldDecorator('cityName', {
+          rules: [{ required: true, message: '请输入小区名称...' }],
         })(
           <Input placeholder="请输入" />
         )}
@@ -107,7 +115,7 @@ const CreateEditForm = Form.create()((props) => {
         wrapperCol={{ span: 15 }}
         label="序号"
       >
-        {form.getFieldDecorator('orderNumber', {
+        {form.getFieldDecorator('cityNo', {
           rules: [{ required: true, message: '请输入序号...' }],
         })(
           <InputNumber placeholder="请输入" />
@@ -116,10 +124,10 @@ const CreateEditForm = Form.create()((props) => {
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="品牌名称"
+        label="小区名称"
       >
-        {form.getFieldDecorator('brandName', {
-          rules: [{ required: true, message: '请输入品牌名称...' }],
+        {form.getFieldDecorator('cityName', {
+          rules: [{ required: true, message: '请输入小区名称...' }],
         })(
           <Input placeholder="请输入" />
         )}
@@ -129,9 +137,9 @@ const CreateEditForm = Form.create()((props) => {
 });
 
 
-@connect(({ brandManage, loading }) => ({
-  brandManage,
-  loading: loading.models.brandManage,
+@connect(({ cityManage, loading }) => ({
+  cityManage,
+  loading: loading.models.cityManage,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -151,7 +159,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'cityManage/fetch',
     });
   }
 
@@ -177,7 +185,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'cityManage/fetch',
       payload: params,
     });
     this.setState({
@@ -195,7 +203,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'cityManage/fetch',
       payload: {},
     });
   }
@@ -215,7 +223,7 @@ export default class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'brandManage/remove',
+          type: 'cityManage/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -255,7 +263,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'brandManage/fetch',
+        type: 'cityManage/fetch',
         payload: values,
       });
     });
@@ -275,7 +283,7 @@ export default class TableList extends PureComponent {
 
   handleAdd = (fields) => {
     this.props.dispatch({
-      type: 'brandManage/add',
+      type: 'cityManage/add',
       payload: fields,
     });
 
@@ -287,7 +295,7 @@ export default class TableList extends PureComponent {
 
   handleEdit = (key) => {
     this.props.dispatch({
-      type: 'brandManage/edit',
+      type: 'cityManage/edit',
       payload: key,
     });
 
@@ -310,8 +318,8 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="品牌名称">
-              {getFieldDecorator('brandName')(
+            <FormItem label="小区名称">
+              {getFieldDecorator('cityName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
@@ -346,8 +354,8 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="品牌名称">
-              {getFieldDecorator('brandName')(
+            <FormItem label="小区名称">
+              {getFieldDecorator('cityName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
                   <Option value="1">运行中</Option>
@@ -390,7 +398,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { brandManage: { data }, loading } = this.props;
+    const { cityManage: { data }, loading } = this.props;
     const { selectedRows, modalVisible, modalEditVisible } = this.state;
 
     const menu = (

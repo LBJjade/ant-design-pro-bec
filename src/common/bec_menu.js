@@ -175,6 +175,14 @@ const menuData = [{
     name: '大区管理标准表格',
     icon: 'layout',
     path: 'bigArea',
+  }, {
+    name: '小区管理标准表格',
+    icon: 'scan',
+    path: 'city',
+  }, {
+    name: '门店管理标准表格',
+    icon: 'scan',
+    path: 'shop',
   }],
 }];
 

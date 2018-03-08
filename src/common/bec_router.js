@@ -218,7 +218,13 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/CardList')),
     },
     '/set/bigArea': {
-      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/BigAreaTableList')),
+      component: dynamicWrapper(app, ['regionManage'], () => import('../routes/SysSet/RegionTableList')),
+    },
+    '/set/city': {
+      component: dynamicWrapper(app, ['cityManage'], () => import('../routes/SysSet/CityTableList')),
+    },
+    '/set/shop': {
+      component: dynamicWrapper(app, ['shopManage'], () => import('../routes/SysSet/ShopTableList')),
     },
   };
   // Get name from ./menu.js or just set it in the router data.
