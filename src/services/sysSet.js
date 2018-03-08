@@ -43,22 +43,22 @@ export async function regionEdit(params) {
   });
 }
 
-export async function cityQuery(params) {
-  return request(`/api/classes/City?${stringify(params)}`, {
+export async function districtQuery(params) {
+  return request(`/api/classes/District?${stringify(params)}`, {
     method: 'GET',
   });
 }
 
-export async function cityAdd(params) {
-  return request('/api/classes/City', {
+export async function districtAdd(params) {
+  return request('/api/classes/District', {
     method: 'POST',
     body: params,
   });
 }
 
-export async function cityEdit(params) {
+export async function districtEdit(params) {
   const { ids, data } = params;
-  return request(`/api/classes/City?${stringify(ids)}`, {
+  return request(`/api/classes/District?${stringify(ids)}`, {
     method: 'PUT',
     body: data,
   });

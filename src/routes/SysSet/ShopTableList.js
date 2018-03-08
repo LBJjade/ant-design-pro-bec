@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Row, Col, Card, Form, a, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './CityTableList.less';
+import styles from './DistrictTableList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;

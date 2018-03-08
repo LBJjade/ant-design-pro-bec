@@ -1,7 +1,7 @@
-import { cityQuery, cityAdd, cityEdit } from '../services/sysSet';
+import { districtQuery, districtAdd, districtEdit } from '../services/sysSet';
 
 export default {
-  namespace: 'cityManage',
+  namespace: 'districtManage',
 
   state: {
     data: {
@@ -12,43 +12,43 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(cityQuery, payload);
+      const response = yield call(districtQuery, payload);
       yield put({
-        type: 'changeCitys',
+        type: 'changeDistricts',
         payload: response,
       });
     },
     *add({ payload }, { call, put }) {
-      const response = yield call(cityAdd, payload);
+      const response = yield call(districtAdd, payload);
       yield put({
-        type: 'addCitys',
+        type: 'addDistricts',
         payload: response,
       });
     },
     *edit({ payload }, { call, put }) {
-      const response = yield call(cityEdit, payload);
+      const response = yield call(districtEdit, payload);
       yield put({
-        type: 'editCitys',
+        type: 'editDistricts',
         payload: response,
       });
     },
   },
 
   reducers: {
-    changeCitys(state, action) {
+    changeDistricts(state, action) {
       return {
         ...state,
         data: action.payload,
       };
     },
   },
-  addCitys(state, action) {
+  addDistricts(state, action) {
     return {
       ...state,
       data: action.payload,
     };
   },
-  editCitys(state, action) {
+  editDistricts(state, action) {
     return {
       ...state,
       data: action.payload,

@@ -32,6 +32,13 @@ export default {
         payload: response,
       });
     },
+    *getBrand({ payload }, { call, put }) {
+      const response = yield call(regionEdit, payload);
+      yield put({
+        type: 'editRegions',
+        payload: response,
+      });
+    },
   },
 
   reducers: {

@@ -178,7 +178,7 @@ const menuData = [{
   }, {
     name: '小区管理标准表格',
     icon: 'scan',
-    path: 'city',
+    path: 'district',
   }, {
     name: '门店管理标准表格',
     icon: 'scan',

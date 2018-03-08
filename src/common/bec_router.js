@@ -220,8 +220,8 @@ export const getRouterData = (app) => {
     '/set/bigArea': {
       component: dynamicWrapper(app, ['regionManage'], () => import('../routes/SysSet/RegionTableList')),
     },
-    '/set/city': {
-      component: dynamicWrapper(app, ['cityManage'], () => import('../routes/SysSet/CityTableList')),
+    '/set/district': {
+      component: dynamicWrapper(app, ['districtManage'], () => import('../routes/SysSet/DistrictTableList')),
     },
     '/set/shop': {
       component: dynamicWrapper(app, ['shopManage'], () => import('../routes/SysSet/ShopTableList')),
