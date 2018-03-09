@@ -20,11 +20,11 @@ const columns = [
   },
   {
     title: '关联品牌',
-    dataIndex: 'descript',
+    dataIndex: '',
   },
   {
     title: '关联大区',
-    dataIndex: 'descript',
+    dataIndex: '',
   },
   {
     title: '操作',

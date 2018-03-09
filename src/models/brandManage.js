@@ -1,4 +1,4 @@
-import { brandQuery, brandAdd, brandEdit } from '../services/sysSet';
+import { brandQuery, brandAdd, brandEdit, brandDelete } from '../services/sysSet';
 
 export default {
   namespace: 'brandManage',
@@ -32,6 +32,13 @@ export default {
         payload: response,
       });
     },
+    *delete({ payload }, { call, put }) {
+      const response = yield call(brandDelete, payload);
+      yield put({
+        type: 'deleteBrands',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -49,6 +56,12 @@ export default {
     };
   },
   editBrands(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  deleteBrands(state, action) {
     return {
       ...state,
       data: action.payload,

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars,max-len */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -21,18 +22,7 @@ const columns = [
   {
     title: '操作',
     dataIndex: 'operate',
-    render: val => <span><a href="brandManage/fetch">{val}</a></span>,
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
-    sorter: true,
-    render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-  }, {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    sorter: true,
-    render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+    render: val => <span><a onClick={() => this.handelDelete(this.state.selectedRows)}>删除</a>     <a onClick={() => this.handelDelete(this.state.selectedRows)}>编辑</a></span>,
   },
 ];
 
@@ -261,6 +251,13 @@ export default class TableList extends PureComponent {
     });
   }
 
+  handelDelete= (rows) => {
+    this.props.dispatch({
+      type: 'brandManage/delete',
+      payload: rows,
+    });
+  }
+
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
@@ -432,7 +429,7 @@ export default class TableList extends PureComponent {
               <Button icon="edit" type="primary" onClick={() => this.handleEditModalVisible(true)}>
                 编辑
               </Button>
-              <Button icon="delete" type="primary" onClick={() => this.handleModalVisible()}>
+              <Button icon="delete" type="primary" onClick={() => this.handelDelete(this.state.selectedRows)}>
                 删除
               </Button>
               {
@@ -459,6 +456,7 @@ export default class TableList extends PureComponent {
                     dataSource={data.results}
                     onChange={this.handleStandardTableChange}
                     rowSelection={rowSelection}
+                    onSelectRow={this.handleSelectRows}
                   />
                 </div>
               </Card>

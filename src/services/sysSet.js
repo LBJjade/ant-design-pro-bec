@@ -22,6 +22,12 @@ export async function brandEdit(params) {
   });
 }
 
+export async function brandDelete(params) {
+  return request(`/api/classes/brand?${stringify(params)}`, {
+    method: 'DELETE',
+  });
+}
+
 export async function regionQuery(params) {
   return request(`/api/classes/Region?${stringify(params)}`, {
     method: 'GET',
