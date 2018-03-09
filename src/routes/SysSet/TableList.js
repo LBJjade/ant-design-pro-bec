@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,max-len */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -25,16 +25,6 @@ const columns = [
     render: val => <span><a onClick={() => this.handelDelete(this.state.selectedRows)}>删除</a>     <a onClick={() => this.handelDelete(this.state.selectedRows)}>编辑</a></span>,
   },
 ];
-
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: record => ({
-    disabled: record.name === 'Disabled User', // Column configuration not to be checked
-    name: record.name,
-  }),
-};
 
 const CreateAddForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -396,6 +386,19 @@ export default class TableList extends PureComponent {
         <Menu.Item key="approval">批量审批</Menu.Item>
       </Menu>
     );
+
+    const rowSelection = {
+      onChange: (selectedRowKeys, Rows) => {
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', Rows);
+        this.setState({
+          selectedRows: selectedRowKeys,
+        });
+      },
+      getCheckboxProps: record => ({
+        disabled: record.name === 'Disabled User', // Column configuration not to be checked
+        name: record.name,
+      }),
+    };
 
     const parentAddMethods = {
       handleAdd: this.handleAdd,

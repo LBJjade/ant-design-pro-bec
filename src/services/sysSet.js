@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import { stringify } from 'qs';
 import request from '../utils/request';
 
@@ -23,9 +24,11 @@ export async function brandEdit(params) {
 }
 
 export async function brandDelete(params) {
-  return request(`/api/classes/brand?${stringify(params)}`, {
-    method: 'DELETE',
-  });
+  for (let i = 0; i < params.length; i++) {
+    return request(`/api/classes/brand/${stringify(params[i])}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export async function regionQuery(params) {
