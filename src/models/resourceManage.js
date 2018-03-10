@@ -1,8 +1,8 @@
 import { getUsers } from '../services/user';
-import { getModule, postModule, moduleDelete, moduleBatchDelete } from '../services/module';
+import { getSource, addResource, resourceDelete, resourceBatchDelete } from '../services/module';
 
 export default {
-  namespace: 'moduleManage',
+  namespace: 'resourceManage',
 
   state: {
     data: {
@@ -22,21 +22,21 @@ export default {
         payload: response,
       });
     },
-    *getModule(_, { call, put }) {
-      const response = yield call(getModule);
+    *getResource(_, { call, put }) {
+      const response = yield call(getSource);
       yield put({
-        type: 'returnModule',
+        type: 'returnResource',
         payload: response,
       });
     },
-    *postModule({ payload }, { call }) {
-      yield call(postModule, payload);
+    *add({ payload }, { call }) {
+      yield call(addResource, payload);
     },
     *delete({ payload }, { call }) {
-      yield call(moduleDelete, payload);
+      yield call(resourceDelete, payload);
     },
     *batchDelete({ payload }, { call }) {
-      yield call(moduleBatchDelete, payload);
+      yield call(resourceBatchDelete, payload);
     },
   },
 
@@ -47,7 +47,7 @@ export default {
         data: action.payload,
       };
     },
-    returnModule(state, action) {
+    returnResource(state, action) {
       return {
         ...state,
         data: action.payload,

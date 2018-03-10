@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Card, Form, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
+import { Row, Col, Card, Form, a, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
@@ -9,33 +10,8 @@ import styles from './TableList.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const columns = [
-  {
-    title: '浏览次数',
-    dataIndex: 'viewTimes',
-  },
-  {
-    title: '模版名称',
-    dataIndex: 'moduleName',
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
-    sorter: true,
-    render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-  }, {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    sorter: true,
-    render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-  },
-];
 
-const CreateForm = Form.create()((props) => {
+const CreateAddForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -53,10 +29,10 @@ const CreateForm = Form.create()((props) => {
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="浏览次数"
+        label="序号"
       >
-        {form.getFieldDecorator('viewTimes', {
-          rules: [{ required: true, message: '请输入浏览次数...' }],
+        {form.getFieldDecorator('orderNumber', {
+          rules: [{ required: true, message: '请输入序号...' }],
         })(
           <InputNumber placeholder="请输入" />
         )}
@@ -64,10 +40,51 @@ const CreateForm = Form.create()((props) => {
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="模版名称"
+        label="模块名称"
       >
         {form.getFieldDecorator('moduleName', {
-          rules: [{ required: true, message: '请输入模版名称...' }],
+          rules: [{ required: true, message: '请输入模块名称...' }],
+        })(
+          <Input placeholder="请输入" />
+        )}
+      </FormItem>
+    </Modal>
+  );
+});
+
+const CreateEditForm = Form.create()((props) => {
+  const { modalEditVisible, form, handleAdd, handleModalVisible } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      handleAdd(fieldsValue);
+    });
+  };
+  return (
+    <Modal
+      title="编辑"
+      visible={modalEditVisible}
+      onOk={okHandle}
+      onCancel={() => handleModalVisible()}
+    >
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="序号"
+      >
+        {form.getFieldDecorator('orderNumber', {
+          rules: [{ required: true, message: '请输入序号...' }],
+        })(
+          <InputNumber placeholder="请输入" />
+        )}
+      </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="模块名称"
+      >
+        {form.getFieldDecorator('moduleName', {
+          rules: [{ required: true, message: '请输入模块名称...' }],
         })(
           <Input placeholder="请输入" />
         )}
@@ -90,6 +107,7 @@ export default class TableList extends PureComponent {
       total: 0,
     },
     modalVisible: false,
+    modalEditVisible: false,
     expandForm: false,
     selectedRows: [],
     formValues: {},
@@ -208,15 +226,45 @@ export default class TableList extends PureComponent {
     });
   }
 
-  handleModalVisible = (flag) => {
+  handelDelete = (row) => {
+    this.props.dispatch({
+      type: 'moduleManage/delete',
+      payload: row,
+    });
+  }
+
+  handelbatchDelete = (row) => {
+    this.props.dispatch({
+      type: 'moduleManage/delete',
+      payload: row,
+    });
+  }
+
+  handelEdit = (rows, data) => {
+    this.props.dispatch({
+      type: 'moduleManage/edit',
+      payload: {
+        row: rows,
+        data: data,
+      },
+    });
+  }
+
+  handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
     });
   }
 
+  handleEditModalVisible = (flag) => {
+    this.setState({
+      modalEditVisible: !!flag,
+    });
+  }
+
   handleAdd = (fields) => {
     this.props.dispatch({
-      type: 'moduleManage/add',
+      type: 'moduleManage/postModule',
       payload: fields,
     });
 
@@ -226,20 +274,32 @@ export default class TableList extends PureComponent {
     });
   }
 
+  handleEdit = (key) => {
+    this.props.dispatch({
+      type: 'moduleManage/edit',
+      payload: key,
+    });
+
+    message.success('添加成功');
+    this.setState({
+      modalEditVisible: false,
+    });
+  }
+
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="浏览次数">
+            <FormItem label="序号">
               {getFieldDecorator('no')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="模版名称">
+            <FormItem label="模块名称">
               {getFieldDecorator('moduleName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
@@ -268,14 +328,14 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="浏览次数">
+            <FormItem label="序号">
               {getFieldDecorator('no')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="模版名称">
+            <FormItem label="模块名称">
               {getFieldDecorator('moduleName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
@@ -303,7 +363,7 @@ export default class TableList extends PureComponent {
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>新增</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
               收起 <Icon type="up" />
               </a>
@@ -320,7 +380,7 @@ export default class TableList extends PureComponent {
 
   render() {
     const { moduleManage: { data }, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { selectedRows, modalVisible, modalEditVisible } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -329,9 +389,60 @@ export default class TableList extends PureComponent {
       </Menu>
     );
 
-    const parentMethods = {
+    const columns = [
+
+      {
+        title: '浏览次数',
+        dataIndex: 'viewTimes',
+      },
+      {
+        title: '模版名称',
+        dataIndex: 'moduleName',
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+      },
+      {
+        title: '更新时间',
+        dataIndex: 'updatedAt',
+        sorter: true,
+        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      }, {
+        title: '创建时间',
+        dataIndex: 'createdAt',
+        sorter: true,
+        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      },
+      {
+        title: '操作',
+        dataIndex: 'operate',
+        render: val => <span><a onClick={() => this.handelDelete(selectedRows)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
+      },
+    ];
+
+    const rowSelection = {
+      onChange: (selectedRowKeys, Rows) => {
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', Rows);
+        this.setState({
+          selectedRows: selectedRowKeys,
+        });
+        // noinspection JSAnnotator
+      },
+      getCheckboxProps: record => ({
+        disabled: record.name === 'Disabled User', // Column configuration not to be checked
+        name: record.name,
+      }),
+    };
+
+    const parentAddMethods = {
       handleAdd: this.handleAdd,
-      handleModalVisible: this.handleModalVisible,
+      handleModalVisible: this.handleAddModalVisible,
+    };
+
+    const parentEditMethods = {
+      handleAdd: this.handleAdd,
+      handleModalVisible: this.handleEditModalVisible,
     };
 
     const paginationProps = {
@@ -343,25 +454,20 @@ export default class TableList extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="品牌管理">
+      <PageHeaderLayout title="模块管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
               {this.renderForm()}
             </div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+              <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
                 新增
               </Button>
               {
                 selectedRows.length > 0 && (
                   <span>
-                    <Button>批量状态</Button>
-                    <Dropdown overlay={menu}>
-                      <Button>
-                        更多状态 <Icon type="down" />
-                      </Button>
-                    </Dropdown>
+                    <Button icon="delete" type="primary" onClick={() => this.handelDelete(selectedRows)}>删除</Button>
                   </span>
                 )
               }
@@ -370,20 +476,27 @@ export default class TableList extends PureComponent {
               <Card>
                 <div>
                   <Table
+                    rowKey="objectId"
                     columns={columns}
                     loading={loading}
                     pagination={paginationProps}
                     dataSource={data.results}
                     onChange={this.handleStandardTableChange}
+                    rowSelection={rowSelection}
+                    onSelectRow={this.handleSelectRows}
                   />
                 </div>
               </Card>
             </div>
           </div>
         </Card>
-        <CreateForm
-          {...parentMethods}
+        <CreateAddForm
+          {...parentAddMethods}
           modalVisible={modalVisible}
+        />
+        <CreateEditForm
+          {...parentEditMethods}
+          modalEditVisible={modalEditVisible}
         />
       </PageHeaderLayout>
     );

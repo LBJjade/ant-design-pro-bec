@@ -1,26 +1,61 @@
+/* eslint-disable no-plusplus,spaced-comment */
+import { stringify } from 'qs';
 import request from '../utils/request';
 
+
+//module
 export async function getModule() {
   return request('/api/classes/module', {
     method: 'GET',
   });
 }
 
+export async function postModule(params) {
+  return request('/api/classes/module', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function moduleBatchDelete(params) {
+  for (let i = 0; i < params.length; i++) {
+    return request(`/api/classes/module?${stringify(params[i])}`, {
+      method: 'DELETE',
+    });
+  }
+}
+
+export async function moduleDelete(params) {
+  return request(`/api/classes/module?${stringify(params)}`, {
+    method: 'DELETE',
+  });
+}
+
+//resource
 export async function getSource() {
   return request('/api/classes/moduleResource', {
     method: 'GET',
   });
 }
 
-
-export async function postModule(params) {
-  return request('/api/classes/role', {
+export async function addResource(params) {
+  return request('/api/classes/moduleResource', {
     method: 'POST',
-    headers: { 'X-Parse-Session-Token': localStorage.token },
-    // data: '{"roleId":12,"RoleName":"超级管理员","authority":3,"status":1}',
-    body: {
-      ...params,
-      method: 'post',
-    },
+    body: params,
   });
 }
+
+export async function resourceBatchDelete(params) {
+  for (let i = 0; i < params.length; i++) {
+    return request(`/api/classes/moduleResource?${stringify(params[i])}`, {
+      method: 'DELETE',
+    });
+  }
+}
+
+export async function resourceDelete(params) {
+  return request(`/api/classes/moduleResource?${stringify(params)}`, {
+    method: 'DELETE',
+  });
+}
+
