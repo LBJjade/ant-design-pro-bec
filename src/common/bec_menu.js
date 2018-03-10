@@ -4,6 +4,7 @@ const menuData = [{
   name: '控制台',
   icon: 'dashboard',
   path: 'dashboard',
+  authority: ['a'],
   children: [{
     name: '工作台',
     path: 'workspace',
@@ -22,6 +23,7 @@ const menuData = [{
   name: '表单页',
   icon: 'form',
   path: 'form',
+  authority: ['a'],
   children: [{
     name: '基础表单',
     path: 'basic-form',
@@ -37,6 +39,7 @@ const menuData = [{
   name: '列表页',
   icon: 'table',
   path: 'list',
+  authority: ['a'],
   children: [{
     name: '查询表格',
     path: 'table-list',
@@ -64,6 +67,7 @@ const menuData = [{
   name: '详情页',
   icon: 'profile',
   path: 'profile',
+  authority: ['a'],
   children: [{
     name: '基础详情页',
     path: 'basic',
@@ -76,6 +80,7 @@ const menuData = [{
   name: '结果页',
   icon: 'check-circle-o',
   path: 'result',
+  authority: ['a'],
   children: [{
     name: '成功',
     path: 'success',
@@ -87,6 +92,7 @@ const menuData = [{
   name: '异常页',
   icon: 'warning',
   path: 'exception',
+  authority: ['a'],
   children: [{
     name: '403',
     path: '403',
@@ -105,7 +111,7 @@ const menuData = [{
   name: '账户',
   icon: 'user',
   path: 'user',
-  authority: 'guest',
+  authority: ['a'],
   children: [{
     name: '登录',
     path: 'login',
@@ -120,12 +126,13 @@ const menuData = [{
   name: '使用文档',
   icon: 'book',
   path: 'http://pro.ant.design/docs/getting-started',
+  authority: ['a'],
   target: '_blank',
 }, {
   name: '人力资源',
   icon: 'team',
   path: 'humanresources',
-  authority: ['guest'],
+  authority: ['a'],
   children: [{
     name: '人事档案',
     icon: 'user',
@@ -137,9 +144,9 @@ const menuData = [{
   path: 'system',
   authority: ['admin'],
   children: [{
-    name: '菜单管理',
-    icon: 'bars',
-    path: 'menu',
+    // name: '菜单管理',
+    // icon: 'bars',
+    // path: 'menu',
   }, {
     name: '用户管理',
     icon: 'user',
