@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -10,21 +10,6 @@ import styles from './TableList.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const columns = [
-  {
-    title: '序号',
-    dataIndex: 'orderNumber',
-  },
-  {
-    title: '品牌名称',
-    dataIndex: 'brandName',
-  },
-  {
-    title: '操作',
-    dataIndex: 'operate',
-    render: val => <span><a onClick={() => this.handelDelete(this.state.selectedRows)}>删除</a>     <a onClick={() => this.handelDelete(this.state.selectedRows)}>编辑</a></span>,
-  },
-];
 
 const CreateAddForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -241,10 +226,27 @@ export default class TableList extends PureComponent {
     });
   }
 
-  handelDelete= (rows) => {
+  handelDelete = (row) => {
     this.props.dispatch({
       type: 'brandManage/delete',
-      payload: rows,
+      payload: row,
+    });
+  }
+
+  handelbatchDelete = (row) => {
+    this.props.dispatch({
+      type: 'brandManage/delete',
+      payload: row,
+    });
+  }
+
+  handelEdit = (rows, data) => {
+    this.props.dispatch({
+      type: 'brandManage/edit',
+      payload: {
+        row: rows,
+        data: data,
+      },
     });
   }
 
@@ -387,12 +389,29 @@ export default class TableList extends PureComponent {
       </Menu>
     );
 
+    const columns = [
+      {
+        title: '序号',
+        dataIndex: 'orderNumber',
+      },
+      {
+        title: '品牌名称',
+        dataIndex: 'brandName',
+      },
+      {
+        title: '操作',
+        dataIndex: 'operate',
+        render: val => <span><a onClick={() => this.handelDelete(selectedRows)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
+      },
+    ];
+
     const rowSelection = {
       onChange: (selectedRowKeys, Rows) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', Rows);
         this.setState({
           selectedRows: selectedRowKeys,
         });
+        // noinspection JSAnnotator
       },
       getCheckboxProps: record => ({
         disabled: record.name === 'Disabled User', // Column configuration not to be checked
@@ -429,21 +448,10 @@ export default class TableList extends PureComponent {
               <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
                 新增
               </Button>
-              <Button icon="edit" type="primary" onClick={() => this.handleEditModalVisible(true)}>
-                编辑
-              </Button>
-              <Button icon="delete" type="primary" onClick={() => this.handelDelete(this.state.selectedRows)}>
-                删除
-              </Button>
               {
                 selectedRows.length > 0 && (
                   <span>
-                    <Button>批量操作</Button>
-                    <Dropdown overlay={menu}>
-                      <Button>
-                        更多操作 <Icon type="down" />
-                      </Button>
-                    </Dropdown>
+                    <Button icon="delete" type="primary" onClick={() => this.handelDelete(selectedRows)}>删除</Button>
                   </span>
                 )
               }

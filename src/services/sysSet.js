@@ -16,19 +16,25 @@ export async function brandAdd(params) {
 }
 
 export async function brandEdit(params) {
-  const { ids, data } = params;
-  return request(`/api/classes/brand?${stringify(ids)}`, {
+  const { id, data } = params;
+  return request(`/api/classes/brand/${stringify(id)}`, {
     method: 'PUT',
     body: data,
   });
 }
 
-export async function brandDelete(params) {
+export async function brandBatchDelete(params) {
   for (let i = 0; i < params.length; i++) {
-    return request(`/api/classes/brand/${stringify(params[i])}`, {
+    return request(`/api/classes/brand?${stringify(params[i])}`, {
       method: 'DELETE',
     });
   }
+}
+
+export async function brandDelete(params) {
+  return request(`/api/classes/brand?${stringify(params)}`, {
+    method: 'DELETE',
+  });
 }
 
 export async function regionQuery(params) {
