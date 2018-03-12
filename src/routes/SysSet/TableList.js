@@ -362,7 +362,7 @@ export default class TableList extends PureComponent {
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd} className="">刷新</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
               收起 <Icon type="up" />
               </a>
