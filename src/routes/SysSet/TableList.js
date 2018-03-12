@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import moment from 'moment';
-import { Row, Col, Card, Form, a, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
+import { Row, Col, Card, Form, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
@@ -151,7 +150,7 @@ export default class TableList extends PureComponent {
         pageSize: pagination.pageSize,
       },
     });
-  }
+  };
 
   handleFormAdd = () => {
     const { form, dispatch } = this.props;
@@ -163,13 +162,13 @@ export default class TableList extends PureComponent {
       type: 'brandManage/fetch',
       payload: {},
     });
-  }
+  };
 
   toggleForm = () => {
     this.setState({
       expandForm: !this.state.expandForm,
     });
-  }
+  };
 
   handleMenuClick = (e) => {
     const { dispatch } = this.props;
@@ -194,13 +193,13 @@ export default class TableList extends PureComponent {
       default:
         break;
     }
-  }
+  };
 
   handleSelectRows = (rows) => {
     this.setState({
       selectedRows: rows,
     });
-  }
+  };
 
   handleSearch = (e) => {
     e.preventDefault();
@@ -224,21 +223,21 @@ export default class TableList extends PureComponent {
         payload: values,
       });
     });
-  }
+  };
 
   handelDelete = (row) => {
     this.props.dispatch({
       type: 'brandManage/delete',
       payload: row,
     });
-  }
+  };
 
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'brandManage/delete',
+      type: 'brandManage/batchDelete',
       payload: row,
     });
-  }
+  };
 
   handelEdit = (rows, data) => {
     this.props.dispatch({
@@ -248,19 +247,19 @@ export default class TableList extends PureComponent {
         data: data,
       },
     });
-  }
+  };
 
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
     });
-  }
+  };
 
   handleEditModalVisible = (flag) => {
     this.setState({
       modalEditVisible: !!flag,
     });
-  }
+  };
 
   handleAdd = (fields) => {
     this.props.dispatch({
@@ -272,7 +271,7 @@ export default class TableList extends PureComponent {
     this.setState({
       modalVisible: false,
     });
-  }
+  };
 
   handleEdit = (key) => {
     this.props.dispatch({
@@ -284,7 +283,7 @@ export default class TableList extends PureComponent {
     this.setState({
       modalEditVisible: false,
     });
-  }
+  };
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
@@ -363,7 +362,7 @@ export default class TableList extends PureComponent {
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd} className="">刷新</Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
               收起 <Icon type="up" />
               </a>
@@ -401,7 +400,7 @@ export default class TableList extends PureComponent {
       {
         title: '操作',
         dataIndex: 'operate',
-        render: val => <span><a onClick={() => this.handelDelete(selectedRows)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
+        render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(selectedRows)}><a href="#">删除</a></Popconfirm>  <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
     ];
 
@@ -451,7 +450,7 @@ export default class TableList extends PureComponent {
               {
                 selectedRows.length > 0 && (
                   <span>
-                    <Button icon="delete" type="primary" onClick={() => this.handelDelete(selectedRows)}>删除</Button>
+                    <Button icon="delete" type="primary" onClick={() => this.handelbatchDelete(selectedRows)}>删除</Button>
                   </span>
                 )
               }

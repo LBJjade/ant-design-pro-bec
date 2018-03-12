@@ -1,4 +1,4 @@
-/* eslint-disable no-plusplus */
+/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len */
 import { stringify } from 'qs';
 import request from '../utils/request';
 
@@ -24,15 +24,15 @@ export async function brandEdit(params) {
 }
 
 export async function brandBatchDelete(params) {
-  for (let i = 0; i < params.length; i++) {
-    return request(`/api/classes/brand?${stringify(params[i])}`, {
+  for(let i = 0; i < params.length; i++) {
+    request(`/api/classes/brand/${params[i]}`, {
       method: 'DELETE',
     });
   }
 }
 
 export async function brandDelete(params) {
-  return request(`/api/classes/brand?${stringify(params)}`, {
+  return request(`/api/classes/brand/${params[0]}`, {
     method: 'DELETE',
   });
 }
