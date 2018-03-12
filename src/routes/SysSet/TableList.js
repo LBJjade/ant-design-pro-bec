@@ -231,7 +231,9 @@ export default class TableList extends PureComponent {
       payload: row,
     });
   };
-
+  // handelDelete = (row) => {
+  //   console.log(row);
+  // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
       type: 'brandManage/batchDelete',
@@ -399,8 +401,13 @@ export default class TableList extends PureComponent {
       },
       {
         title: '操作',
-        dataIndex: 'operate',
-        render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(selectedRows)}><a href="#">删除</a></Popconfirm>  <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
+        dataIndex: 'objectId',
+        render: val => (
+          <span>
+            <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
+            <a onClick={() => this.handleEditModalVisible(true)}>编辑</a>
+          </span>),
+        // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
     ];
 

@@ -32,7 +32,7 @@ export async function brandBatchDelete(params) {
 }
 
 export async function brandDelete(params) {
-  return request(`/api/classes/brand/${params[0]}`, {
+  return request('/api/classes/brand/' + params, {
     method: 'DELETE',
   });
 }
