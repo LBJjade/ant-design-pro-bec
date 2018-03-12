@@ -1,3 +1,4 @@
+/* eslint-disable keyword-spacing */
 import { brandQuery, brandAdd, brandEdit, brandBatchDelete, brandDelete } from '../services/sysSet';
 
 export default {
