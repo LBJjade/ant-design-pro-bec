@@ -49,7 +49,7 @@ export default function request(url, options) {
     credentials: 'include',
   };
   const newOptions = { ...defaultOptions, ...options };
-  if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT') {
+  if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'DELETE') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
