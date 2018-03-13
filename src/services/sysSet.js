@@ -39,11 +39,11 @@ export async function brandDelete(params) {
 }
 
 export async function brandRequireQuery(params) {
-  let require = `where={${params}}`
+  let require = `'where={${stringify(params)}}'`;
   return request('/api/classes/brand/', {
     method: 'GET',
-    body: require,
-  });
+    data: require,
+  }, 'where');
 }
 
 export async function regionQuery(params) {

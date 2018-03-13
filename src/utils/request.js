@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-semi */
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import { routerRedux } from 'dva/router';
@@ -44,9 +45,10 @@ function checkStatus(response) {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request(url, options) {
+export default function request(url, options, where) {
   const defaultOptions = {
     credentials: 'include',
+    dataUrlencode: '',
   };
   const newOptions = { ...defaultOptions, ...options };
   if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'DELETE') {
@@ -56,6 +58,9 @@ export default function request(url, options) {
         'Content-Type': 'application/json; charset=utf-8',
         'X-Parse-Application-Id': 'bec',
         ...newOptions.headers,
+      };
+      if (where === 'where') {
+        newOptions.dataUrlencode = newOptions.data;
       };
       newOptions.body = JSON.stringify(newOptions.body);
     } else {
