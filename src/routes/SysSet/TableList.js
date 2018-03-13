@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -52,11 +52,11 @@ const CreateAddForm = Form.create()((props) => {
 });
 
 const CreateEditForm = Form.create()((props) => {
-  const { modalEditVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      handleAdd(fieldsValue);
+      handleEdit(fieldsValue);
     });
   };
   return (
@@ -110,6 +110,7 @@ export default class TableList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    editId: {},
   };
 
   componentDidMount() {
@@ -257,9 +258,10 @@ export default class TableList extends PureComponent {
     });
   };
 
-  handleEditModalVisible = (flag) => {
+  handleEditModalVisible = (flag, data) => {
     this.setState({
       modalEditVisible: !!flag,
+      editId: data,
     });
   };
 
@@ -275,13 +277,14 @@ export default class TableList extends PureComponent {
     });
   };
 
-  handleEdit = (key) => {
+  handleEdit = (fields) => {
+    let eidtId = this.state.editId;
     this.props.dispatch({
       type: 'brandManage/edit',
-      payload: key,
+      payload: { fields, eidtId },
     });
 
-    message.success('添加成功');
+    message.success('编辑成功');
     this.setState({
       modalEditVisible: false,
     });
@@ -405,7 +408,7 @@ export default class TableList extends PureComponent {
         render: val => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`)}>编辑</a>
           </span>),
         // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
@@ -431,7 +434,7 @@ export default class TableList extends PureComponent {
     };
 
     const parentEditMethods = {
-      handleAdd: this.handleAdd,
+      handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
     };
 
@@ -440,6 +443,7 @@ export default class TableList extends PureComponent {
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
       total: data.count,
+      showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
       // onChange: this.handlePageChange,
     };
 

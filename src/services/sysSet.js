@@ -1,4 +1,4 @@
-/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len */
+/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len,prefer-const */
 import { stringify } from 'qs';
 import request from '../utils/request';
 
@@ -16,8 +16,9 @@ export async function brandAdd(params) {
 }
 
 export async function brandEdit(params) {
-  const { id, data } = params;
-  return request(`/api/classes/brand/${stringify(id)}`, {
+  let editid = params.eidtId;
+  let data = params.fields;
+  return request(`/api/classes/brand/${editid}`, {
     method: 'PUT',
     body: data,
   });
