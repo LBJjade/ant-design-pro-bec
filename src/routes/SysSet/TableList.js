@@ -92,7 +92,6 @@ const CreateEditForm = Form.create()((props) => {
   );
 });
 
-
 @connect(({ brandManage, loading }) => ({
   brandManage,
   loading: loading.models.brandManage,
@@ -220,7 +219,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'brandManage/fetch',
+        type: 'brandManage/requireQuery',
         payload: values,
       });
     });
@@ -297,7 +296,7 @@ export default class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="序号">
-              {getFieldDecorator('no')(
+              {getFieldDecorator('orderNumber')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>

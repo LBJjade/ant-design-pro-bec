@@ -38,6 +38,14 @@ export async function brandDelete(params) {
   });
 }
 
+export async function brandRequireQuery(params) {
+  let require = `where={${params}}`
+  return request('/api/classes/brand/', {
+    method: 'GET',
+    body: require,
+  });
+}
+
 export async function regionQuery(params) {
   return request(`/api/classes/Region?${stringify(params)}`, {
     method: 'GET',
