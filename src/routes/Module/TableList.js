@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,no-undef */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Card, Form, a, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
+import { Row, Col, Card, Form, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
@@ -53,11 +53,11 @@ const CreateAddForm = Form.create()((props) => {
 });
 
 const CreateEditForm = Form.create()((props) => {
-  const { modalEditVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      handleAdd(fieldsValue);
+      handleEdit(fieldsValue);
     });
   };
   return (
@@ -93,7 +93,6 @@ const CreateEditForm = Form.create()((props) => {
   );
 });
 
-
 @connect(({ moduleManage, loading }) => ({
   moduleManage,
   loading: loading.models.moduleManage,
@@ -111,12 +110,13 @@ export default class TableList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    editId: {},
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'moduleManage/getModule',
+      type: 'moduleManage/fetch',
     });
   }
 
@@ -142,7 +142,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'moduleManage/getModule',
+      type: 'moduleManage/fetch',
       payload: params,
     });
     this.setState({
@@ -151,7 +151,7 @@ export default class TableList extends PureComponent {
         pageSize: pagination.pageSize,
       },
     });
-  }
+  };
 
   handleFormAdd = () => {
     const { form, dispatch } = this.props;
@@ -160,16 +160,16 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'moduleManage/getModule',
+      type: 'moduleManage/fetch',
       payload: {},
     });
-  }
+  };
 
   toggleForm = () => {
     this.setState({
       expandForm: !this.state.expandForm,
     });
-  }
+  };
 
   handleMenuClick = (e) => {
     const { dispatch } = this.props;
@@ -194,13 +194,13 @@ export default class TableList extends PureComponent {
       default:
         break;
     }
-  }
+  };
 
   handleSelectRows = (rows) => {
     this.setState({
       selectedRows: rows,
     });
-  }
+  };
 
   handleSearch = (e) => {
     e.preventDefault();
@@ -220,25 +220,27 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'moduleManage/getModule',
+        type: 'moduleManage/requireQuery',
         payload: values,
       });
     });
-  }
+  };
 
   handelDelete = (row) => {
     this.props.dispatch({
       type: 'moduleManage/delete',
       payload: row,
     });
-  }
-
+  };
+  // handelDelete = (row) => {
+  //   console.log(row);
+  // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'moduleManage/delete',
+      type: 'moduleManage/batchDelete',
       payload: row,
     });
-  }
+  };
 
   handelEdit = (rows, data) => {
     this.props.dispatch({
@@ -248,23 +250,24 @@ export default class TableList extends PureComponent {
         data: data,
       },
     });
-  }
+  };
 
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
     });
-  }
+  };
 
-  handleEditModalVisible = (flag) => {
+  handleEditModalVisible = (flag, data) => {
     this.setState({
       modalEditVisible: !!flag,
+      editId: data,
     });
-  }
+  };
 
   handleAdd = (fields) => {
     this.props.dispatch({
-      type: 'moduleManage/postModule',
+      type: 'moduleManage/add',
       payload: fields,
     });
 
@@ -272,19 +275,20 @@ export default class TableList extends PureComponent {
     this.setState({
       modalVisible: false,
     });
-  }
+  };
 
-  handleEdit = (key) => {
+  handleEdit = (fields) => {
+    let eidtId = this.state.editId;
     this.props.dispatch({
       type: 'moduleManage/edit',
-      payload: key,
+      payload: { fields, eidtId },
     });
 
-    message.success('添加成功');
+    message.success('编辑成功');
     this.setState({
       modalEditVisible: false,
     });
-  }
+  };
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
@@ -293,13 +297,13 @@ export default class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="序号">
-              {getFieldDecorator('no')(
+              {getFieldDecorator('orderNumber')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="模块名称">
+            <FormItem label="板块名称">
               {getFieldDecorator('moduleName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
@@ -335,7 +339,7 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="模块名称">
+            <FormItem label="板块名称">
               {getFieldDecorator('moduleName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
@@ -396,7 +400,7 @@ export default class TableList extends PureComponent {
         dataIndex: 'viewTimes',
       },
       {
-        title: '模版名称',
+        title: '板块名称',
         dataIndex: 'moduleName',
       },
       {
@@ -416,8 +420,8 @@ export default class TableList extends PureComponent {
       },
       {
         title: '操作',
-        dataIndex: 'operate',
-        render: val => <span><a onClick={() => this.handelDelete(selectedRows)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
+        dataIndex: 'objectId',
+        render: val => <span><a onClick={() => this.handelDelete(val)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true, val)}>编辑</a></span>,
       },
     ];
 
@@ -441,7 +445,7 @@ export default class TableList extends PureComponent {
     };
 
     const parentEditMethods = {
-      handleAdd: this.handleAdd,
+      handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
     };
 
@@ -450,11 +454,12 @@ export default class TableList extends PureComponent {
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
       total: data.count,
+      showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
       // onChange: this.handlePageChange,
     };
 
     return (
-      <PageHeaderLayout title="模块管理">
+      <PageHeaderLayout title="板块管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
@@ -467,7 +472,7 @@ export default class TableList extends PureComponent {
               {
                 selectedRows.length > 0 && (
                   <span>
-                    <Button icon="delete" type="primary" onClick={() => this.handelDelete(selectedRows)}>删除</Button>
+                    <Button icon="delete" type="primary" onClick={() => this.handelbatchDelete(selectedRows)}>删除</Button>
                   </span>
                 )
               }
