@@ -1,5 +1,4 @@
-/* eslint-disable no-plusplus,spaced-comment */
-import { stringify } from 'qs';
+/* eslint-disable no-plusplus,spaced-comment,prefer-const,keyword-spacing,prefer-template */
 import request from '../utils/request';
 
 
@@ -18,15 +17,24 @@ export async function postModule(params) {
 }
 
 export async function moduleBatchDelete(params) {
-  for (let i = 0; i < params.length; i++) {
-    return request(`/api/classes/module?${stringify(params[i])}`, {
+  for(let i = 0; i < params.length; i++) {
+    request(`/api/classes/module/${params[i]}`, {
       method: 'DELETE',
     });
   }
 }
 
+export async function moduleEdit(params) {
+  let editid = params.eidtId;
+  let data = params.fields;
+  return request(`/api/classes/module/${editid}`, {
+    method: 'PUT',
+    body: data,
+  });
+}
+
 export async function moduleDelete(params) {
-  return request(`/api/classes/module?${stringify(params)}`, {
+  return request('/api/classes/module/' + params, {
     method: 'DELETE',
   });
 }
@@ -46,15 +54,24 @@ export async function addResource(params) {
 }
 
 export async function resourceBatchDelete(params) {
-  for (let i = 0; i < params.length; i++) {
-    return request(`/api/classes/moduleResource?${stringify(params[i])}`, {
+  for(let i = 0; i < params.length; i++) {
+    request(`/api/classes/moduleResource/${params[i]}`, {
       method: 'DELETE',
     });
   }
 }
 
+export async function resourceEdit(params) {
+  let editid = params.eidtId;
+  let data = params.fields;
+  return request(`/api/classes/moduleResource/${editid}`, {
+    method: 'PUT',
+    body: data,
+  });
+}
+
 export async function resourceDelete(params) {
-  return request(`/api/classes/moduleResource?${stringify(params)}`, {
+  return request('/api/classes/moduleResource/' + params, {
     method: 'DELETE',
   });
 }
