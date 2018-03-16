@@ -1,5 +1,5 @@
-import { getUsers } from '../services/user';
-import { getSource, addResource, resourceDelete, resourceBatchDelete } from '../services/module';
+/* eslint-disable keyword-spacing */
+import { getSource, addResource, resourceEdit, resourceBatchDelete, resourceDelete, resourceRequireQuery } from '../services/module';
 
 export default {
   namespace: 'resourceManage',
@@ -9,49 +9,83 @@ export default {
       results: [],
       count: 0,
     },
-    list: {
-      results: [],
-    },
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(getUsers, payload);
+      const response = yield call(getSource, payload);
       yield put({
-        type: 'changeUser',
+        type: 'changeResources',
         payload: response,
       });
     },
-    *getResource(_, { call, put }) {
-      const response = yield call(getSource);
+    *add({ payload }, { call, put }) {
+      const response = yield call(addResource, payload);
       yield put({
-        type: 'returnResource',
+        type: 'addResources',
         payload: response,
       });
     },
-    *add({ payload }, { call }) {
-      yield call(addResource, payload);
+    *edit({ payload }, { call, put }) {
+      const response = yield call(resourceEdit, payload);
+      yield put({
+        type: 'editResources',
+        payload: response,
+      });
     },
-    *delete({ payload }, { call }) {
-      yield call(resourceDelete, payload);
+    *delete({ payload }, { call, put }) {
+      const response = yield call(resourceDelete, payload);
+      yield put({
+        type: 'deleteResources',
+        payload: response,
+      });
     },
-    *batchDelete({ payload }, { call }) {
-      yield call(resourceBatchDelete, payload);
+    *batchDelete({ payload }, { call, put }) {
+      const response = yield call(resourceBatchDelete, payload);
+      yield put({
+        type: 'deleteResources',
+        payload: response,
+      });
+    },
+    *requireQuery({ payload }, { call, put }) {
+      const response = yield call(resourceRequireQuery, payload);
+      yield put({
+        type: 'queryResult',
+        payload: response,
+      });
     },
   },
 
   reducers: {
-    changeUser(state, action) {
+    changeResources(state, action) {
       return {
         ...state,
         data: action.payload,
       };
     },
-    returnResource(state, action) {
-      return {
-        ...state,
-        data: action.payload,
-      };
-    },
+  },
+  addResources(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  editResources(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  deleteResources(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  queryResult(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
   },
 };

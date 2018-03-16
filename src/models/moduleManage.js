@@ -1,5 +1,5 @@
-import { getUsers } from '../services/user';
-import { getModule, postModule, moduleDelete, moduleBatchDelete } from '../services/module';
+/* eslint-disable keyword-spacing */
+import { getModule, postModule, moduleEdit, moduleBatchDelete, moduleDelete, moduleRequireQuery } from '../services/module';
 
 export default {
   namespace: 'moduleManage',
@@ -9,49 +9,83 @@ export default {
       results: [],
       count: 0,
     },
-    list: {
-      results: [],
-    },
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(getUsers, payload);
+      const response = yield call(getModule, payload);
       yield put({
-        type: 'changeUser',
+        type: 'changeModules',
         payload: response,
       });
     },
-    *getModule(_, { call, put }) {
-      const response = yield call(getModule);
+    *add({ payload }, { call, put }) {
+      const response = yield call(postModule, payload);
       yield put({
-        type: 'returnModule',
+        type: 'addModules',
         payload: response,
       });
     },
-    *postModule({ payload }, { call }) {
-      yield call(postModule, payload);
+    *edit({ payload }, { call, put }) {
+      const response = yield call(moduleEdit, payload);
+      yield put({
+        type: 'editModules',
+        payload: response,
+      });
     },
-    *delete({ payload }, { call }) {
-      yield call(moduleDelete, payload);
+    *delete({ payload }, { call, put }) {
+      const response = yield call(moduleDelete, payload);
+      yield put({
+        type: 'deleteModules',
+        payload: response,
+      });
     },
-    *batchDelete({ payload }, { call }) {
-      yield call(moduleBatchDelete, payload);
+    *batchDelete({ payload }, { call, put }) {
+      const response = yield call(moduleBatchDelete, payload);
+      yield put({
+        type: 'deleteModules',
+        payload: response,
+      });
+    },
+    *requireQuery({ payload }, { call, put }) {
+      const response = yield call(moduleRequireQuery, payload);
+      yield put({
+        type: 'queryResult',
+        payload: response,
+      });
     },
   },
 
   reducers: {
-    changeUser(state, action) {
+    changeModules(state, action) {
       return {
         ...state,
         data: action.payload,
       };
     },
-    returnModule(state, action) {
-      return {
-        ...state,
-        data: action.payload,
-      };
-    },
+  },
+  addModules(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  editModules(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  deleteModules(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  queryResult(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
   },
 };
