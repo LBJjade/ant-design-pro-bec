@@ -4,7 +4,7 @@ const menuData = [{
   name: '控制台',
   icon: 'dashboard',
   path: 'dashboard',
-  authority: ['a'],
+  authority: ['admin'],
   children: [{
     name: '工作台',
     path: 'workspace',
@@ -180,6 +180,28 @@ const menuData = [{
     path: 'base',
   }, {
     name: '数字资源管理',
+    icon: 'folder-open',
+    path: 'resource',
+  }],
+}, {
+  name: '评论点赞管理',
+  icon: 'api',
+  path: 'comment',
+  authority: ['admin'],
+  children: [{
+    name: '评论管理',
+    icon: 'bars',
+    path: 'list',
+  }, {
+    name: '卡片表格',
+    icon: 'folder-open',
+    path: 'cart',
+  }, {
+    name: '标准表格',
+    icon: 'folder-open',
+    path: 'base',
+  }, {
+    name: '点赞管理',
     icon: 'folder-open',
     path: 'resource',
   }],
