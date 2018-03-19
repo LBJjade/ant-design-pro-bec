@@ -1,4 +1,5 @@
-import { districtQuery, districtAdd, districtEdit } from '../services/sysSet';
+/* eslint-disable keyword-spacing */
+import { districtQuery, districtAdd, districtEdit, districtBatchDelete, districtDelete, districtRequireQuery } from '../services/sysSet';
 
 export default {
   namespace: 'districtManage',
@@ -32,6 +33,27 @@ export default {
         payload: response,
       });
     },
+    *delete({ payload }, { call, put }) {
+      const response = yield call(districtDelete, payload);
+      yield put({
+        type: 'deleteDistricts',
+        payload: response,
+      });
+    },
+    *batchDelete({ payload }, { call, put }) {
+      const response = yield call(districtBatchDelete, payload);
+      yield put({
+        type: 'deleteDistricts',
+        payload: response,
+      });
+    },
+    *requireQuery({ payload }, { call, put }) {
+      const response = yield call(districtRequireQuery, payload);
+      yield put({
+        type: 'queryResult',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -49,6 +71,18 @@ export default {
     };
   },
   editDistricts(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  deleteDistricts(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  queryResult(state, action) {
     return {
       ...state,
       data: action.payload,

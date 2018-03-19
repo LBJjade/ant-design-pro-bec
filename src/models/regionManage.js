@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing */
-import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery, uploadLogo } from '../services/sysSet';
+import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery } from '../services/sysSet';
 
 export default {
   namespace: 'regionManage',
@@ -54,13 +54,6 @@ export default {
         payload: response,
       });
     },
-    *upload({ payload }, { call, put }) {
-      const response = yield call(uploadLogo, payload);
-      yield put({
-        type: 'uploadResult',
-        payload: response,
-      });
-    },
   },
 
   reducers: {
@@ -90,12 +83,6 @@ export default {
     };
   },
   queryResult(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  uploadResult(state, action) {
     return {
       ...state,
       data: action.payload,
