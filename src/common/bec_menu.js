@@ -161,27 +161,27 @@ const menuData = [{
   authority: ['admin'],
   children: [{
     name: '品牌管理基础',
-    icon: 'star',
+    icon: 'global',
     path: 'brand',
   }, {
     name: '品牌管理标准',
-    icon: 'star',
+    icon: 'global',
     path: 'table',
   }, {
     name: '品牌卡片',
-    icon: 'star',
+    icon: 'global',
     path: 'card',
   }, {
     name: '大区管理',
-    icon: 'layout',
+    icon: 'api',
     path: 'bigArea',
   }, {
     name: '小区管理',
-    icon: 'scan',
+    icon: 'safety',
     path: 'district',
   }, {
     name: '门店管理',
-    icon: 'scan',
+    icon: 'star',
     path: 'shop',
   }],
 }];
