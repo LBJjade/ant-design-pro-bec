@@ -608,8 +608,8 @@ export default class TableList extends PureComponent {
       },
       {
         title: '操作',
-        width: '10%',
-        dataIndex: 'objectId' ,
+        dataIndex: 'objectId',
+        width: '10%' ,
         render: val => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
