@@ -46,6 +46,14 @@ export async function brandRequireQuery(params) {
   }, 'where');
 }
 
+export async function uploadLogo(params) {
+  let require = `'where={${stringify(params)}}'`;
+  return request('/api/classes/brand/', {
+    method: 'GET',
+    data: require,
+  }, 'where');
+}
+
 export async function regionQuery(params) {
   return request(`/api/classes/Region?${stringify(params)}`, {
     method: 'GET',

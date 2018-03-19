@@ -1,54 +1,14 @@
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import moment from 'moment';
-import { Row, Col, Card, Form, a, Input, InputNumber, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
+import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './RegionTableList.less';
+import styles from './TableList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const columns = [
-  {
-    title: '序号',
-    dataIndex: 'orderNumber',
-  },
-  {
-    title: '大区名称',
-    dataIndex: 'regionName',
-  },
-  {
-    title: '关联品牌',
-    dataIndex: 'descript',
-  },
-  {
-    title: '操作',
-    dataIndex: 'operate',
-    render: val => <span><a href="regionManage/fetch">{val}</a></span>,
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
-    sorter: true,
-    render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-  }, {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    sorter: true,
-    render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-  },
-];
-
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: record => ({
-    disabled: record.name === 'Disabled User', // Column configuration not to be checked
-    name: record.name,
-  }),
-};
 
 const CreateAddForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -68,17 +28,6 @@ const CreateAddForm = Form.create()((props) => {
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="序号"
-      >
-        {form.getFieldDecorator('orderNumber', {
-          rules: [{ required: true, message: '请输入序号...' }],
-        })(
-          <InputNumber placeholder="请输入" />
-        )}
-      </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
         label="大区名称"
       >
         {form.getFieldDecorator('regionName', {
@@ -87,16 +36,32 @@ const CreateAddForm = Form.create()((props) => {
           <Input placeholder="请输入" />
         )}
       </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="关联品牌"
+      >
+        {form.getFieldDecorator('regionName', {
+          rules: [{ required: true, message: '请选择关联品牌...' }],
+        })(
+          <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+            <Option value="disabled" disabled>Disabled</Option>
+            <Option value="Yiminghe">yiminghe</Option>
+          </Select>
+        )}
+      </FormItem>
     </Modal>
   );
 });
 
 const CreateEditForm = Form.create()((props) => {
-  const { modalEditVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      handleAdd(fieldsValue);
+      handleEdit(fieldsValue);
     });
   };
   return (
@@ -109,17 +74,6 @@ const CreateEditForm = Form.create()((props) => {
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="序号"
-      >
-        {form.getFieldDecorator('orderNumber', {
-          rules: [{ required: true, message: '请输入序号...' }],
-        })(
-          <InputNumber placeholder="请输入" />
-        )}
-      </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
         label="大区名称"
       >
         {form.getFieldDecorator('regionName', {
@@ -128,11 +82,88 @@ const CreateEditForm = Form.create()((props) => {
           <Input placeholder="请输入" />
         )}
       </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="关联品牌"
+      >
+        {form.getFieldDecorator('regionName', {
+          rules: [{ required: true, message: '请选择关联品牌...' }],
+        })(
+          <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+            <Option value="disabled" disabled>Disabled</Option>
+            <Option value="Yiminghe">yiminghe</Option>
+          </Select>
+        )}
+      </FormItem>
     </Modal>
   );
 });
 
+function handleChange(value) {
+  console.log(`selected ${value}`);
+}
 
+function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+
+function beforeUpload(file) {
+  const isJPG = file.type === 'image/jpeg';
+  if (!isJPG) {
+    message.error('You can only upload JPG file!');
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!');
+  }
+  return isJPG && isLt2M;
+}
+
+class Avatar extends React.Component {
+  state = {
+    loading: false,
+  };
+  handleChange = (info) => {
+    if (info.file.status === 'uploading') {
+      this.setState({ loading: true });
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, imageUrl => this.setState({
+        imageUrl,
+        loading: false,
+      }));
+    }
+  }
+  render() {
+    const uploadButton = (
+      <div>
+        <Icon type={this.state.loading ? 'loading' : 'plus'} />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
+    const imageUrl = this.state.imageUrl;
+    return (
+      <Upload
+        name="avatar"
+        listType="picture-card"
+        className="avatar-uploader"
+        showUploadList={true}
+        action="http://localhost:80/upload/webUploader/img"
+        beforeUpload={beforeUpload}
+        onChange={this.handleChange}
+      >
+        {imageUrl ? <img src={imageUrl} alt="" /> : uploadButton}
+      </Upload>
+    );
+  }
+}
 @connect(({ regionManage, loading }) => ({
   regionManage,
   loading: loading.models.regionManage,
@@ -150,6 +181,8 @@ export default class TableList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    editId: {},
+    imgUrl: {},
   };
 
   componentDidMount() {
@@ -190,7 +223,7 @@ export default class TableList extends PureComponent {
         pageSize: pagination.pageSize,
       },
     });
-  }
+  };
 
   handleFormAdd = () => {
     const { form, dispatch } = this.props;
@@ -202,13 +235,13 @@ export default class TableList extends PureComponent {
       type: 'regionManage/fetch',
       payload: {},
     });
-  }
+  };
 
   toggleForm = () => {
     this.setState({
       expandForm: !this.state.expandForm,
     });
-  }
+  };
 
   handleMenuClick = (e) => {
     const { dispatch } = this.props;
@@ -233,13 +266,13 @@ export default class TableList extends PureComponent {
       default:
         break;
     }
-  }
+  };
 
   handleSelectRows = (rows) => {
     this.setState({
       selectedRows: rows,
     });
-  }
+  };
 
   handleSearch = (e) => {
     e.preventDefault();
@@ -259,23 +292,50 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'regionManage/fetch',
+        type: 'regionManage/requireQuery',
         payload: values,
       });
     });
-  }
+  };
+
+  handelDelete = (row) => {
+    this.props.dispatch({
+      type: 'regionManage/delete',
+      payload: row,
+    });
+  };
+  // handelDelete = (row) => {
+  //   console.log(row);
+  // };
+  handelbatchDelete = (row) => {
+    this.props.dispatch({
+      type: 'regionManage/batchDelete',
+      payload: row,
+    });
+  };
+
+  handelEdit = (rows, data) => {
+    this.props.dispatch({
+      type: 'regionManage/edit',
+      payload: {
+        row: rows,
+        data: data,
+      },
+    });
+  };
 
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
     });
-  }
+  };
 
-  handleEditModalVisible = (flag) => {
+  handleEditModalVisible = (flag, data) => {
     this.setState({
       modalEditVisible: !!flag,
+      editId: data,
     });
-  }
+  };
 
   handleAdd = (fields) => {
     this.props.dispatch({
@@ -287,19 +347,20 @@ export default class TableList extends PureComponent {
     this.setState({
       modalVisible: false,
     });
-  }
+  };
 
-  handleEdit = (key) => {
+  handleEdit = (fields) => {
+    let eidtId = this.state.editId;
     this.props.dispatch({
       type: 'regionManage/edit',
-      payload: key,
+      payload: { fields, eidtId },
     });
 
-    message.success('添加成功');
+    message.success('编辑成功');
     this.setState({
       modalEditVisible: false,
     });
-  }
+  };
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
@@ -308,7 +369,7 @@ export default class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="序号">
-              {getFieldDecorator('no')(
+              {getFieldDecorator('orderNumber')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
@@ -404,13 +465,52 @@ export default class TableList extends PureComponent {
       </Menu>
     );
 
+    const columns = [
+      {
+        title: '序号',
+        dataIndex: 'orderNumber',
+      },
+      {
+        title: '大区名称',
+        dataIndex: 'regionName',
+      },
+      {
+        title: '关联大区',
+        dataIndex: 'descript',
+      },
+      {
+        title: '操作',
+        dataIndex: 'objectId',
+        render: val => (
+          <span>
+            <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`)}>编辑</a>
+          </span>),
+        // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
+      },
+    ];
+
+    const rowSelection = {
+      onChange: (selectedRowKeys, Rows) => {
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', Rows);
+        this.setState({
+          selectedRows: selectedRowKeys,
+        });
+        // noinspection JSAnnotator
+      },
+      getCheckboxProps: record => ({
+        disabled: record.name === 'Disabled User', // Column configuration not to be checked
+        name: record.name,
+      }),
+    };
+
     const parentAddMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleAddModalVisible,
     };
 
     const parentEditMethods = {
-      handleAdd: this.handleAdd,
+      handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
     };
 
@@ -419,11 +519,12 @@ export default class TableList extends PureComponent {
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
       total: data.count,
+      showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
       // onChange: this.handlePageChange,
     };
 
     return (
-      <PageHeaderLayout title="品牌管理">
+      <PageHeaderLayout title="大区管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
@@ -433,21 +534,10 @@ export default class TableList extends PureComponent {
               <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
                 新增
               </Button>
-              <Button icon="edit" type="primary" onClick={() => this.handleEditModalVisible(true)}>
-                编辑
-              </Button>
-              <Button icon="delete" type="primary" onClick={() => this.handleModalVisible()}>
-                删除
-              </Button>
               {
                 selectedRows.length > 0 && (
                   <span>
-                    <Button>批量操作</Button>
-                    <Dropdown overlay={menu}>
-                      <Button>
-                        更多操作 <Icon type="down" />
-                      </Button>
-                    </Dropdown>
+                    <Button icon="delete" type="primary" onClick={() => this.handelbatchDelete(selectedRows)}>删除</Button>
                   </span>
                 )
               }
@@ -463,6 +553,7 @@ export default class TableList extends PureComponent {
                     dataSource={data.results}
                     onChange={this.handleStandardTableChange}
                     rowSelection={rowSelection}
+                    onSelectRow={this.handleSelectRows}
                   />
                 </div>
               </Card>

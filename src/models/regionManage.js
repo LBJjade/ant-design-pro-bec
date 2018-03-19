@@ -1,4 +1,5 @@
-import { regionQuery, regionAdd, regionEdit } from '../services/sysSet';
+/* eslint-disable keyword-spacing */
+import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery, uploadLogo } from '../services/sysSet';
 
 export default {
   namespace: 'regionManage',
@@ -32,10 +33,31 @@ export default {
         payload: response,
       });
     },
-    *getBrand({ payload }, { call, put }) {
-      const response = yield call(regionEdit, payload);
+    *delete({ payload }, { call, put }) {
+      const response = yield call(regionDelete, payload);
       yield put({
-        type: 'editRegions',
+        type: 'deleteRegions',
+        payload: response,
+      });
+    },
+    *batchDelete({ payload }, { call, put }) {
+      const response = yield call(regionBatchDelete, payload);
+      yield put({
+        type: 'deleteRegions',
+        payload: response,
+      });
+    },
+    *requireQuery({ payload }, { call, put }) {
+      const response = yield call(regionRequireQuery, payload);
+      yield put({
+        type: 'queryResult',
+        payload: response,
+      });
+    },
+    *upload({ payload }, { call, put }) {
+      const response = yield call(uploadLogo, payload);
+      yield put({
+        type: 'uploadResult',
         payload: response,
       });
     },
@@ -56,6 +78,24 @@ export default {
     };
   },
   editRegions(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  deleteRegions(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  queryResult(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  uploadResult(state, action) {
     return {
       ...state,
       data: action.payload,
