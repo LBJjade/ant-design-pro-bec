@@ -24,6 +24,9 @@ const passwordProgressMap = {
   signup,
   submitting: loading.effects['register/submit'],
   validating: signup.userValidating,
+  existUsername: signup.existUsername,
+  existEmail: signup.existEmail,
+  existMobile: signup.existMobile,
   res: signup.res,
 }))
 @Form.create()
@@ -84,31 +87,39 @@ export default class Signup extends Component {
       } else {
         if (rule.fieldname === 'username') {
           this.props.dispatch({
-            type: 'signup/validate',
+            type: 'signup/existUsername',
             payload: { username: value },
           });
         }
         if (rule.fieldname === 'email') {
           this.props.dispatch({
-            type: 'signup/validate',
+            type: 'signup/existEmail',
             payload: { email: value },
           });
         }
         if (rule.fieldname === 'mobile') {
           this.props.dispatch({
-            type: 'signup/validate',
+            type: 'signup/existMobile',
             payload: { mobile: value },
           });
         }
-        setTimeout(() => {
-          if (this.props.validating.results.length > 0) {
-            callback([new Error(rule.message)]);
-          } else {
-            callback();
-          }
-        }, 800);
+        // setTimeout(() => {
+        //   if (this.props.validating.results.length > 0) {
+        //     callback([new Error(rule.message)]);
+        //   } else {
+        //     callback();
+        //   }
+        // }, 8000);
+        // if (this.props.validating.results !== undefined) {
+        //   if (this.props.validating.results.length > 0) {
+        //     callback([new Error(rule.message)]);
+        //   } else {
+        //     callback();
+        //   }
+        // }
       }
     }
+    callback();
   }
 
   handleSubmit = (e) => {
@@ -168,6 +179,7 @@ export default class Signup extends Component {
         callback();
       }
     }
+    callback();
   };
 
   changePrefix = (value) => {
@@ -195,13 +207,94 @@ export default class Signup extends Component {
 
   render() {
     const { form, submitting } = this.props;
-    const { getFieldDecorator } = form;
+    const { getFieldDecorator, isFieldValidating } = form;
     const { count, prefix } = this.state;
+
+    const { existUsername, existEmail, existMobile } = this.props;
+
+
+    const usernameValidating = isFieldValidating('username');
+    const emailValidating = isFieldValidating('email');
+    const mobileValidating = isFieldValidating('mobile');
+
+    let usernameValidateStatus = '';
+    let emailValidateStatus = '';
+    let mobileValidateStatus = '';
+
+    let usernameHelp = '';
+    let emailHelp = '';
+    let mobileHelp = '';
+
+    if (existUsername.results === undefined) {
+      if (usernameValidating) {
+        usernameValidateStatus = 'validating';
+        usernameHelp = '正在校验中...';
+      }
+    } else if (existUsername.results.length <= 0) {
+      usernameValidateStatus = 'success';
+      usernameHelp = '';
+    } else {
+      usernameValidateStatus = 'error';
+      usernameHelp = '该帐号已被注册。';
+    }
+
+    if (existEmail.results === undefined) {
+      if (emailValidating) {
+        emailValidateStatus = 'validating';
+        emailHelp = '正在校验中...';
+      }
+    } else if (existEmail.results.length <= 0) {
+      emailValidateStatus = 'success';
+      emailHelp = '';
+    } else {
+      emailValidateStatus = 'error';
+      emailHelp = '该邮箱已被注册。';
+    }
+
+    if (existMobile.results === undefined) {
+      if (mobileValidating) {
+        mobileValidateStatus = 'validating';
+        mobileHelp = '正在校验中...';
+      }
+    } else if (existMobile.results.length <= 0) {
+      mobileValidateStatus = 'success';
+      mobileHelp = '';
+    } else {
+      mobileValidateStatus = 'error';
+      mobileHelp = '该手机号码已被注册。';
+    }
+
+    const status = {
+      username: {
+        validating: usernameValidating,
+        exist: existUsername,
+        validateStatus: usernameValidateStatus,
+        help: usernameHelp,
+      },
+      email: {
+        validating: emailValidating,
+        exist: existUsername,
+        validateStatus: emailValidateStatus,
+        help: emailHelp,
+      },
+      mobile: {
+        validating: mobileValidating,
+        exist: existMobile,
+        validateStatus: mobileValidateStatus,
+        help: mobileHelp,
+      },
+    };
+
     return (
       <div className={styles.main}>
         <h3>注册</h3>
         <Form onSubmit={this.handleSubmit}>
-          <FormItem>
+          <FormItem
+            // label="用户名"
+            // hasFeedback
+            validateStatus={status.username.validateStatus}
+            help={status.username.help}
+          >
             {getFieldDecorator('username', {
               rules: [
                 { fieldname: 'username', required: true, message: '请输入帐号！' },
@@ -212,7 +305,10 @@ export default class Signup extends Component {
               validateTrigger: 'onBlur',
             })(<Input size="large" placeholder="帐号" prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
           </FormItem>
-          <FormItem>
+          <FormItem
+            validateStatus={status.email.validateStatus}
+            help={status.email.help}
+          >
             {getFieldDecorator('email', {
               rules: [
                 { fieldname: 'email', required: true, message: '请输入邮箱地址！' },
@@ -274,7 +370,10 @@ export default class Signup extends Component {
               />
             )}
           </FormItem>
-          <FormItem>
+          <FormItem
+            validateStatus={status.mobile.validateStatus}
+            help={status.mobile.help}
+          >
             <InputGroup compact>
               <Select
                 size="large"
