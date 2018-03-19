@@ -1,4 +1,5 @@
-import { shopQuery, shopAdd, shopEdit } from '../services/sysSet';
+/* eslint-disable keyword-spacing */
+import { shopQuery, shopAdd, shopEdit, shopBatchDelete, shopDelete, shopRequireQuery } from '../services/sysSet';
 
 export default {
   namespace: 'shopManage',
@@ -32,6 +33,27 @@ export default {
         payload: response,
       });
     },
+    *delete({ payload }, { call, put }) {
+      const response = yield call(shopDelete, payload);
+      yield put({
+        type: 'deleteShops',
+        payload: response,
+      });
+    },
+    *batchDelete({ payload }, { call, put }) {
+      const response = yield call(shopBatchDelete, payload);
+      yield put({
+        type: 'deleteShops',
+        payload: response,
+      });
+    },
+    *requireQuery({ payload }, { call, put }) {
+      const response = yield call(shopRequireQuery, payload);
+      yield put({
+        type: 'queryResult',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -49,6 +71,18 @@ export default {
     };
   },
   editShops(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  deleteShops(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  queryResult(state, action) {
     return {
       ...state,
       data: action.payload,

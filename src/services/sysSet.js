@@ -156,24 +156,25 @@ export async function shopAdd(params) {
 }
 
 export async function shopEdit(params) {
-  const { ids, data } = params;
-  return request(`/api/classes/Shop?${stringify(ids)}`, {
+  let editid = params.eidtId;
+  let data = params.fields;
+  return request(`/api/classes/Shop/${editid}`, {
     method: 'PUT',
     body: data,
   });
 }
 
-
-export async function queryCurrent() {
-  return request('/api/currentUser');
-}
-
-export async function getUserList(params) {
-  return request(`/api/users?${stringify(params)}`);
-}
-
-export async function getUsers(params) {
-  return request(`/api/users?${stringify(params)}`, {
-    method: 'GET',
+export async function shopDelete(params) {
+  return request('/api/classes/Shop/' + params, {
+    method: 'DELETE',
   });
 }
+
+export async function shopRequireQuery(params) {
+  let require = `'where={${stringify(params)}}'`;
+  return request('/api/classes/Shop/', {
+    method: 'GET',
+    data: require,
+  }, 'where');
+}
+
