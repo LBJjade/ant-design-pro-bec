@@ -475,7 +475,7 @@ export default class TableList extends PureComponent {
         dataIndex: 'regionName',
       },
       {
-        title: '关联大区',
+        title: '关联品牌',
         dataIndex: 'descript',
       },
       {
