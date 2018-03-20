@@ -4,9 +4,9 @@ import { routerRedux, Link } from 'dva/router';
 import { Form, Input, Button, Select, Row, Col, Popover, Progress, Icon } from 'antd';
 import styles from './Signup.less';
 
-const FormItem = Form.Item;
+const { Item } = Form;
 const { Option } = Select;
-const InputGroup = Input.Group;
+const { Group } = Input;
 
 const passwordStatusMap = {
   ok: <div className={styles.success}>强度：强</div>,
@@ -89,18 +89,36 @@ export default class Signup extends Component {
           this.props.dispatch({
             type: 'signup/existUsername',
             payload: { username: value },
+          }).then(() => {
+            if (this.props.existUsername.results.length > 0) {
+              callback([new Error(rule.message)]);
+            } else {
+              callback();
+            }
           });
         }
         if (rule.fieldname === 'email') {
           this.props.dispatch({
             type: 'signup/existEmail',
             payload: { email: value },
+          }).then(() => {
+            if (this.props.existEmail.results.length > 0) {
+              callback([new Error(rule.message)]);
+            } else {
+              callback();
+            }
           });
         }
         if (rule.fieldname === 'mobile') {
           this.props.dispatch({
             type: 'signup/existMobile',
             payload: { mobile: value },
+          }).then(() => {
+            if (this.props.existMobile.results.length > 0) {
+              callback([new Error(rule.message)]);
+            } else {
+              callback();
+            }
           });
         }
         // setTimeout(() => {
@@ -119,8 +137,7 @@ export default class Signup extends Component {
         // }
       }
     }
-    callback();
-  }
+  };
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -139,10 +156,10 @@ export default class Signup extends Component {
     });
   };
 
-  handleConfirmBlur = (e) => {
-    const { value } = e.target;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  };
+  // handleConfirmBlur = (e) => {
+  //   const { value } = e.target;
+  //   this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  // };
 
   checkConfirm = (rule, value, callback) => {
     const { form } = this.props;
@@ -207,94 +224,14 @@ export default class Signup extends Component {
 
   render() {
     const { form, submitting } = this.props;
-    const { getFieldDecorator, isFieldValidating } = form;
+    const { getFieldDecorator } = form;
     const { count, prefix } = this.state;
-
-    const { existUsername, existEmail, existMobile } = this.props;
-
-
-    const usernameValidating = isFieldValidating('username');
-    const emailValidating = isFieldValidating('email');
-    const mobileValidating = isFieldValidating('mobile');
-
-    let usernameValidateStatus = '';
-    let emailValidateStatus = '';
-    let mobileValidateStatus = '';
-
-    let usernameHelp = '';
-    let emailHelp = '';
-    let mobileHelp = '';
-
-    if (existUsername.results === undefined) {
-      if (usernameValidating) {
-        usernameValidateStatus = 'validating';
-        usernameHelp = '正在校验中...';
-      }
-    } else if (existUsername.results.length <= 0) {
-      usernameValidateStatus = 'success';
-      usernameHelp = '';
-    } else {
-      usernameValidateStatus = 'error';
-      usernameHelp = '该帐号已被注册。';
-    }
-
-    if (existEmail.results === undefined) {
-      if (emailValidating) {
-        emailValidateStatus = 'validating';
-        emailHelp = '正在校验中...';
-      }
-    } else if (existEmail.results.length <= 0) {
-      emailValidateStatus = 'success';
-      emailHelp = '';
-    } else {
-      emailValidateStatus = 'error';
-      emailHelp = '该邮箱已被注册。';
-    }
-
-    if (existMobile.results === undefined) {
-      if (mobileValidating) {
-        mobileValidateStatus = 'validating';
-        mobileHelp = '正在校验中...';
-      }
-    } else if (existMobile.results.length <= 0) {
-      mobileValidateStatus = 'success';
-      mobileHelp = '';
-    } else {
-      mobileValidateStatus = 'error';
-      mobileHelp = '该手机号码已被注册。';
-    }
-
-    const status = {
-      username: {
-        validating: usernameValidating,
-        exist: existUsername,
-        validateStatus: usernameValidateStatus,
-        help: usernameHelp,
-      },
-      email: {
-        validating: emailValidating,
-        exist: existUsername,
-        validateStatus: emailValidateStatus,
-        help: emailHelp,
-      },
-      mobile: {
-        validating: mobileValidating,
-        exist: existMobile,
-        validateStatus: mobileValidateStatus,
-        help: mobileHelp,
-      },
-    };
 
     return (
       <div className={styles.main}>
         <h3>注册</h3>
         <Form onSubmit={this.handleSubmit}>
-          <FormItem
-            // label="用户名"
-            // hasFeedback
-            validateStatus={status.username.validateStatus}
-            help={status.username.help}
-          >
+          <Item>
             {getFieldDecorator('username', {
               rules: [
                 { fieldname: 'username', required: true, message: '请输入帐号！' },
@@ -304,11 +241,8 @@ export default class Signup extends Component {
               validateFirst: true,
               validateTrigger: 'onBlur',
             })(<Input size="large" placeholder="帐号" prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
-          </FormItem>
-          <FormItem
-            validateStatus={status.email.validateStatus}
-            help={status.email.help}
-          >
+          </Item>
+          <Item>
             {getFieldDecorator('email', {
               rules: [
                 { fieldname: 'email', required: true, message: '请输入邮箱地址！' },
@@ -318,8 +252,8 @@ export default class Signup extends Component {
               validateFirst: true,
               validateTrigger: 'onBlur',
             })(<Input size="large" placeholder="邮箱" prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
-          </FormItem>
-          <FormItem help={this.state.help}>
+          </Item>
+          <Item help={this.state.help}>
             <Popover
               content={
                 <div style={{ padding: '4px 0' }}>
@@ -349,8 +283,8 @@ export default class Signup extends Component {
                 />
               )}
             </Popover>
-          </FormItem>
-          <FormItem>
+          </Item>
+          <Item>
             {getFieldDecorator('confirm', {
               rules: [
                 {
@@ -369,12 +303,9 @@ export default class Signup extends Component {
                 prefix={<Icon type="key" style={{ color: 'rgba(0,0,0,.25)' }} />}
               />
             )}
-          </FormItem>
-          <FormItem
-            validateStatus={status.mobile.validateStatus}
-            help={status.mobile.help}
-          >
-            <InputGroup compact>
+          </Item>
+          <Item>
+            <Group compact>
               <Select
                 size="large"
                 value={prefix}
@@ -399,9 +330,9 @@ export default class Signup extends Component {
                   placeholder="手机号码"
                 />
               )}
-            </InputGroup>
-          </FormItem>
-          <FormItem>
+            </Group>
+          </Item>
+          <Item>
             <Row gutter={8}>
               <Col span={16}>
                 {getFieldDecorator('captcha', {
@@ -424,8 +355,8 @@ export default class Signup extends Component {
                 </Button>
               </Col>
             </Row>
-          </FormItem>
-          <FormItem>
+          </Item>
+          <Item>
             <Button
               size="large"
               loading={submitting}
@@ -438,7 +369,7 @@ export default class Signup extends Component {
             <Link className={styles.login} to="/account/login">
               使用已有账户登录
             </Link>
-          </FormItem>
+          </Item>
         </Form>
       </div>
     );
