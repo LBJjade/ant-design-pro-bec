@@ -1,4 +1,3 @@
-/* eslint-disable no-extra-semi,no-unused-vars */
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import { routerRedux } from 'dva/router';
@@ -45,22 +44,18 @@ function checkStatus(response) {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request(url, options, where) {
+export default function request(url, options) {
   const defaultOptions = {
     credentials: 'include',
-    dataUrlencode: '',
   };
   const newOptions = { ...defaultOptions, ...options };
-  if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'DELETE') {
+  if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
         'X-Parse-Application-Id': 'bec',
         ...newOptions.headers,
-      };
-      if (where === 'where') {
-        newOptions.dataUrlencode = newOptions.data;
       };
       newOptions.body = JSON.stringify(newOptions.body);
     } else {
@@ -105,3 +100,18 @@ export default function request(url, options, where) {
     });
 }
 
+export function requestParams2Url(params) {
+  let url = '';
+  if (params === undefined) {
+    return url;
+  }
+  if (params.where !== undefined) {
+    url += url.length > 0 ? '&' : '';
+    url += `where=${JSON.stringify(params.where)}`;
+  }
+  if (params.include !== undefined) {
+    url += url.length > 0 ? '&' : '';
+    url += `include=${params.include}`;
+  }
+  return url.length > 0 ? `?${url}` : url;
+}

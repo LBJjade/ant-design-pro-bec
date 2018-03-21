@@ -1,4 +1,4 @@
-/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len,prefer-const,no-unused-vars,prefer-destructuring */
+/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len,prefer-const,no-unused-vars,prefer-destructuring,no-undef */
 import { stringify } from 'qs';
 import request from '../utils/request';
 
@@ -39,9 +39,7 @@ export async function brandDelete(params) {
 }
 
 export async function brandRequireQuery(params) {
-  return request(`/api/classes/brand?${stringify(params)}`, {
-    method: 'GET',
-  });
+  let data = `where{ ${params} }`;
 }
 
 export async function uploadLogo(params) {
