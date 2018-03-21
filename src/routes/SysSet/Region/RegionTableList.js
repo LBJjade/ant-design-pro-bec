@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,quote-props,key-spacing,quotes,quotes,no-undef */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -38,6 +38,19 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'regionManage/fetch',
+    });
+    dispatch({
+      type: 'regionManage/brandQuery',
+      payload: {
+        include: "pointerIntention",
+        where: {
+          "pointerIntention":{
+            "__type": "Pointer",
+            "className": "Intention",
+            "objectId": "mqMb52dJaH",
+          },
+        },
+      },
     });
   }
 

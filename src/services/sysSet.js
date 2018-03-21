@@ -54,8 +54,7 @@ export async function uploadLogo(params) {
 }
 
 export async function regionQuery(params) {
-  let url = requestParams2Url(params);
-  return request(`/api/classes/Region${url}`, {
+  return request(`/api/classes/Region?${stringify(params)}`, {
     method: 'GET',
   });
 }
@@ -96,6 +95,13 @@ export async function regionRequireQuery(params) {
     method: 'GET',
     data: require,
   }, 'where');
+}
+
+export async function regionBrandQuery(params) {
+  let url = requestParams2Url(params);
+  return request(`/api/classes/AnalysisRule${url}`, {
+    method: 'GET',
+  });
 }
 
 export async function districtQuery(params) {

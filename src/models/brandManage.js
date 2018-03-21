@@ -23,42 +23,42 @@ export default {
     *add({ payload }, { call, put }) {
       const response = yield call(brandAdd, payload);
       yield put({
-        type: 'addBrands',
+        type: 'changeBrands',
         payload: response,
       });
     },
     *edit({ payload }, { call, put }) {
       const response = yield call(brandEdit, payload);
       yield put({
-        type: 'editBrands',
+        type: 'changeBrands',
         payload: response,
       });
     },
     *delete({ payload }, { call, put }) {
       const response = yield call(brandDelete, payload);
       yield put({
-        type: 'deleteBrands',
+        type: 'changeBrands',
         payload: response,
       });
     },
     *batchDelete({ payload }, { call, put }) {
       const response = yield call(brandBatchDelete, payload);
       yield put({
-        type: 'deleteBrands',
+        type: 'changeBrands',
         payload: response,
       });
     },
     *requireQuery({ payload }, { call, put }) {
       const response = yield call(brandRequireQuery, payload);
       yield put({
-        type: 'queryResult',
+        type: 'changeBrands',
         payload: response,
       });
     },
     *upload({ payload }, { call, put }) {
       const response = yield call(uploadLogo, payload);
       yield put({
-        type: 'uploadResult',
+        type: 'changeBrands',
         payload: response,
       });
     },
@@ -71,35 +71,5 @@ export default {
         data: action.payload,
       };
     },
-  },
-  addBrands(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  editBrands(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  deleteBrands(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  queryResult(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  uploadResult(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
   },
 };

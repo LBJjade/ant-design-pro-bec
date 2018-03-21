@@ -205,8 +205,6 @@ export default class TableList extends PureComponent {
         type: 'brandManage/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
-
-      this.setState({ source: true });
     });
   };
 

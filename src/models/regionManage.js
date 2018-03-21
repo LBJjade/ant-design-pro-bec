@@ -1,5 +1,8 @@
-/* eslint-disable keyword-spacing */
-import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery } from '../services/sysSet';
+/* eslint-disable keyword-spacing,comma-dangle */
+import {
+  regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery,
+  regionBrandQuery
+} from '../services/sysSet';
 
 export default {
   namespace: 'regionManage',
@@ -54,6 +57,13 @@ export default {
         payload: response,
       });
     },
+    *brandQuery({ payload }, { call, put }) {
+      const response = yield call(regionBrandQuery, payload);
+      yield put({
+        type: 'brandqueryResult',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -83,6 +93,12 @@ export default {
     };
   },
   queryResult(state, action) {
+    return {
+      ...state,
+      data: action.payload,
+    };
+  },
+  brandqueryResult(state, action) {
     return {
       ...state,
       data: action.payload,

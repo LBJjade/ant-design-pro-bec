@@ -105,13 +105,13 @@ export function requestParams2Url(params) {
   if (params === undefined) {
     return url;
   }
-  if (params.where !== undefined) {
-    url += url.length > 0 ? '&' : '';
-    url += `where=${JSON.stringify(params.where)}`;
-  }
   if (params.include !== undefined) {
     url += url.length > 0 ? '&' : '';
     url += `include=${params.include}`;
+  }
+  if (params.where !== undefined) {
+    url += url.length > 0 ? '&' : '';
+    url += `where=${JSON.stringify(params.where)}`;
   }
   return url.length > 0 ? `?${url}` : url;
 }
