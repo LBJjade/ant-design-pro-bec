@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,no-multi-spaces,no-undef,object-curly-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -12,87 +12,6 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-// const CreateAddForm = Form.create()((props) => {
-//   const { modalVisible, form, handleAdd, handleModalVisible } = props;
-//   const okHandle = () => {
-//     form.validateFields((err, fieldsValue) => {
-//       if (err) return;
-//       handleAdd(fieldsValue);
-//     });
-//   };
-//   return (
-//     <Modal
-//       title="新增"
-//       visible={modalVisible}
-//       onOk={okHandle}
-//       onCancel={() => handleModalVisible()}
-//     >
-//       <FormItem
-//         labelCol={{ span: 5 }}
-//         wrapperCol={{ span: 15 }}
-//         label="品牌名称"
-//       >
-//         {form.getFieldDecorator('brandName', {
-//           rules: [{ required: true, message: '请输入品牌名称...' }],
-//         })(
-//           <Input placeholder="请输入" />
-//         )}
-//       </FormItem>
-//       <FormItem
-//         labelCol={{ span: 5 }}
-//         wrapperCol={{ span: 15 }}
-//         label="品牌LOGO"
-//       >
-//         {form.getFieldDecorator('brandLogo', {
-//           rules: [{ required: true, message: '请上传品牌LOGO...' }],
-//         })(
-//           <Avatar />
-//         )}
-//       </FormItem>
-//     </Modal>
-//   );
-// });
-
-// const CreateEditForm = Form.create()((props) => {
-//   const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
-//   const okHandle = () => {
-//     form.validateFields((err, fieldsValue) => {
-//       if (err) return;
-//       handleEdit(fieldsValue);
-//     });
-//   };
-//   return (
-//     <Modal
-//       title="编辑"
-//       visible={modalEditVisible}
-//       onOk={okHandle}
-//       onCancel={() => handleModalVisible()}
-//     >
-//       <FormItem
-//         labelCol={{ span: 5 }}
-//         wrapperCol={{ span: 15 }}
-//         label="品牌名称"
-//       >
-//         {form.getFieldDecorator('brandName', {
-//           rules: [{ required: true, message: '请输入品牌名称...' }],
-//         })(
-//           <Input placeholder="请输入" />
-//         )}
-//       </FormItem>
-//       <FormItem
-//         labelCol={{ span: 5 }}
-//         wrapperCol={{ span: 15 }}
-//         label="品牌LOGO"
-//       >
-//         {form.getFieldDecorator('brandLogo', {
-//           rules: [{ required: true, message: '请上传品牌LOGO...' }],
-//         })(
-//           <Avatar />
-//         )}
-//       </FormItem>
-//     </Modal>
-//   );
-// });
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -173,6 +92,7 @@ export default class TableList extends PureComponent {
     orderNumber: {},
     brandName: {},
     imgUrl: {},
+    source: {},
   };
 
   componentDidMount() {
@@ -283,8 +203,10 @@ export default class TableList extends PureComponent {
 
       dispatch({
         type: 'brandManage/requireQuery',
-        payload: values,
-      });
+        payload: { where: values },
+      }).then(message.success('查询成功'));
+
+      this.setState({ source: true });
     });
   };
 
@@ -361,7 +283,7 @@ export default class TableList extends PureComponent {
           <Col md={8} sm={24}>
             <FormItem label="序号">
               {getFieldDecorator('orderNumber')(
-                <Input placeholder="请输入" />
+                <InputNumber placeholder="请输入" />
               )}
             </FormItem>
           </Col>

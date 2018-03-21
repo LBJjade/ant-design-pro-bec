@@ -1,6 +1,6 @@
-/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len,prefer-const,no-unused-vars,prefer-destructuring,no-undef */
+/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len,prefer-const,no-unused-vars,prefer-destructuring,no-undef,import/no-named-as-default,import/no-duplicates */
 import { stringify } from 'qs';
-import request from '../utils/request';
+import request, { requestParams2Url } from '../utils/request';
 
 export async function brandQuery(params) {
   return request(`/api/classes/brand?${stringify(params)}`, {
@@ -39,7 +39,10 @@ export async function brandDelete(params) {
 }
 
 export async function brandRequireQuery(params) {
-  let data = `where{ ${params} }`;
+  let url = requestParams2Url(params);
+  return request(`/api/classes/brand${url}`, {
+    method: 'GET',
+  });
 }
 
 export async function uploadLogo(params) {
@@ -51,7 +54,8 @@ export async function uploadLogo(params) {
 }
 
 export async function regionQuery(params) {
-  return request(`/api/classes/Region?${stringify(params)}`, {
+  let url = requestParams2Url(params);
+  return request(`/api/classes/Region${url}`, {
     method: 'GET',
   });
 }

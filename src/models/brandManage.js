@@ -1,4 +1,4 @@
-/* eslint-disable keyword-spacing */
+/* eslint-disable keyword-spacing,no-undef */
 import { brandQuery, brandAdd, brandEdit, brandBatchDelete, brandDelete, brandRequireQuery, uploadLogo } from '../services/sysSet';
 
 export default {
@@ -8,6 +8,7 @@ export default {
     data: {
       results: [],
       count: 0,
+      state: [],
     },
   },
 
