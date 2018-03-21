@@ -63,16 +63,14 @@ class Avatar extends React.Component {
   }
 }
 @Form.create()
-export default class CreateEditForm extends PureComponent {
+export default class CreateAddForm extends PureComponent {
   constructor(props) {
     super(props);
     const { pro } = props;
     this.state = {
-      modalEditVisible: props.modalEditVisible,
-      handleEdit: props.handleEdit,
+      modalVisible: props.modalVisible,
+      handleAdd: props.handleAdd,
       handleModalVisible: props.handleModalVisible,
-      orderNumber: props.orderNumber,
-      brandName: props.brandName,
       form: props.form,
     };
   }
@@ -81,18 +79,17 @@ export default class CreateEditForm extends PureComponent {
     const okHandle = () => {
       this.state.form.validateFields((err, fieldsValue) => {
         if (err) return;
-        this.state.handleEdit(fieldsValue);
+        this.state.handleAdd(fieldsValue);
       });
     };
     const { getFieldDecorator } = this.props.form;
-    const modalEditVisible = this.props.modalEditVisible;
-    const brandName = this.props.brandName;
+    const modalVisible = this.props.modalVisible;
 
   return (
 
     <Modal
-      title="编辑"
-      visible={modalEditVisible}
+      title="新增"
+      visible={modalVisible}
       onOk={okHandle}
       onCancel={() => this.state.handleModalVisible(false)}
     >
@@ -103,7 +100,6 @@ export default class CreateEditForm extends PureComponent {
       >
         { getFieldDecorator('brandName', {
           rules: [{ required: true, message: '请输入品牌名称...' }],
-          initialValue: { brandName },
         })(
           <Input placeholder="请输入" />
         )}

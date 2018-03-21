@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import CreateEditForm from './EditFrom';
+import CreateAddForm from './AddFrom';
 
 import styles from './TableList.less';
 
@@ -11,46 +12,46 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-const CreateAddForm = Form.create()((props) => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
-  const okHandle = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      handleAdd(fieldsValue);
-    });
-  };
-  return (
-    <Modal
-      title="新增"
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => handleModalVisible()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="品牌名称"
-      >
-        {form.getFieldDecorator('brandName', {
-          rules: [{ required: true, message: '请输入品牌名称...' }],
-        })(
-          <Input placeholder="请输入" />
-        )}
-      </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="品牌LOGO"
-      >
-        {form.getFieldDecorator('brandLogo', {
-          rules: [{ required: true, message: '请上传品牌LOGO...' }],
-        })(
-          <Avatar />
-        )}
-      </FormItem>
-    </Modal>
-  );
-});
+// const CreateAddForm = Form.create()((props) => {
+//   const { modalVisible, form, handleAdd, handleModalVisible } = props;
+//   const okHandle = () => {
+//     form.validateFields((err, fieldsValue) => {
+//       if (err) return;
+//       handleAdd(fieldsValue);
+//     });
+//   };
+//   return (
+//     <Modal
+//       title="新增"
+//       visible={modalVisible}
+//       onOk={okHandle}
+//       onCancel={() => handleModalVisible()}
+//     >
+//       <FormItem
+//         labelCol={{ span: 5 }}
+//         wrapperCol={{ span: 15 }}
+//         label="品牌名称"
+//       >
+//         {form.getFieldDecorator('brandName', {
+//           rules: [{ required: true, message: '请输入品牌名称...' }],
+//         })(
+//           <Input placeholder="请输入" />
+//         )}
+//       </FormItem>
+//       <FormItem
+//         labelCol={{ span: 5 }}
+//         wrapperCol={{ span: 15 }}
+//         label="品牌LOGO"
+//       >
+//         {form.getFieldDecorator('brandLogo', {
+//           rules: [{ required: true, message: '请上传品牌LOGO...' }],
+//         })(
+//           <Avatar />
+//         )}
+//       </FormItem>
+//     </Modal>
+//   );
+// });
 
 // const CreateEditForm = Form.create()((props) => {
 //   const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
