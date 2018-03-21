@@ -1,4 +1,4 @@
-/* eslint-disable no-extra-semi */
+/* eslint-disable no-extra-semi,no-unused-vars */
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import { routerRedux } from 'dva/router';
@@ -104,3 +104,4 @@ export default function request(url, options, where) {
       }
     });
 }
+

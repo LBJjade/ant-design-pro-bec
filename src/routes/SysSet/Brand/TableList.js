@@ -2,7 +2,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
+import CreateEditForm from './EditFrom';
 
 import styles from './TableList.less';
 
@@ -51,46 +52,46 @@ const CreateAddForm = Form.create()((props) => {
   );
 });
 
-const CreateEditForm = Form.create()((props) => {
-  const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
-  const okHandle = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      handleEdit(fieldsValue);
-    });
-  };
-  return (
-    <Modal
-      title="编辑"
-      visible={modalEditVisible}
-      onOk={okHandle}
-      onCancel={() => handleModalVisible()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="品牌名称"
-      >
-        {form.getFieldDecorator('brandName', {
-          rules: [{ required: true, message: '请输入品牌名称...' }],
-        })(
-          <Input placeholder="请输入" />
-        )}
-      </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="品牌LOGO"
-      >
-        {form.getFieldDecorator('brandLogo', {
-          rules: [{ required: true, message: '请上传品牌LOGO...' }],
-        })(
-          <Avatar />
-        )}
-      </FormItem>
-    </Modal>
-  );
-});
+// const CreateEditForm = Form.create()((props) => {
+//   const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
+//   const okHandle = () => {
+//     form.validateFields((err, fieldsValue) => {
+//       if (err) return;
+//       handleEdit(fieldsValue);
+//     });
+//   };
+//   return (
+//     <Modal
+//       title="编辑"
+//       visible={modalEditVisible}
+//       onOk={okHandle}
+//       onCancel={() => handleModalVisible()}
+//     >
+//       <FormItem
+//         labelCol={{ span: 5 }}
+//         wrapperCol={{ span: 15 }}
+//         label="品牌名称"
+//       >
+//         {form.getFieldDecorator('brandName', {
+//           rules: [{ required: true, message: '请输入品牌名称...' }],
+//         })(
+//           <Input placeholder="请输入" />
+//         )}
+//       </FormItem>
+//       <FormItem
+//         labelCol={{ span: 5 }}
+//         wrapperCol={{ span: 15 }}
+//         label="品牌LOGO"
+//       >
+//         {form.getFieldDecorator('brandLogo', {
+//           rules: [{ required: true, message: '请上传品牌LOGO...' }],
+//         })(
+//           <Avatar />
+//         )}
+//       </FormItem>
+//     </Modal>
+//   );
+// });
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -168,6 +169,8 @@ export default class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
     editId: {},
+    orderNumber: {},
+    brandName: {},
     imgUrl: {},
   };
 
@@ -316,10 +319,11 @@ export default class TableList extends PureComponent {
     });
   };
 
-  handleEditModalVisible = (flag, data) => {
+  handleEditModalVisible = (flag, orderNumber, brandName) => {
     this.setState({
-      modalEditVisible: !!flag,
-      editId: data,
+      modalEditVisible: flag,
+      orderNumber: orderNumber,
+      brandName: brandName,
     });
   };
 
@@ -442,7 +446,7 @@ export default class TableList extends PureComponent {
 
   render() {
     const { brandManage: { data }, loading } = this.props;
-    const { selectedRows, modalVisible, modalEditVisible } = this.state;
+    const { selectedRows, modalVisible, modalEditVisible, orderNumber, brandName } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -463,10 +467,10 @@ export default class TableList extends PureComponent {
       {
         title: '操作',
         dataIndex: 'objectId',
-        render: val => (
+        render: (val, record) => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, record.orderNumber, record.brandName)}>编辑</a>
           </span>),
         // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
@@ -494,6 +498,8 @@ export default class TableList extends PureComponent {
     const parentEditMethods = {
       handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
+      orderNumber: orderNumber,
+      brandName: brandName,
     };
 
     const paginationProps = {

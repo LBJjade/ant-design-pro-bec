@@ -1,10 +1,10 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,react/sort-comp */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './TableList.less';
+import styles from './Brand/TableList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -66,6 +66,17 @@ const CreateAddForm = Form.create()((props) => {
             <Option value="disabled" disabled>Disabled</Option>
             <Option value="Yiminghe">yiminghe</Option>
           </Select>
+        )}
+      </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="关联城市"
+      >
+        {form.getFieldDecorator('districtName', {
+          rules: [{ required: true, message: '请选择关联城市...' }],
+        })(
+          <App />
         )}
       </FormItem>
     </Modal>
@@ -130,6 +141,17 @@ const CreateEditForm = Form.create()((props) => {
           </Select>
         )}
       </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="关联城市"
+      >
+        {form.getFieldDecorator('districtName', {
+          rules: [{ required: true, message: '请选择关联城市...' }],
+        })(
+          <App />
+        )}
+      </FormItem>
     </Modal>
   );
 });
@@ -192,6 +214,45 @@ class Avatar extends React.Component {
     );
   }
 }
+
+const provinceData = ['Zhejiang', 'Jiangsu'];
+const cityData = {
+  Zhejiang: ['Hangzhou', 'Ningbo', 'Wenzhou'],
+  Jiangsu: ['Nanjing', 'Suzhou', 'Zhenjiang'],
+};
+
+class App extends React.Component {
+  state = {
+    cities: cityData[provinceData[0]],
+    secondCity: cityData[provinceData[0]][0],
+  }
+  handleProvinceChange = (value) => {
+    this.setState({
+      cities: cityData[value],
+      secondCity: cityData[value][0],
+    });
+  }
+  onSecondCityChange = (value) => {
+    this.setState({
+      secondCity: value,
+    });
+  }
+  render() {
+    const provinceOptions = provinceData.map(province => <Option key={province}>{province}</Option>);
+    const cityOptions = this.state.cities.map(city => <Option key={city}>{city}</Option>);
+    return (
+      <div>
+        <Select defaultValue={provinceData[0]} style={{ width: 90 }} onChange={this.handleProvinceChange}>
+          {provinceOptions}
+        </Select>
+        <Select value={this.state.secondCity} style={{ width: 90 }} onChange={this.onSecondCityChange}>
+          {cityOptions}
+        </Select>
+      </div>
+    );
+  }
+}
+
 @connect(({ districtManage, loading }) => ({
   districtManage,
   loading: loading.models.districtManage,

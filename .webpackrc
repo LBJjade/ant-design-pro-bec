@@ -20,15 +20,15 @@
   "disableDynamicImport": true,
   "hash": true,
   "proxy": {
-    "/api": {
-      "target": "http://localhost:1337/",
-      "changeOrigin": true,
-      "pathRewrite": { "^/api":"parse" }
-    },
-    "/mail": {
-      "target": "http://localhost:1337/",
-      "changeOrigin": true,
-      "pathRewrite": { "^/mail":"parse/apps/bec" }
-    }
-  }
+     "/api": {
+       "target": "https://parse-server-instances.herokuapp.com/",
+        "changeOrigin": true,
+        "pathRewrite": { "^/api":"parse" }
+     },
+     "/mail": {
+        "target": "https://parse-server-instances.herokuapp.com/",
+        "changeOrigin": true,
+        "pathRewrite": { "^/mail":"parse/apps/bec" }
+     }
+   }
 }

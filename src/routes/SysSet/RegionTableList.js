@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './TableList.less';
+import styles from './Brand/TableList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
