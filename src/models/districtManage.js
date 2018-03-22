@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing */
-import { districtQuery, districtAdd, districtEdit, districtBatchDelete, districtDelete, districtRequireQuery, brandQuery, regionQuery } from '../services/sysSet';
+import { districtQuery, districtAdd, districtEdit, districtBatchDelete, districtDelete, districtRequireQuery, getBrand, regionQuery } from '../services/sysSet';
 
 export default {
   namespace: 'districtManage',
@@ -63,7 +63,7 @@ export default {
       });
     },
     *brandQuery({ payload }, { call, put }) {
-      const response = yield call(brandQuery, payload);
+      const response = yield call(getBrand, payload);
       yield put({
         type: 'brands',
         payload: response,

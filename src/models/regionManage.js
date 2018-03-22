@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing,comma-dangle */
-import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery, brandQuery } from '../services/sysSet';
+import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery, getBrand } from '../services/sysSet';
 
 export default {
   namespace: 'regionManage',
@@ -59,7 +59,7 @@ export default {
       });
     },
     *brandQuery({ payload }, { call, put }) {
-      const response = yield call(brandQuery, payload);
+      const response = yield call(getBrand, payload);
       yield put({
         type: 'brands',
         payload: response,
