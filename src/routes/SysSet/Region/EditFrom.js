@@ -4,6 +4,7 @@ import { Input, Modal, Form, Upload, Icon, Select } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const SelectOption = Select.Option;
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -85,6 +86,7 @@ export default class CreateEditForm extends PureComponent {
     };
     const { getFieldDecorator } = this.props.form;
     const modalEditVisible = this.props.modalEditVisible;
+    const results = this.props.option;
 
   return (
 
@@ -110,14 +112,12 @@ export default class CreateEditForm extends PureComponent {
         wrapperCol={{ span: 15 }}
         label="关联品牌"
       >
-        {getFieldDecorator('regionName', {
-          rules: [{ required: true, message: '请选择关联品牌...' }],
-        })(
-          <Select defaultValue="lucy" style={{ width: 120 }}>
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="disabled" disabled>Disabled</Option>
-            <Option value="Yiminghe">yiminghe</Option>
+        {getFieldDecorator('brandName')(
+          <Select
+            placeholder="请选择"
+            style={{ width: '100%' }}
+          >
+            {results.map(d => <SelectOption key={d.objectId} value={d.brandName} >{d.brandName}</SelectOption>)}
           </Select>
         )}
       </FormItem>
