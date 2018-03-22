@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,no-multi-spaces,no-undef,object-curly-spacing */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,eslint-disable react/jsx-wrap-multilines,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,no-multi-spaces,no-undef,object-curly-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -9,6 +9,7 @@ import CreateAddForm from './AddFrom';
 import styles from './TableList.less';
 
 const FormItem = Form.Item;
+const SelectOption = Select.Option;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
@@ -102,6 +103,7 @@ export default class TableList extends PureComponent {
     });
   }
   getbrand = () => {
+    message.success('查询成功');
     const { dispatch } = this.props;
     dispatch({
       type: 'brandManage/getBrand',
@@ -281,7 +283,8 @@ export default class TableList extends PureComponent {
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
-    const value = this.props.list;
+    const { brandManage: { data } } = this.props;
+    const results = data.results;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
@@ -294,16 +297,12 @@ export default class TableList extends PureComponent {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="品牌名称">
-              {(
+              {getFieldDecorator('brandName')(
                 <Select
                   placeholder="请选择"
                   style={{ width: '100%' }}
-                  onClick={this.getbrand}
                 >
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="disabled" disabled>Disabled</Option>
-                  <Option value="Yiminghe">yiminghe</Option>
+                  {results.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.brandName}</SelectOption>)}
                 </Select>
               )}
             </FormItem>
@@ -324,6 +323,8 @@ export default class TableList extends PureComponent {
 
   renderAdvancedForm() {
     const { getFieldDecorator } = this.props.form;
+    const { brandManage: { data } } = this.props;
+    const results = data.results;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
@@ -337,9 +338,11 @@ export default class TableList extends PureComponent {
           <Col md={8} sm={24}>
             <FormItem label="品牌名称">
               {getFieldDecorator('brandName')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                <Select
+                  placeholder="请选择"
+                  style={{ width: '100%' }}
+                >
+                  {results.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.brandName}</SelectOption>)}
                 </Select>
               )}
             </FormItem>
