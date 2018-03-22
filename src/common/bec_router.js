@@ -221,10 +221,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['regionManage'], () => import('../routes/SysSet/Region/RegionTableList')),
     },
     '/set/district': {
-      component: dynamicWrapper(app, ['districtManage'], () => import('../routes/SysSet/DistrictTableList')),
+      component: dynamicWrapper(app, ['districtManage'], () => import('../routes/SysSet/District/DistrictTableList')),
     },
     '/set/shop': {
-      component: dynamicWrapper(app, ['shopManage'], () => import('../routes/SysSet/ShopTableList')),
+      component: dynamicWrapper(app, ['shopManage'], () => import('../routes/SysSet/Shop/ShopTableList')),
     },
   };
   // Get name from ./menu.js or just set it in the router data.
