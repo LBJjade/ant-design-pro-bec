@@ -4,6 +4,8 @@ import { Input, Modal, Form, Upload, Icon, Select } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const SelectOption = Select.Option;
+
 
 const provinceData = ['Zhejiang', 'Jiangsu'];
 const cityData = {
@@ -64,6 +66,7 @@ export default class CreateAddForm extends PureComponent {
     };
     const { getFieldDecorator } = this.props.form;
     const modalVisible = this.props.modalVisible;
+    const results = this.props.option;
 
   return (
 
@@ -89,14 +92,14 @@ export default class CreateAddForm extends PureComponent {
         wrapperCol={{ span: 15 }}
         label="关联品牌"
       >
-        {getFieldDecorator('districtName', {
+        {getFieldDecorator('brandName', {
           rules: [{ required: true, message: '请选择关联品牌...' }],
         })(
-          <Select defaultValue="lucy" style={{ width: 120 }} >
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="disabled" disabled>Disabled</Option>
-            <Option value="Yiminghe">yiminghe</Option>
+          <Select
+            placeholder="请选择"
+            style={{ width: '100%' }}
+          >
+            {results.map(d => <SelectOption key={d.objectId} value={d.brandName} >{d.brandName}</SelectOption>)}
           </Select>
         )}
       </FormItem>

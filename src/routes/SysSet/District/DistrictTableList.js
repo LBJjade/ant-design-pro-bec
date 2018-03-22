@@ -38,6 +38,9 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'districtManage/fetch',
     });
+    dispatch({
+      type: 'districtManage/brandQuery',
+    });
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -195,6 +198,10 @@ export default class TableList extends PureComponent {
     this.setState({
       modalVisible: false,
     });
+    this.props.dispatch({
+      type: 'districtManage/fetch',
+      payload: {},
+    });
   };
 
   handleEdit = (fields) => {
@@ -207,6 +214,11 @@ export default class TableList extends PureComponent {
     message.success('编辑成功');
     this.setState({
       modalEditVisible: false,
+    });
+
+    this.props.dispatch({
+      type: 'districtManage/fetch',
+      payload: {},
     });
   };
 
@@ -303,7 +315,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { districtManage: { data }, loading } = this.props;
+    const { districtManage: { data, list }, loading } = this.props;
     const { selectedRows, modalVisible, modalEditVisible } = this.state;
 
     const menu = (
@@ -359,11 +371,13 @@ export default class TableList extends PureComponent {
     const parentAddMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleAddModalVisible,
+      option: list.results,
     };
 
     const parentEditMethods = {
       handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
+      option: list.results,
     };
 
     const paginationProps = {
