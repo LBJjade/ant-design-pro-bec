@@ -110,7 +110,7 @@ export default class CreateAddForm extends PureComponent {
         wrapperCol={{ span: 15 }}
         label="关联品牌"
       >
-        {getFieldDecorator('regionName', {
+        {getFieldDecorator('brandName', {
           rules: [{ required: true, message: '请选择关联品牌...' }],
         })(
           <Select defaultValue="lucy" style={{ width: 120 }}>
