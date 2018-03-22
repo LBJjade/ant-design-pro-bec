@@ -41,6 +41,9 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'districtManage/brandQuery',
     });
+    dispatch({
+      type: 'districtManage/regionQuery',
+    });
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -198,6 +201,7 @@ export default class TableList extends PureComponent {
     this.setState({
       modalVisible: false,
     });
+
     this.props.dispatch({
       type: 'districtManage/fetch',
       payload: {},
@@ -235,7 +239,7 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="品牌名称">
+            <FormItem label="小区名称">
               {getFieldDecorator('districtName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
@@ -271,7 +275,7 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="品牌名称">
+            <FormItem label="小区名称">
               {getFieldDecorator('districtName')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   <Option value="0">关闭</Option>
@@ -315,7 +319,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { districtManage: { data, list }, loading } = this.props;
+    const { districtManage: { data, list, regionsResults }, loading } = this.props;
     const { selectedRows, modalVisible, modalEditVisible } = this.state;
 
     const menu = (
@@ -335,7 +339,7 @@ export default class TableList extends PureComponent {
         dataIndex: 'districtName',
       },
       {
-        title: '关联品牌',
+        title: '关联小区',
         dataIndex: '',
       },
       {
@@ -372,12 +376,14 @@ export default class TableList extends PureComponent {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleAddModalVisible,
       option: list.results,
+      option2: regionsResults.results,
     };
 
     const parentEditMethods = {
       handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
       option: list.results,
+      option2: regionsResults.results,
     };
 
     const paginationProps = {
@@ -390,7 +396,7 @@ export default class TableList extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="品牌管理">
+      <PageHeaderLayout title="小区管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>

@@ -67,6 +67,7 @@ export default class CreateAddForm extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const modalVisible = this.props.modalVisible;
     const results = this.props.option;
+    const results2 = this.props.option2;
 
   return (
 
@@ -108,14 +109,14 @@ export default class CreateAddForm extends PureComponent {
         wrapperCol={{ span: 15 }}
         label="关联大区"
       >
-        {getFieldDecorator('districtName', {
+        {getFieldDecorator('regionName', {
           rules: [{ required: true, message: '请选择关联大区...' }],
         })(
-          <Select defaultValue="lucy" style={{ width: 120 }} >
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="disabled" disabled>Disabled</Option>
-            <Option value="Yiminghe">yiminghe</Option>
+          <Select
+            placeholder="请选择"
+            style={{ width: '100%' }}
+          >
+            {results2.map(d => <SelectOption key={d.objectId} value={d.regionName} >{d.regionName}</SelectOption>)}
           </Select>
         )}
       </FormItem>
