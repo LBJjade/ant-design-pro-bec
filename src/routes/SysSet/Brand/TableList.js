@@ -101,6 +101,12 @@ export default class TableList extends PureComponent {
       type: 'brandManage/fetch',
     });
   }
+  getbrand = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'brandManage/getBrand',
+    });
+  };
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch } = this.props;
@@ -275,6 +281,7 @@ export default class TableList extends PureComponent {
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
+    const value = this.props.list;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
@@ -287,10 +294,16 @@ export default class TableList extends PureComponent {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="品牌名称">
-              {getFieldDecorator('brandName')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+              {(
+                <Select
+                  placeholder="请选择"
+                  style={{ width: '100%' }}
+                  onClick={this.getbrand}
+                >
+                  <Option value="jack">Jack</Option>
+                  <Option value="lucy">Lucy</Option>
+                  <Option value="disabled" disabled>Disabled</Option>
+                  <Option value="Yiminghe">yiminghe</Option>
                 </Select>
               )}
             </FormItem>
@@ -366,7 +379,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { brandManage: { data }, loading } = this.props;
+    const { brandManage: { data }, list, loading } = this.props;
     const { selectedRows, modalVisible, modalEditVisible, orderNumber, brandName } = this.state;
 
     const menu = (

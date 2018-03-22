@@ -53,6 +53,12 @@ export async function uploadLogo(params) {
   }, 'where');
 }
 
+export async function getBrandName(params) {
+  return request(`/api/classes/brand?${stringify(params)}`, {
+    method: 'GET',
+  });
+}
+
 export async function regionQuery(params) {
   return request(`/api/classes/Region?${stringify(params)}`, {
     method: 'GET',
