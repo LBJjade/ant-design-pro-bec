@@ -2,20 +2,20 @@
 import { stringify } from 'qs';
 import request, { requestParams2Url } from '../utils/request';
 
-export async function brandQuery(params) {
+export async function getBrand(params) {
   return request(`/api/classes/brand?${stringify(params)}`, {
     method: 'GET',
   });
 }
 
-export async function brandAdd(params) {
+export async function postBrand(params) {
   return request('/api/classes/brand', {
     method: 'POST',
     body: params,
   });
 }
 
-export async function brandEdit(params) {
+export async function putBrand(params) {
   let editid = params.eidtId;
   let data = params.fields;
   return request(`/api/classes/brand/${editid}`, {
@@ -32,7 +32,7 @@ export async function brandBatchDelete(params) {
   }
 }
 
-export async function brandDelete(params) {
+export async function deleteBrand(params) {
   return request('/api/classes/brand/' + params, {
     method: 'DELETE',
   });

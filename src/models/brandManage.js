@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing,no-undef */
-import { brandQuery, brandAdd, brandEdit, brandBatchDelete, brandDelete, brandRequireQuery, uploadLogo } from '../services/sysSet';
+import { getBrand, postBrand, putBrand, brandBatchDelete, deleteBrand, brandRequireQuery, uploadLogo } from '../services/sysSet';
 
 export default {
   namespace: 'brandManage',
@@ -16,35 +16,35 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(brandQuery, payload);
+    *fetchBrand({ payload }, { call, put }) {
+      const response = yield call(getBrand, payload);
       yield put({
         type: 'changeBrands',
         payload: response,
       });
     },
-    *add({ payload }, { call, put }) {
-      const response = yield call(brandAdd, payload);
+    *storeBrand({ payload }, { call, put }) {
+      const response = yield call(postBrand, payload);
       yield put({
         type: 'changeBrands',
         payload: response,
       });
     },
-    *edit({ payload }, { call, put }) {
-      const response = yield call(brandEdit, payload);
+    *coverBrand({ payload }, { call, put }) {
+      const response = yield call(putBrand, payload);
       yield put({
         type: 'changeBrands',
         payload: response,
       });
     },
-    *delete({ payload }, { call, put }) {
-      const response = yield call(brandDelete, payload);
+    *removeBrand({ payload }, { call, put }) {
+      const response = yield call(deleteBrand, payload);
       yield put({
         type: 'changeBrands',
         payload: response,
       });
     },
-    *batchDelete({ payload }, { call, put }) {
+    *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(brandBatchDelete, payload);
       yield put({
         type: 'changeBrands',

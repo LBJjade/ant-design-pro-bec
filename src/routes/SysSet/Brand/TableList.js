@@ -99,7 +99,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brandManage/fetchBrand',
     });
   }
 
@@ -125,7 +125,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brandManage/fetchBrand',
       payload: params,
     });
     this.setState({
@@ -143,7 +143,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brandManage/fetchBrand',
       payload: {},
     });
   };
@@ -217,7 +217,7 @@ export default class TableList extends PureComponent {
 
   handelDelete = (row) => {
     this.props.dispatch({
-      type: 'brandManage/delete',
+      type: 'brandManage/removeBrand',
       payload: row,
     });
   };
@@ -226,14 +226,14 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'brandManage/batchDelete',
+      type: 'brandManage/batchRemoveDelete',
       payload: row,
     });
   };
 
   handelEdit = (rows, data) => {
     this.props.dispatch({
-      type: 'brandManage/edit',
+      type: 'brandManage/coverBrand',
       payload: {
         row: rows,
         data: data,
@@ -257,7 +257,7 @@ export default class TableList extends PureComponent {
 
   handleAdd = (fields) => {
     this.props.dispatch({
-      type: 'brandManage/add',
+      type: 'brandManage/storeBrand',
       payload: fields,
     });
 
@@ -270,7 +270,7 @@ export default class TableList extends PureComponent {
   handleEdit = (fields) => {
     let eidtId = this.state.editId;
     this.props.dispatch({
-      type: 'brandManage/edit',
+      type: 'brandManage/coverBrand',
       payload: { fields, eidtId },
     });
 
