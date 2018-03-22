@@ -4,6 +4,7 @@ import { Input, Modal, Form, Upload, Icon, Select } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const SelectOption = Select.Option;
 
 @Form.create()
 export default class CreateAddForm extends PureComponent {

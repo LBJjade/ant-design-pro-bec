@@ -41,16 +41,6 @@ export default class TableList extends PureComponent {
     });
     dispatch({
       type: 'regionManage/brandQuery',
-      payload: {
-        include: "pointerIntention",
-        where: {
-          "pointerIntention":{
-            "__type": "Pointer",
-            "className": "Intention",
-            "objectId": "mqMb52dJaH",
-          },
-        },
-      },
     });
   }
 
@@ -262,7 +252,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { regionManage: { data }, loading } = this.props;
+    const { regionManage: { data, list }, loading } = this.props;
     const { selectedRows, modalVisible, modalEditVisible } = this.state;
 
     const menu = (
@@ -314,11 +304,13 @@ export default class TableList extends PureComponent {
     const parentAddMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleAddModalVisible,
+      option: list.results,
     };
 
     const parentEditMethods = {
       handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
+      option: list.results,
     };
 
     const paginationProps = {

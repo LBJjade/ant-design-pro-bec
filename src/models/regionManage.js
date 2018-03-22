@@ -1,14 +1,15 @@
 /* eslint-disable keyword-spacing,comma-dangle */
-import {
-  regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery,
-  regionBrandQuery
-} from '../services/sysSet';
+import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery, brandQuery } from '../services/sysSet';
 
 export default {
   namespace: 'regionManage',
 
   state: {
     data: {
+      results: [],
+      count: 0,
+    },
+    list: {
       results: [],
       count: 0,
     },
@@ -25,42 +26,42 @@ export default {
     *add({ payload }, { call, put }) {
       const response = yield call(regionAdd, payload);
       yield put({
-        type: 'addRegions',
+        type: 'changeRegions',
         payload: response,
       });
     },
     *edit({ payload }, { call, put }) {
       const response = yield call(regionEdit, payload);
       yield put({
-        type: 'editRegions',
+        type: 'changeRegions',
         payload: response,
       });
     },
     *delete({ payload }, { call, put }) {
       const response = yield call(regionDelete, payload);
       yield put({
-        type: 'deleteRegions',
+        type: 'changeRegions',
         payload: response,
       });
     },
     *batchDelete({ payload }, { call, put }) {
       const response = yield call(regionBatchDelete, payload);
       yield put({
-        type: 'deleteRegions',
+        type: 'changeRegions',
         payload: response,
       });
     },
     *requireQuery({ payload }, { call, put }) {
       const response = yield call(regionRequireQuery, payload);
       yield put({
-        type: 'queryResult',
+        type: 'changeRegions',
         payload: response,
       });
     },
     *brandQuery({ payload }, { call, put }) {
-      const response = yield call(regionBrandQuery, payload);
+      const response = yield call(brandQuery, payload);
       yield put({
-        type: 'brandqueryResult',
+        type: 'brands',
         payload: response,
       });
     },
@@ -73,35 +74,11 @@ export default {
         data: action.payload,
       };
     },
-  },
-  addRegions(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  editRegions(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  deleteRegions(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  queryResult(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  brandqueryResult(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
+    brands(state, action) {
+      return {
+        ...state,
+        list: action.payload,
+      };
+    },
   },
 };

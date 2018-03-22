@@ -1,9 +1,10 @@
-/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state */
+/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,react/jsx-no-comment-textnodes */
 import React, { PureComponent } from 'react';
 import { Input, Modal, Form, Upload, Icon, Select } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const SelectOption = Select.Option;
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -73,6 +74,7 @@ export default class CreateAddForm extends PureComponent {
       handleAdd: props.handleAdd,
       handleModalVisible: props.handleModalVisible,
       form: props.form,
+      option: props.option,
     };
   }
 
@@ -85,6 +87,7 @@ export default class CreateAddForm extends PureComponent {
     };
     const { getFieldDecorator } = this.props.form;
     const modalVisible = this.props.modalVisible;
+    const results = this.props.option;
 
   return (
 
@@ -110,14 +113,12 @@ export default class CreateAddForm extends PureComponent {
         wrapperCol={{ span: 15 }}
         label="关联品牌"
       >
-        {getFieldDecorator('brandName', {
-          rules: [{ required: true, message: '请选择关联品牌...' }],
-        })(
-          <Select defaultValue="lucy" style={{ width: 120 }}>
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="disabled" disabled>Disabled</Option>
-            <Option value="Yiminghe">yiminghe</Option>
+        {getFieldDecorator('brandName')(
+          <Select
+            placeholder="请选择"
+            style={{ width: '100%' }}
+          >
+            {results.map(d => <SelectOption key={d.objectId} value={d.brandName} >{d.brandName}</SelectOption>)}
           </Select>
         )}
       </FormItem>
