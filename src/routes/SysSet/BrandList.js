@@ -6,7 +6,7 @@ import styles from './BrandList.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const columns = [{
-  title: '序号',
+  title: '编号',
   dataIndex: 'orderNumber',
 }, {
   title: '品牌名称',
