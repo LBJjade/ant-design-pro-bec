@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing,no-undef */
-import { brandQuery, brandAdd, brandEdit, brandBatchDelete, brandDelete, brandRequireQuery, uploadLogo, getBrandName } from '../services/sysSet';
+import { brandQuery, brandAdd, brandEdit, brandBatchDelete, brandDelete, brandRequireQuery, uploadLogo } from '../services/sysSet';
 
 export default {
   namespace: 'brandManage',
@@ -65,13 +65,6 @@ export default {
         payload: response,
       });
     },
-    *getBrand({ payload }, { call, put }) {
-      const response = yield call(getBrandName, payload);
-      yield put({
-        type: 'brands',
-        payload: response,
-      });
-    },
   },
 
   reducers: {
@@ -79,12 +72,6 @@ export default {
       return {
         ...state,
         data: action.payload,
-      };
-    },
-    brands(state, action) {
-      return {
-        ...state,
-        list: action.payload.brandName,
       };
     },
   },

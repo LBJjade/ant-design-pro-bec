@@ -102,13 +102,6 @@ export default class TableList extends PureComponent {
       type: 'brandManage/fetch',
     });
   }
-  getbrand = () => {
-    message.success('查询成功');
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'brandManage/getBrand',
-    });
-  };
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch } = this.props;
@@ -195,7 +188,7 @@ export default class TableList extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const { dispatch, form } = this.props;
+    const {brandManage: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -213,6 +206,12 @@ export default class TableList extends PureComponent {
         type: 'brandManage/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
+
+      this.setState({
+        pagination: {
+          pageSize: data.results.length,
+        },
+      });
     });
   };
 
@@ -302,7 +301,7 @@ export default class TableList extends PureComponent {
                   placeholder="请选择"
                   style={{ width: '100%' }}
                 >
-                  {results.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.brandName}</SelectOption>)}
+                  {results.map(d => <SelectOption key={d.objectId} value={d.brandName} >{d.brandName}</SelectOption>)}
                 </Select>
               )}
             </FormItem>
