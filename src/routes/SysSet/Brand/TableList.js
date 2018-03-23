@@ -148,12 +148,6 @@ export default class TableList extends PureComponent {
     });
   };
 
-  toggleForm = () => {
-    this.setState({
-      expandForm: !this.state.expandForm,
-    });
-  };
-
   handleMenuClick = (e) => {
     const { dispatch } = this.props;
     const { selectedRows } = this.state;
@@ -228,16 +222,6 @@ export default class TableList extends PureComponent {
     this.props.dispatch({
       type: 'brandManage/batchRemoveDelete',
       payload: row,
-    });
-  };
-
-  handelEdit = (rows, data) => {
-    this.props.dispatch({
-      type: 'brandManage/coverBrand',
-      payload: {
-        row: rows,
-        data: data,
-      },
     });
   };
 
