@@ -37,7 +37,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'regionManage/fetch',
+      type: 'regionManage/fetchRegion',
     });
     dispatch({
       type: 'regionManage/brandQuery',
@@ -66,7 +66,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'regionManage/fetch',
+      type: 'regionManage/fetchRegion',
       payload: params,
     });
     this.setState({
@@ -84,7 +84,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'regionManage/fetch',
+      type: 'regionManage/fetchRegion',
       payload: {},
     });
   };
@@ -152,7 +152,7 @@ export default class TableList extends PureComponent {
 
   handelDelete = (row) => {
     this.props.dispatch({
-      type: 'regionManage/delete',
+      type: 'regionManage/removeRegion',
       payload: row,
     });
   };
@@ -168,7 +168,7 @@ export default class TableList extends PureComponent {
 
   handelEdit = (rows, data) => {
     this.props.dispatch({
-      type: 'regionManage/edit',
+      type: 'regionManage/coverRegion',
       payload: {
         row: rows,
         data: data,
@@ -191,7 +191,7 @@ export default class TableList extends PureComponent {
 
   handleAdd = (fields) => {
     this.props.dispatch({
-      type: 'regionManage/add',
+      type: 'regionManage/storeRegion',
       payload: fields,
     });
 
@@ -201,7 +201,7 @@ export default class TableList extends PureComponent {
     });
 
     this.props.dispatch({
-      type: 'regionManage/fetch',
+      type: 'regionManage/fetchRegion',
       payload: {},
     });
   };
@@ -209,7 +209,7 @@ export default class TableList extends PureComponent {
   handleEdit = (fields) => {
     let eidtId = this.state.editId;
     this.props.dispatch({
-      type: 'regionManage/edit',
+      type: 'regionManage/coverRegion',
       payload: { fields, eidtId },
     });
 
@@ -219,7 +219,7 @@ export default class TableList extends PureComponent {
     });
 
     this.props.dispatch({
-      type: 'regionManage/fetch',
+      type: 'regionManage/fetchRegion',
       payload: {},
     });
   };

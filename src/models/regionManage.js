@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing,comma-dangle */
-import { regionQuery, regionAdd, regionEdit, regionBatchDelete, regionDelete, regionRequireQuery, getBrand } from '../services/sysSet';
+import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, getBrand } from '../services/sysSet';
 
 export default {
   namespace: 'regionManage',
@@ -16,29 +16,29 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(regionQuery, payload);
+    *fetchRegion({ payload }, { call, put }) {
+      const response = yield call(getRegion, payload);
       yield put({
         type: 'changeRegions',
         payload: response,
       });
     },
-    *add({ payload }, { call, put }) {
-      const response = yield call(regionAdd, payload);
+    *storeRegion({ payload }, { call, put }) {
+      const response = yield call(postRegion, payload);
       yield put({
         type: 'changeRegions',
         payload: response,
       });
     },
-    *edit({ payload }, { call, put }) {
-      const response = yield call(regionEdit, payload);
+    *coverRegion({ payload }, { call, put }) {
+      const response = yield call(putRegion, payload);
       yield put({
         type: 'changeRegions',
         payload: response,
       });
     },
-    *delete({ payload }, { call, put }) {
-      const response = yield call(regionDelete, payload);
+    *removeRegion({ payload }, { call, put }) {
+      const response = yield call(deleteRegion, payload);
       yield put({
         type: 'changeRegions',
         payload: response,

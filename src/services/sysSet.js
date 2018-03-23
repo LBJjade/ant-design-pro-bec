@@ -59,20 +59,20 @@ export async function getBrandName(params) {
   });
 }
 
-export async function regionQuery(params) {
+export async function getRegion(params) {
   return request(`/api/classes/Region?${stringify(params)}`, {
     method: 'GET',
   });
 }
 
-export async function regionAdd(params) {
+export async function postRegion(params) {
   return request('/api/classes/Region', {
     method: 'POST',
     body: params,
   });
 }
 
-export async function regionEdit(params) {
+export async function putRegion(params) {
   let editid = params.eidtId;
   let data = params.fields;
   return request(`/api/classes/Region/${editid}`, {
@@ -89,7 +89,7 @@ export async function regionBatchDelete(params) {
   }
 }
 
-export async function regionDelete(params) {
+export async function deleteRegion(params) {
   return request('/api/classes/Region/' + params, {
     method: 'DELETE',
   });
