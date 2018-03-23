@@ -246,7 +246,7 @@ export default class TableList extends PureComponent {
                   placeholder="请选择"
                   style={{ width: '100%' }}
                 >
-                  {results.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.regionName}</SelectOption>)}
+                  {results.map(d => <SelectOption key={d.objectId} >{d.regionName}</SelectOption>)}
                 </Select>
               )}
             </FormItem>
