@@ -33,7 +33,7 @@ export default {
         if (resReset.error !== undefined) {
           Message.error(`重置密码验证邮件发送失败！${resReset.error}`, 5);
         } else {
-          Message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱进行激活。', 5);
+          Message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱并进行重置密码。', 5);
         }
       }
     },

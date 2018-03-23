@@ -19,6 +19,14 @@ const menuData = [{
     // hideInMenu: true,
   }],
 }, {
+  name: '客户分析',
+  icon: 'area-chart',
+  path: 'analysis',
+  children: [{
+    name: '分析规则管理',
+    path: 'analysissetting',
+  }],
+}, {
   name: '表单页',
   icon: 'form',
   path: 'form',

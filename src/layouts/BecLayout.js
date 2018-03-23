@@ -15,6 +15,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/bec_menu';
 import logo from '../assets/logo.svg';
+import styles from './BecLayout.less';
 
 const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute } = Authorized;

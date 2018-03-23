@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-<path fill="none" stroke="#2196F3" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M28.917,48.359
-	c-6.781-7.913-11.114-17.986-11.821-29.046v-0.202c0-8.311,6.738-15.049,15.049-15.049c8.312,0,15.049,6.738,15.049,15.049v0.15
-	c-0.065,1.13-0.169,2.25-0.307,3.359"/>
-<path fill="none" stroke="#F44336" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M22.643,27.174
-	c10.215-2.07,21.122-0.95,31.128,3.816l0.178,0.099c7.259,4.043,9.864,13.208,5.816,20.469c-4.045,7.26-13.209,9.867-20.468,5.82
-	l-0.133-0.075c-0.953-0.604-1.882-1.24-2.783-1.899"/>
-<path fill="none" stroke="#4CAF50" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M44.602,32.909
-	c-3.699,9.743-10.467,18.37-19.836,24.29l-0.179,0.096c-7.296,3.981-16.437,1.294-20.418-6.002
-	c-3.98-7.296-1.293-16.436,6.002-20.417l0.131-0.071c1.023-0.484,2.056-0.931,3.096-1.34"/>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#00A0E9;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#E60012;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st2{fill:none;stroke:#009944;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+</style>
+<path class="st0" d="M361.2,191c0.9-7.9,1.4-15.9,1.7-24l-0.1,0c0-58.4-47.3-105.7-105.7-105.7S151.5,108.6,151.5,167l-0.1,0  c2.8,74.6,30,143,73.9,197.3"/>
+<path class="st1" d="M205,219.5c16.9-2.6,34.2-4,51.9-4c56.6,0,109.8,14,156.6,38.8l-0.1,0.3c31.7,18.2,53,52.5,53,91.7  c0,58.4-47.3,105.7-105.7,105.7c-19.4,0-37.7-5.3-53.3-14.4l0.1,0c-6.5-4.1-12.9-8.5-19.2-13"/>
+<path class="st2" d="M121,244.3c-6.9,3.1-13.7,6.4-20.3,9.9l0.2,0.3c-31.6,18.3-52.9,52.4-52.9,91.6c0,58.4,47.3,105.7,105.7,105.7  c19.3,0,37.4-5.2,53-14.2l0.1,0.2c60.6-38.1,108-95.1,134.2-162.8"/>
 </svg>
