@@ -11,6 +11,7 @@ import styles from '../Brand/TableList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const SelectOption = Select.Option;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 @connect(({ regionManage, loading }) => ({
@@ -226,22 +227,26 @@ export default class TableList extends PureComponent {
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
+    const { regionManage: { data } } = this.props;
+    const results = data.results;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
+          <Col md={4} sm={10}>
             <FormItem label="编号">
               {getFieldDecorator('orderNumber')(
-                <Input placeholder="请输入" />
+                <InputNumber placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="大区名称">
               {getFieldDecorator('regionName')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                <Select
+                  placeholder="请选择"
+                  style={{ width: '100%' }}
+                >
+                  {results.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.regionName}</SelectOption>)}
                 </Select>
               )}
             </FormItem>
