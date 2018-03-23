@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,quote-props,key-spacing,quotes,quotes,no-undef,no-unused-expressions */
+/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,quote-props,key-spacing,quotes,quotes,no-undef,no-unused-expressions,no-plusplus,no-empty */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -42,6 +42,26 @@ export default class TableList extends PureComponent {
     });
     dispatch({
       type: 'regionManage/brandQuery',
+    });
+    // const { regionManage: { data } } = this.props;
+    // const results = data.results;
+    // for (let i = 0; i < results.length; i++) {
+    //
+    // };
+    dispatch({
+      type: 'regionManage/requireQuery',
+      payload: {
+        where: {
+          "$relatedTo": {
+            "object": {
+              "__type":"Pointer",
+              "className":"Region",
+              "objectId":"wtnJcWgIeg",
+            },
+            "key":"relatebrand",
+          },
+        },
+      },
     });
   }
 

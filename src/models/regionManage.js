@@ -13,6 +13,10 @@ export default {
       results: [],
       count: 0,
     },
+    rebrands: {
+      results: [],
+      count: 0,
+    },
   },
 
   effects: {
@@ -54,7 +58,7 @@ export default {
     *requireQuery({ payload }, { call, put }) {
       const response = yield call(regionRequireQuery, payload);
       yield put({
-        type: 'changeRegions',
+        type: 'requireBrands',
         payload: response,
       });
     },
@@ -78,6 +82,12 @@ export default {
       return {
         ...state,
         list: action.payload,
+      };
+    },
+    requireBrands(state, action) {
+      return {
+        ...state,
+        rebrands: action.payload,
       };
     },
   },

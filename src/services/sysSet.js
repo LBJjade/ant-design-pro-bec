@@ -96,11 +96,10 @@ export async function deleteRegion(params) {
 }
 
 export async function regionRequireQuery(params) {
-  let require = `'where={${stringify(params)}}'`;
-  return request('/api/classes/Region/', {
+  let url = requestParams2Url(params);
+  return request(`/api/classes/brand${url}`, {
     method: 'GET',
-    data: require,
-  }, 'where');
+  });
 }
 
 export async function regionBrandQuery(params) {
