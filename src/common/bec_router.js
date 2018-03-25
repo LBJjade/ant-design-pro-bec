@@ -208,9 +208,6 @@ export const getRouterData = (app) => {
     '/humanresources/employee': {
       component: dynamicWrapper(app, [], () => import('../routes/HumanResources/Employee')),
     },
-    '/analysis/intention': {
-      component: dynamicWrapper(app, ['intention'], () => import('../routes/Analysis/IntentionSetting')),
-    },
     '/analysis/analysissetting': {
       component: dynamicWrapper(app, ['analysis'], () => import('../routes/Analysis/AnalysisSetting')),
     },

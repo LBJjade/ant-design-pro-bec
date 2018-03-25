@@ -6,34 +6,25 @@ import { randomString } from '../../utils/cryptoUtils';
 
 const { Option } = Select;
 
-export default class RuleTableForm extends Component {
+export default class TableForm extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      loading: false,
-      data: props.value,
+      loading: props.loading,
       // dataSource: props.dataSource,
-      // columnsSource: props.columnsSource,
-      // pointerIntention: props.pointerIntention,
       dataAnalysisField: props.dataAnalysisField,
+      dataKey: props.dataKey,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    // 非dataSource属性变化不作改变
-    if (this.props.pointerIntention === nextProps.pointerIntention) {
-      if (nextProps.value !== undefined) {
-        this.setState({
-          data: nextProps.value,
-        });
-      }
-    } else {
-      // if (nextProps.dataSource !== undefined) {
+    if (this.props.pointerIntention !== nextProps.pointerIntention) {
+      if (nextProps.dataSource !== undefined) {
         this.setState({
           data: nextProps.dataSource,
         });
-      // }
+      }
     }
   }
 
@@ -71,8 +62,8 @@ export default class RuleTableForm extends Component {
     newData.push({
       objectId: `NEW_TEMP_ID_${this.index}`,
       key: randomString(10),
-      isRequired: 1,
-      isOptional: 0,
+      isRequired: (this.state.dataKey === 'isRequired' ? 1 : 0),
+      isOptional: (this.state.dataKey === 'isOptional' ? 1 : 0),
       fieldKey: '',
       logic: '',
       value: '',
@@ -109,7 +100,7 @@ export default class RuleTableForm extends Component {
         return;
       }
       const target = this.getRowByKey(recode.key) || {};
-      if (!target.isRequired || !target.fieldKey || !target.logic || !target.value) {
+      if (!target[this.state.dataKey] || !target.fieldKey || !target.logic || !target.value) {
         message.error('请填写完整条件规则信息。');
         e.target.focus();
         this.setState({
@@ -144,33 +135,39 @@ export default class RuleTableForm extends Component {
   };
 
   render() {
-    // const { dataAnalysisField } = this.props;
     const columns = [{
       title: '条件类型',
-      dataIndex: 'isRequired',
-      key: 'isRequired',
+      dataIndex: this.state.dataKey,
+      key: this.state.dataKey,
       width: '20%',
       render: (text, record) => {
-        const ruleType = [
-          { objectId: 'XDE9jnTaq8', key: 1, label: '必要条件' },
-        ];
+        // let ruleType = [];
+        //
+        // if (this.state.dataKey === 'isRequired') {
+        //   ruleType = [{ objectId: 'XDE9jnTaq8', key: 1, label: '必要条件' }];
+        // }
+        // if (this.state.dataKey === 'isOptional') {
+        //   ruleType = [{ objectId: 'PWuNiLqB', key: 2, label: '充分条件' }];
+        // }
 
         if (record.editable) {
           return (
             <Select
               defaultValue={text}
-              onChange={e => this.handleFieldChange(e, 'isRequired', record.key)}
+              onChange={e => this.handleFieldChange(e, this.state.dataKey, record.key)}
               onKeyPress={e => this.handleKeyPress(e, record)}
             >
               {
-                ruleType.map(owner =>
-                  <Option key={owner.objectId} value={owner.key}>{owner.label}</Option>
-                )
+                // ruleType.map(owner =>
+                //   <Option key={owner.objectId} value={owner.key}>{owner.label}</Option>
+                // )
+                <Option key={1} value={1}>{this.state.dataKey === 'isRequired' ? '必要条件' : '充分条件'}</Option>
               }
             </Select>
           );
         }
-        return ruleType.find((item) => { return item.key === text; }).label;
+        // return ruleType.find((item) => { return item.key === text; }).label;
+        return this.state.dataKey === 'isRequired' ? '必要条件' : '充分条件';
       },
     }, {
       title: '条件名称',
@@ -221,7 +218,7 @@ export default class RuleTableForm extends Component {
             >
               {
                 logic.map(owner =>
-                  <SelectOption key={owner.objectId} value={owner.key}>{owner.label}</SelectOption>
+                  <Option key={owner.objectId} value={owner.key}>{owner.label}</Option>
                 )
               }
             </Select>
@@ -286,11 +283,16 @@ export default class RuleTableForm extends Component {
       },
     }];
 
-    const disableNew = (this.props.pointerIntention.length);
+    const disableNew = (this.props.pointerIntention.length <= 0);
+
+    const { loading } = this.props;
+
+    // const { dataSource } = this.props;
 
     return (
       <div>
         <Table
+          loading={loading}
           columns={columns}
           dataSource={this.state.data}
           pagination={false}

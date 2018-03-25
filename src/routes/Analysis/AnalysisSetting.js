@@ -2,13 +2,12 @@
 
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Card, Table, Tabs, Icon, Select, Row, Col, Button, Message, Input, InputNumber, Divider } from 'antd';
+import { Form, Card, Table, Tabs, Icon, Select, Row, message, InputNumber } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import RuleTableForm from './RuleTableForm';
-
+import TableForm from './TableForm';
 
 const { TabPane } = Tabs;
-const SelectOption = Select.Option;
+const { Option } = Select;
 
 @connect(({ analysis, loading }) => ({
   analysis,
@@ -32,7 +31,7 @@ export default class AnalysisSetting extends Component {
     });
   }
 
-  handleSaveRow(e) {
+  handleSaveRow(e, dataKey) {
     const { dispatch } = this.props;
 
     if (e.isNew) {
@@ -43,7 +42,7 @@ export default class AnalysisSetting extends Component {
           logic: e.logic,
           value: e.value,
           isRequired: e.isRequired,
-          isOptional: 0,
+          isOptional: e.isOptional,
           pointerIntention: {
             __type: 'Pointer',
             className: 'Intention',
@@ -54,7 +53,7 @@ export default class AnalysisSetting extends Component {
       }).then(() => {
         e.isNew = false;
       }).catch(() => {
-        Message.error('保存失败！', 5);
+        message.error('保存失败！', 5);
       });
     } else {
 
@@ -72,23 +71,23 @@ export default class AnalysisSetting extends Component {
             fieldKey: e.fieldKey,
             logic: e.logic,
             value: e.value,
-            isRequired: e.isRequired,
-            isOptional: 0,
+            isRequired: (dataKey === 'isRequired' ? 1 : 0),
+            isOptional: (dataKey === 'isOptional' ? 1 : 0),
             key: e.key,
           },
         }).then(() => {
           e.isNew = false;
         }).catch(() => {
-          Message.error('保存失败！', 5);
+          message.error('保存失败！', 5);
         });
       }
     }
   }
 
-  handleRemoveRow(e, r) {
+  handleRemoveRow(e, record) {
     // 通过key查找ObjectId
     const { analysisRule } = this.props.analysis;
-    const target = analysisRule.results.filter(item => item.key === r.key);
+    const target = analysisRule.results.filter(item => item.key === record.key);
 
     if (target.length > 0) {
       const objectId = target[0].objectId;
@@ -99,7 +98,7 @@ export default class AnalysisSetting extends Component {
           objectId: objectId,
         },
       }).then().catch(() => {
-        Message.error('删除数据失败！', 5);
+        message.error('删除数据失败！', 5);
       });
     }
   }
@@ -120,10 +119,9 @@ export default class AnalysisSetting extends Component {
       }).then(() => {
         this.setState({
           selectedIntention: e,
-          reload: true,
         });
       }).catch(() => {
-        Message.error('获取数据失败！', 5);
+        message.error('获取数据失败！', 5);
       });
     }
   }
@@ -131,153 +129,15 @@ export default class AnalysisSetting extends Component {
   render() {
     // const { submitting } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { analysis: { intention, analysisField, analysisRule }, loading } = this.props;
+    const { intention, analysisField, analysisRule, loading } = this.props.analysis;
+
+    const analysisRuleRequired = analysisRule.results.filter(item => item.isRequired === 1);
+    const analysisRuleOptional = analysisRule.results.filter(item => item.isOptional === 1);
 
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 6 },
     };
-
-    // const columnsSource = [{
-    //   title: '条件类型',
-    //   dataIndex: 'isRequired',
-    //   key: 'isRequired',
-    //   width: '20%',
-    //   render: (text, record) => {
-    //     const ruletype = [
-    //       { objectId: 'XDE9jnTaq8', key: 1, label: '必要条件' },
-    //     ];
-    //
-    //     if (record.editable) {
-    //       return (
-    //         <Select
-    //           defaultValue={text}
-    //           onChange={e => this.handleFieldChange(e, 'isRequired', record.key)}
-    //           onKeyPress={e => this.handleKeyPress(e, record)}
-    //         >
-    //           {
-    //             ruletype.map(owner =>
-    //               <SelectOption key={owner.objectId} value={owner.key}>{owner.label}</SelectOption>
-    //             )
-    //           }
-    //         </Select>
-    //       );
-    //     }
-    //     return ruletype.find((item) => { return item.key === text; }).label;
-    //   },
-    // }, {
-    //   title: '条件名称',
-    //   dataIndex: 'fieldKey',
-    //   key: 'fieldKey',
-    //   width: '20%',
-    //   render: (text, record) => {
-    //     if (record.editable) {
-    //       return (
-    //         <Select
-    //           defaultValue={text}
-    //           onChange={e => this.handleFieldChange(e, 'fieldKey', record.key)}
-    //           onKeyPress={e => this.handleKeyPress(e, record)}
-    //         >
-    //           {
-    //             analysisField.results.map(owner =>
-    //               <SelectOption key={owner.objectId} value={owner.fieldKey}>{owner.fieldName}</SelectOption>
-    //             )
-    //           }
-    //         </Select>
-    //       );
-    //     }
-    //     return analysisField.results.find((item) => { return item.fieldKey === text; }).fieldName;
-    //   },
-    // }, {
-    //   title: '判断逻辑',
-    //   dataIndex: 'logic',
-    //   key: 'logic',
-    //   width: '20%',
-    //   render: (text, record) => {
-    //     const logic = [
-    //       { objectId: 0, key: '$lt', label: '小于' },
-    //       { objectId: 1, key: '$lte', label: '小于或等于' },
-    //       { objectId: 2, key: '$gt', label: '大于' },
-    //       { objectId: 3, key: '$gte', label: '大于或等于' },
-    //       { objectId: 4, key: '$ne', label: '不等于' },
-    //       { objectId: 5, key: '$et', label: '等于' },
-    //       { objectId: 6, key: '$in', label: '在内(逗号分隔)' },
-    //       { objectId: 7, key: '$lk', label: '模糊包含' },
-    //     ];
-    //
-    //     if (record.editable) {
-    //       return (
-    //         <Select
-    //           defaultValue={text}
-    //           onChange={e => this.handleFieldChange(e, 'logic', record.key)}
-    //           onKeyPress={e => this.handleKeyPress(e, record)}
-    //         >
-    //           {
-    //             logic.map(owner =>
-    //               <SelectOption key={owner.objectId} value={owner.key}>{owner.label}</SelectOption>
-    //             )
-    //           }
-    //         </Select>
-    //       );
-    //     }
-    //     return logic.find((item) => { return item.key === text; }).label;
-    //   },
-    // }, {
-    //   title: '阀值',
-    //   dataIndex: 'value',
-    //   key: 'value',
-    //   width: '20%',
-    //   render: (text, record) => {
-    //     if (record.editable) {
-    //       return (
-    //         <Input
-    //           value={text}
-    //           onChange={e => this.handleFieldChange(e, 'value', record.key)}
-    //           onKeyPress={e => this.handleKeyPress(e, record)}
-    //           placeholder="阀值"
-    //         />
-    //       );
-    //     }
-    //     return text;
-    //   },
-    // }, {
-    //   title: '操作',
-    //   key: 'action',
-    //   render: (text, record) => {
-    //     if (!!record.editable && this.state.loading) {
-    //       return null;
-    //     }
-    //     if (record.editable) {
-    //       if (record.isNew) {
-    //         return (
-    //           <span>
-    //             <a onClick={e => this.saveRow(e, record)}>添加</a>
-    //             <Divider type="vertical" />
-    //             <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record)}>
-    //               <a>删除</a>
-    //             </Popconfirm>
-    //           </span>
-    //         );
-    //       }
-    //       return (
-    //         <span>
-    //           <a onClick={e => this.saveRow(e, record)}>保存</a>
-    //           <Divider type="vertical" />
-    //           <a onClick={e => this.cancel(e, record.key)}>取消</a>
-    //         </span>
-    //       );
-    //     }
-    //     return (
-    //       <span>
-    //         <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
-    //         <Divider type="vertical" />
-    //         <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record)}>
-    //           <a>删除</a>
-    //         </Popconfirm>
-    //       </span>
-    //     );
-    //   },
-    // }];
 
     return (
       <PageHeaderLayout
@@ -324,9 +184,11 @@ export default class AnalysisSetting extends Component {
                       rules: [{ required: true, message: '请选择意向级别!' }],
                     })(
                       <Select initialValue="1" onChange={e => this.handleIntentionChange(e)}>
-                        { intention.results.map(owner => <SelectOption key={owner.intentionLevel} value={owner.objectId} disabled={owner.disabled}>
-                              {owner.intentionName}
-                            </SelectOption>)}
+                        { intention.results.map(owner =>
+                          <Option key={owner.intentionLevel} value={owner.objectId} disabled={owner.disabled}>
+                            { owner.intentionName }
+                          </Option>)
+                        }
                       </Select>
                     )}
                   </Form.Item>
@@ -334,40 +196,47 @@ export default class AnalysisSetting extends Component {
                 <Row>
                   <Form.Item label="必要条件" { ...formItemLayout }>
                     <InputNumber
-                      value={analysisRule.results.length}
-                      min={analysisRule.results.length}
-                      max={analysisRule.results.length}
+                      value={analysisRuleRequired.length}
+                      min={analysisRuleRequired.length}
+                      max={analysisRuleRequired.length}
                       disabled
                     />
                   </Form.Item>
                   <Form.Item label="充分条件" { ...formItemLayout }>
-                    <InputNumber addonBefore="充分条件" />
+                    <InputNumber
+                      defaultValue={0}
+                      min={0}
+                      max={analysisRuleOptional.length}
+                    />
                   </Form.Item>
                 </Row>
                 <Tabs defaultActiveKey="required">
-                  <TabPane tab={<span><Icon type="check" />必要条件</span>} key="required">
+                  <TabPane tab={<span><Icon type="check" />必要条件</span>} key="required" forceRender={true}>
                     <Form.Item>
                       {getFieldDecorator('requirerule')(
-                        <RuleTableForm
-                          //columnsSource={columnsSource}
-                          dataSource={analysisRule.results}
+                        <TableForm
+                          loading={loading}
+                          dataKey='isRequired'
+                          dataSource={analysisRuleRequired}
                           pointerIntention={this.state.selectedIntention}
                           dataAnalysisField={analysisField}
-                          onSaveRow={e => this.handleSaveRow(e)}
-                          onRemoveRow={(e, r) => this.handleRemoveRow(e, r)}
+                          onSaveRow={e => this.handleSaveRow(e, 'isRequired')}
+                          onRemoveRow={(e, recode) => this.handleRemoveRow(e, recode)}
                         />
                       )}
                     </Form.Item>
                   </TabPane>
-                  <TabPane tab={<span><Icon type="ellipsis" />充分条件</span>} key="optional">
+                  <TabPane tab={<span><Icon type="ellipsis" />充分条件</span>} key="optional" forceRender={true}>
                     <Form.Item>
                       {getFieldDecorator('optional')(
-                        <RuleTableForm
-                          // dataSource={analysisRule.results}
+                        <TableForm
+                          loading={loading}
+                          dataKey='isOptional'
+                          dataSource={analysisRuleOptional}
                           pointerIntention={this.state.selectedIntention}
                           dataAnalysisField={analysisField}
-                          // onSaveRow={e => this.handleSaveRow(e)}
-                          // onRemoveRow={(e, r) => this.handleRemoveRow(e, r)}
+                          onSaveRow={e => this.handleSaveRow(e, 'isOptional')}
+                          onRemoveRow={(e, recode) => this.handleRemoveRow(e, recode)}
                         />
                       )}
                     </Form.Item>
