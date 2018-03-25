@@ -1,5 +1,7 @@
+import { message } from 'antd';
 import { getUsers, getUserMe, getVerifyEmail } from '../services/account';
 import { getNotices, putNotice } from '../services/notice';
+import store from "../index";
 
 export default {
   namespace: 'account',
@@ -33,10 +35,17 @@ export default {
         payload: true,
       });
       const resUser = yield call(getUserMe);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: resUser,
-      });
+      if (resUser.error === undefined) {
+        yield put({
+          type: 'saveCurrentUser',
+          payload: resUser,
+        });
+      } else {
+        // 加载当前用户信息失败，重新登陆
+        const { dispatch } = store;
+        dispatch({ type: 'login/logout' });
+        return;
+      }
       // 仅加载当前用户消息。
       const resNotices = yield call(getNotices, {
         userId: resUser.objectId,
