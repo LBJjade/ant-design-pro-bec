@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Icon, message } from 'antd';
 import DocumentTitle from 'react-document-title';
@@ -17,7 +17,7 @@ import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
 
 const { Content, Header, Footer } = Layout;
-const { AuthorizedRoute } = Authorized;
+const { AuthorizedRoute, check } = Authorized;
 
 /**
  * 根据菜单取得重定向地址.
@@ -27,8 +27,8 @@ const getRedirect = (item) => {
   if (item && item.children) {
     if (item.children[0] && item.children[0].path) {
       redirectData.push({
-        from: `/${item.path}`,
-        to: `/${item.children[0].path}`,
+        from: `${item.path}`,
+        to: `${item.children[0].path}`,
       });
       item.children.forEach((children) => {
         getRedirect(children);
@@ -37,6 +37,25 @@ const getRedirect = (item) => {
   }
 };
 getMenuData().forEach(getRedirect);
+
+/**
+ * 获取面包屑映射
+ * @param {Object} menuData 菜单配置
+ * @param {Object} routerData 路由配置
+ */
+const getBreadcrumbNameMap = (menuData, routerData) => {
+  const result = {};
+  const childResult = {};
+  for (const i of menuData) {
+    if (!routerData[i.path]) {
+      result[i.path] = i;
+    }
+    if (i.children) {
+      Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
+    }
+  }
+  return Object.assign({}, routerData, result, childResult);
+};
 
 const query = {
   'screen-xs': {
@@ -76,7 +95,7 @@ class BasicLayout extends React.PureComponent {
     const { location, routerData } = this.props;
     return {
       location,
-      breadcrumbNameMap: routerData,
+      breadcrumbNameMap: getBreadcrumbNameMap(getMenuData(), routerData),
     };
   }
   componentDidMount() {
@@ -109,7 +128,11 @@ class BasicLayout extends React.PureComponent {
       urlParams.searchParams.delete('redirect');
       window.history.replaceState(null, 'redirect', urlParams.href);
     } else {
-      return '/dashboard/analysis';
+      const { routerData } = this.props;
+      // get the first authorized route path in routerData
+      const authorizedPath = Object.keys(routerData).find(item =>
+        check(routerData[item].authority, item) && item !== '/');
+      return authorizedPath;
     }
     return redirect;
   }
@@ -222,9 +245,9 @@ class BasicLayout extends React.PureComponent {
                 blankTarget: true,
               }]}
               copyright={
-                <div>
+                <Fragment>
                   Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
-                </div>
+                </Fragment>
               }
             />
           </Footer>
