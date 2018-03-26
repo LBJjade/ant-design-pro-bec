@@ -49,7 +49,7 @@ export default function request(url, options) {
     credentials: 'include',
   };
   const newOptions = { ...defaultOptions, ...options };
-  if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT') {
+  if (newOptions.method === 'GET' || newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'DELETE') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
@@ -98,4 +98,20 @@ export default function request(url, options) {
         dispatch(routerRedux.push('/exception/404'));
       }
     });
+}
+
+export function requestParams2Url(params) {
+  let url = '';
+  if (params === undefined) {
+    return url;
+  }
+  if (params.where !== undefined) {
+    url += url.length > 0 ? '&' : '';
+    url += `where=${JSON.stringify(params.where)}`;
+  }
+  if (params.include !== undefined) {
+    url += url.length > 0 ? '&' : '';
+    url += `include=${params.include}`;
+  }
+  return url.length > 0 ? `?${url}` : url;
 }

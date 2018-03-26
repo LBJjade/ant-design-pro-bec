@@ -15,6 +15,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/bec_menu';
 import logo from '../assets/logo.svg';
+import styles from './BecLayout.less';
 
 const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute } = Authorized;
@@ -109,7 +110,7 @@ class BecLayout extends React.PureComponent {
       urlParams.searchParams.delete('redirect');
       window.history.replaceState(null, 'redirect', urlParams.href);
     } else {
-      return '/dashboard/analysis';
+      return '/dashboard/workspace';
     }
     return redirect;
   }
@@ -120,6 +121,18 @@ class BecLayout extends React.PureComponent {
     });
   }
   handleNoticeClear = (type) => {
+    const { notices } = this.props;
+    notices.filter(item => item.type === type).forEach((item) => {
+      this.props.dispatch({
+        type: 'account/noticeClear',
+        payload: {
+          objectId: item.objectId,
+          data: {
+            clear: true,
+          },
+        },
+      });
+    });
     message.success(`清空了${type}`);
     this.props.dispatch({
       type: 'global/clearNotices',
@@ -127,6 +140,10 @@ class BecLayout extends React.PureComponent {
     });
   }
   handleMenuClick = ({ key }) => {
+    if (key === 'personalCenter') {
+      this.props.dispatch(routerRedux.push('/dashboard/workspace'));
+      return;
+    }
     if (key === 'triggerError') {
       this.props.dispatch(routerRedux.push('/exception/trigger'));
       return;
@@ -143,9 +160,21 @@ class BecLayout extends React.PureComponent {
         type: 'global/fetchNotices',
         payload: {
           userId: localStorage.currentUserId,
+          clear: false,
         },
       });
     }
+  }
+  handleItemClick = (item) => {
+    this.props.dispatch({
+      type: 'account/noticeRead',
+      payload: {
+        objectId: item.objectId,
+        data: {
+          read: true,
+        },
+      },
+    });
   }
   render() {
     const {
@@ -179,6 +208,7 @@ class BecLayout extends React.PureComponent {
               onCollapse={this.handleMenuCollapse}
               onMenuClick={this.handleMenuClick}
               onNoticeVisibleChange={this.handleNoticeVisibleChange}
+              onItemClick={this.handleItemClick}
             />
           </Header>
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>

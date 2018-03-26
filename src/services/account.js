@@ -47,7 +47,6 @@ export async function getUserMe() {
 export async function postPasswordReset(email) {
   return request('/api/requestPasswordReset', {
     method: 'POST',
-    headers: { 'X-Parse-Session-Token': localStorage.token },
     body: email,
   });
 }

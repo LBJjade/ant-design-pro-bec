@@ -4,9 +4,9 @@ import { routerRedux, Link } from 'dva/router';
 import { Form, Input, Button, Select, Row, Col, Popover, Progress, Icon } from 'antd';
 import styles from './Signup.less';
 
-const FormItem = Form.Item;
+const { Item } = Form;
 const { Option } = Select;
-const InputGroup = Input.Group;
+const { Group } = Input;
 
 const passwordStatusMap = {
   ok: <div className={styles.success}>强度：强</div>,
@@ -24,6 +24,9 @@ const passwordProgressMap = {
   signup,
   submitting: loading.effects['register/submit'],
   validating: signup.userValidating,
+  existUsername: signup.existUsername,
+  existEmail: signup.existEmail,
+  existMobile: signup.existMobile,
   res: signup.res,
 }))
 @Form.create()
@@ -34,11 +37,12 @@ export default class Signup extends Component {
     visible: false,
     help: '',
     prefix: '86',
+    submitComplete: false,
   };
 
   componentWillReceiveProps(nextProps) {
     const email = this.props.form.getFieldValue('email');
-    if (nextProps.signup.res.sessionToken !== undefined) {
+    if (nextProps.signup.res.sessionToken !== undefined && this.state.submitComplete) {
       this.props.dispatch(routerRedux.push({
         pathname: '/account/signup-result',
         state: {
@@ -83,32 +87,57 @@ export default class Signup extends Component {
       } else {
         if (rule.fieldname === 'username') {
           this.props.dispatch({
-            type: 'signup/validate',
+            type: 'signup/existUsername',
             payload: { username: value },
+          }).then(() => {
+            if (this.props.existUsername.results.length > 0) {
+              callback([new Error(rule.message)]);
+            } else {
+              callback();
+            }
           });
         }
         if (rule.fieldname === 'email') {
           this.props.dispatch({
-            type: 'signup/validate',
+            type: 'signup/existEmail',
             payload: { email: value },
+          }).then(() => {
+            if (this.props.existEmail.results.length > 0) {
+              callback([new Error(rule.message)]);
+            } else {
+              callback();
+            }
           });
         }
         if (rule.fieldname === 'mobile') {
           this.props.dispatch({
-            type: 'signup/validate',
+            type: 'signup/existMobile',
             payload: { mobile: value },
+          }).then(() => {
+            if (this.props.existMobile.results.length > 0) {
+              callback([new Error(rule.message)]);
+            } else {
+              callback();
+            }
           });
         }
-        setTimeout(() => {
-          if (this.props.validating.results.length > 0) {
-            callback([new Error(rule.message)]);
-          } else {
-            callback();
-          }
-        }, 800);
+        // setTimeout(() => {
+        //   if (this.props.validating.results.length > 0) {
+        //     callback([new Error(rule.message)]);
+        //   } else {
+        //     callback();
+        //   }
+        // }, 8000);
+        // if (this.props.validating.results !== undefined) {
+        //   if (this.props.validating.results.length > 0) {
+        //     callback([new Error(rule.message)]);
+        //   } else {
+        //     callback();
+        //   }
+        // }
       }
     }
-  }
+  };
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -122,14 +151,15 @@ export default class Signup extends Component {
             prefix: this.state.prefix,
           },
         });
+        this.setState({ submitComplete: true });
       }
     });
   };
 
-  handleConfirmBlur = (e) => {
-    const { value } = e.target;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  };
+  // handleConfirmBlur = (e) => {
+  //   const { value } = e.target;
+  //   this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  // };
 
   checkConfirm = (rule, value, callback) => {
     const { form } = this.props;
@@ -166,6 +196,7 @@ export default class Signup extends Component {
         callback();
       }
     }
+    callback();
   };
 
   changePrefix = (value) => {
@@ -195,11 +226,12 @@ export default class Signup extends Component {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
     const { count, prefix } = this.state;
+
     return (
       <div className={styles.main}>
         <h3>注册</h3>
         <Form onSubmit={this.handleSubmit}>
-          <FormItem>
+          <Item>
             {getFieldDecorator('username', {
               rules: [
                 { fieldname: 'username', required: true, message: '请输入帐号！' },
@@ -209,8 +241,8 @@ export default class Signup extends Component {
               validateFirst: true,
               validateTrigger: 'onBlur',
             })(<Input size="large" placeholder="帐号" prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
-          </FormItem>
-          <FormItem>
+          </Item>
+          <Item>
             {getFieldDecorator('email', {
               rules: [
                 { fieldname: 'email', required: true, message: '请输入邮箱地址！' },
@@ -220,8 +252,8 @@ export default class Signup extends Component {
               validateFirst: true,
               validateTrigger: 'onBlur',
             })(<Input size="large" placeholder="邮箱" prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
-          </FormItem>
-          <FormItem help={this.state.help}>
+          </Item>
+          <Item help={this.state.help}>
             <Popover
               content={
                 <div style={{ padding: '4px 0' }}>
@@ -251,8 +283,8 @@ export default class Signup extends Component {
                 />
               )}
             </Popover>
-          </FormItem>
-          <FormItem>
+          </Item>
+          <Item>
             {getFieldDecorator('confirm', {
               rules: [
                 {
@@ -271,9 +303,9 @@ export default class Signup extends Component {
                 prefix={<Icon type="key" style={{ color: 'rgba(0,0,0,.25)' }} />}
               />
             )}
-          </FormItem>
-          <FormItem>
-            <InputGroup compact>
+          </Item>
+          <Item>
+            <Group compact>
               <Select
                 size="large"
                 value={prefix}
@@ -298,9 +330,9 @@ export default class Signup extends Component {
                   placeholder="手机号码"
                 />
               )}
-            </InputGroup>
-          </FormItem>
-          <FormItem>
+            </Group>
+          </Item>
+          <Item>
             <Row gutter={8}>
               <Col span={16}>
                 {getFieldDecorator('captcha', {
@@ -323,8 +355,8 @@ export default class Signup extends Component {
                 </Button>
               </Col>
             </Row>
-          </FormItem>
-          <FormItem>
+          </Item>
+          <Item>
             <Button
               size="large"
               loading={submitting}
@@ -337,7 +369,7 @@ export default class Signup extends Component {
             <Link className={styles.login} to="/account/login">
               使用已有账户登录
             </Link>
-          </FormItem>
+          </Item>
         </Form>
       </div>
     );

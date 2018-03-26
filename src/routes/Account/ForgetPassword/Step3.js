@@ -12,7 +12,7 @@ export default class Step3 extends React.PureComponent {
   render() {
     const { dispatch } = this.props;
     const onFinish = () => {
-      dispatch(routerRedux.push('/account/forgetpassword'));
+      dispatch(routerRedux.push('/account/login'));
     };
     const actions = (
       <div>

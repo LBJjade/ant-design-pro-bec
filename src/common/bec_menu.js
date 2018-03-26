@@ -19,6 +19,14 @@ const menuData = [{
     // hideInMenu: true,
   }],
 }, {
+  name: '客户分析',
+  icon: 'area-chart',
+  path: 'analysis',
+  children: [{
+    name: '分析规则管理',
+    path: 'analysissetting',
+  }],
+}, {
   name: '表单页',
   icon: 'form',
   path: 'form',
@@ -121,6 +129,16 @@ const menuData = [{
   icon: 'book',
   path: 'http://pro.ant.design/docs/getting-started',
   target: '_blank',
+}, {
+  name: '人力资源',
+  icon: 'team',
+  path: 'humanresources',
+  authority: ['admin'],
+  children: [{
+    name: '人事档案',
+    icon: 'user',
+    path: 'employee',
+  }],
 }, {
   name: '系统管理',
   icon: 'setting',

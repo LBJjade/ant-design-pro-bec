@@ -8,6 +8,9 @@ export default {
   state: {
     res: [],
     userValidating: [],
+    existUsername: [],
+    existEmail: [],
+    existMobile: [],
   },
 
   effects: {
@@ -36,6 +39,27 @@ export default {
         payload: ret,
       });
     },
+    *existUsername({ payload }, { call, put }) {
+      const existUser = yield call(getUsers, payload);
+      yield put({
+        type: 'changeUsername',
+        payload: existUser,
+      });
+    },
+    *existEmail({ payload }, { call, put }) {
+      const existUser = yield call(getUsers, payload);
+      yield put({
+        type: 'changeEmail',
+        payload: existUser,
+      });
+    },
+    *existMobile({ payload }, { call, put }) {
+      const existUser = yield call(getUsers, payload);
+      yield put({
+        type: 'changeMobile',
+        payload: existUser,
+      });
+    },
   },
 
   reducers: {
@@ -55,6 +79,24 @@ export default {
       return {
         ...state,
         userValidating: payload,
+      };
+    },
+    changeUsername(state, { payload }) {
+      return {
+        ...state,
+        existUsername: payload,
+      };
+    },
+    changeEmail(state, { payload }) {
+      return {
+        ...state,
+        existEmail: payload,
+      };
+    },
+    changeMobile(state, { payload }) {
+      return {
+        ...state,
+        existMobile: payload,
       };
     },
   },

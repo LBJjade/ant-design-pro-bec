@@ -1,4 +1,7 @@
+import { message } from 'antd';
 import { getUsers, getUserMe, getVerifyEmail } from '../services/account';
+import { getNotices, putNotice } from '../services/notice';
+import store from "../index";
 
 export default {
   namespace: 'account',
@@ -27,10 +30,34 @@ export default {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(getUserMe);
       yield put({
-        type: 'saveCurrentUser',
-        payload: response,
+        type: 'changeLoading',
+        payload: true,
+      });
+      const resUser = yield call(getUserMe);
+      if (resUser.error === undefined) {
+        yield put({
+          type: 'saveCurrentUser',
+          payload: resUser,
+        });
+      } else {
+        // 加载当前用户信息失败，重新登陆
+        const { dispatch } = store;
+        dispatch({ type: 'login/logout' });
+        return;
+      }
+      // 仅加载当前用户消息。
+      const resNotices = yield call(getNotices, {
+        userId: resUser.objectId,
+        clear: false,
+      });
+      yield put({
+        type: 'changeNotifys',
+        payload: resNotices,
+      });
+      yield put({
+        type: 'changeLoading',
+        payload: false,
       });
     },
     *verifyEmail({ payload }, { call, put }) {
@@ -39,6 +66,12 @@ export default {
         type: 'changeVerifying',
         payload: ret,
       });
+    },
+    *noticeClear({ payload }, { call }) {
+      yield call(putNotice, payload);
+    },
+    *noticeRead({ payload }, { call }) {
+      yield call(putNotice, payload);
     },
   },
 
@@ -67,6 +100,16 @@ export default {
         currentUser: {
           ...state.currentUser,
           notifyCount: action.payload,
+        },
+      };
+    },
+    changeNotifys(state, action) {
+      return {
+        ...state,
+        currentUser: {
+          ...state.currentUser,
+          notifyCount: action.payload.count,
+          notifys: action.payload.results,
         },
       };
     },
