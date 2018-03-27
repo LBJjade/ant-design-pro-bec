@@ -6,7 +6,7 @@ import { randomString } from '../../utils/cryptoUtils';
 
 const { Option } = Select;
 
-export default class TableForm extends Component {
+export default class AnalysisRule extends Component {
   constructor(props) {
     super(props);
 
