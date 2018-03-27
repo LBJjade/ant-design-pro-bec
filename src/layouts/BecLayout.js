@@ -143,6 +143,9 @@ class BecLayout extends React.PureComponent {
       this.props.dispatch(routerRedux.push('/dashboard/workspace'));
       return;
     }
+    if (key === 'setting') {
+      this.props.dispatch(routerRedux.push('/personal/setting'));
+    }
     if (key === 'triggerError') {
       this.props.dispatch(routerRedux.push('/exception/trigger'));
       return;

@@ -125,6 +125,16 @@ const menuData = [{
     path: 'register-result',
   }],
 }, {
+  name: '个人中心',
+  icon: 'user',
+  path: 'personal',
+  // hideInMenu: true,
+  children: [{
+    name: '设置',
+    path: 'setting',
+    // hideInMenu: true,
+  }],
+},{
   name: '使用文档',
   icon: 'book',
   path: 'http://pro.ant.design/docs/getting-started',
