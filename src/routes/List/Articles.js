@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import { Form, Card, Select, List, Tag, Icon, Avatar, Row, Col, Button } from 'antd';
 
-import StandardFormRow from '../../components/StandardFormRow';
-import TagSelect from '../../components/TagSelect';
+import TagSelect from 'components/TagSelect';
+import StandardFormRow from 'components/StandardFormRow';
 import styles from './Articles.less';
 
 const { Option } = Select;
@@ -99,7 +99,7 @@ export default class SearchList extends Component {
     ) : null;
 
     return (
-      <div>
+      <Fragment>
         <Card bordered={false}>
           <Form layout="inline">
             <StandardFormRow title="所属类目" block style={{ paddingBottom: 11 }}>
@@ -230,7 +230,7 @@ export default class SearchList extends Component {
             )}
           />
         </Card>
-      </div>
+      </Fragment>
     );
   }
 }

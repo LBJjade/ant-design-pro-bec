@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import { getUsers, getUserMe, getVerifyEmail } from '../services/account';
 import { getNotices, putNotice } from '../services/notice';
 import store from "../index";
