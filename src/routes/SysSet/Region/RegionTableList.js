@@ -7,7 +7,7 @@ import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import CreateAddForm from './AddFrom';
 import CreateEditForm from './EditFrom';
 
-import styles from '../Brand/TableList.less';
+import styles from '../../../static/js/table.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;

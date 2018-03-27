@@ -168,11 +168,7 @@ const menuData = [{
   path: 'set',
   authority: ['admin'],
   children: [{
-    name: '品牌管理基础',
-    icon: 'global',
-    path: 'brand',
-  }, {
-    name: '品牌管理标准',
+    name: '品牌管理',
     icon: 'global',
     path: 'table',
   }, {

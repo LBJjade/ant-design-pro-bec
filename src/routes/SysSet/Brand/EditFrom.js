@@ -108,17 +108,6 @@ export default class CreateEditForm extends PureComponent {
           <Input placeholder="请输入" />
         )}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="品牌LOGO"
-      >
-        { getFieldDecorator('brandLogo', {
-          rules: [{ required: true, message: '请上传品牌LOGO...' }],
-        })(
-          <Avatar />
-        )}
-      </FormItem>
     </Modal>
   );
  }

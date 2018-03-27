@@ -1,6 +1,6 @@
 /* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state */
 import React, { PureComponent } from 'react';
-import { Input, Modal, Form, Upload, Icon } from 'antd';
+import { Input, Modal, Form, Upload, Icon, InputNumber } from 'antd';
 
 const FormItem = Form.Item;
 
@@ -96,23 +96,23 @@ export default class CreateAddForm extends PureComponent {
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
+        label="编号"
+      >
+        { getFieldDecorator('orderNumber', {
+          rules: [{ required: true, message: '请输入编号...' }],
+        })(
+          <InputNumber placeholder="请输入" />
+        )}
+      </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
         label="品牌名称"
       >
         { getFieldDecorator('brandName', {
           rules: [{ required: true, message: '请输入品牌名称...' }],
         })(
           <Input placeholder="请输入" />
-        )}
-      </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="品牌LOGO"
-      >
-        { getFieldDecorator('brandLogo', {
-          rules: [{ required: true, message: '请上传品牌LOGO...' }],
-        })(
-          <Avatar />
         )}
       </FormItem>
     </Modal>

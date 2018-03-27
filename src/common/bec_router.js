@@ -215,7 +215,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/BrandList')),
     },
     '/set/table': {
-      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/Brand/TableList')),
+      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/Brand/BrandTable')),
     },
     '/set/card': {
       component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/CardList')),

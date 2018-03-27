@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-indent,no-trailing-spaces,max-len,react/jsx-wrap-multilines */
+/* eslint-disable react/jsx-indent,no-trailing-spaces,max-len,react/jsx-wrap-multilines,prefer-destructuring,object-shorthand,padded-blocks,react/jsx-curly-spacing,react/jsx-boolean-value */
 
 import React, { Component } from 'react';
 import { connect } from 'dva';
@@ -216,7 +216,7 @@ export default class AnalysisSetting extends Component {
                       {getFieldDecorator('requirerule')(
                         <TableForm
                           loading={loading}
-                          dataKey='isRequired'
+                          dataKey="isRequired"
                           dataSource={analysisRuleRequired}
                           pointerIntention={this.state.selectedIntention}
                           dataAnalysisField={analysisField}
@@ -231,7 +231,7 @@ export default class AnalysisSetting extends Component {
                       {getFieldDecorator('optional')(
                         <TableForm
                           loading={loading}
-                          dataKey='isOptional'
+                          dataKey="isOptional"
                           dataSource={analysisRuleOptional}
                           pointerIntention={this.state.selectedIntention}
                           dataAnalysisField={analysisField}

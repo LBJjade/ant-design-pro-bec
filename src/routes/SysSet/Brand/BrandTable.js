@@ -6,7 +6,7 @@ import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import CreateEditForm from './EditFrom';
 import CreateAddForm from './AddFrom';
 
-import styles from './TableList.less';
+import styles from '../../../static/js/table.less';
 
 const FormItem = Form.Item;
 const SelectOption = Select.Option;
@@ -213,6 +213,10 @@ export default class TableList extends PureComponent {
     this.props.dispatch({
       type: 'brandManage/removeBrand',
       payload: row,
+    }).then(message.success('删除成功'));
+
+    this.props.dispatch({
+      type: 'brandManage/fetchBrand',
     });
   };
   // handelDelete = (row) => {
@@ -249,6 +253,10 @@ export default class TableList extends PureComponent {
     this.setState({
       modalVisible: false,
     });
+
+    this.props.dispatch({
+      type: 'brandManage/fetchBrand',
+    });
   };
 
   handleEdit = (fields) => {
@@ -262,52 +270,15 @@ export default class TableList extends PureComponent {
     this.setState({
       modalEditVisible: false,
     });
+
+    this.props.dispatch({
+      type: 'brandManage/fetchBrand',
+    });
   };
-
-  renderSimpleForm() {
-    const { getFieldDecorator } = this.props.form;
-    const { brandManage: { data } } = this.props;
-    const results = data.results;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={4} sm={10}>
-            <FormItem label="编号">
-              {getFieldDecorator('orderNumber')(
-                <InputNumber placeholder="请输入" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="品牌名称">
-              {getFieldDecorator('brandName')(
-                <Select
-                  placeholder="请选择"
-                  style={{ width: '100%' }}
-                >
-                  {results.map(d => <SelectOption key={d.objectId} >{d.brandName}</SelectOption>)}
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
-
-  renderForm() {
-    return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
-  }
 
   render() {
     const { brandManage: { data }, list, loading } = this.props;
+    const { getFieldDecorator } = this.props.form;
     const { selectedRows, modalVisible, modalEditVisible, orderNumber, brandName } = this.state;
 
     const menu = (
@@ -378,7 +349,35 @@ export default class TableList extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
-              {this.renderForm()}
+              <Form onSubmit={this.handleSearch} layout="inline">
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                  <Col md={4} sm={10}>
+                    <FormItem label="编号">
+                      {getFieldDecorator('orderNumber')(
+                        <InputNumber placeholder="请输入" />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col md={8} sm={24}>
+                    <FormItem label="品牌名称">
+                      {getFieldDecorator('brandName')(
+                        <Select
+                          placeholder="请选择"
+                          style={{ width: '100%' }}
+                        >
+                          <SelectOption key="123" >sajkdfhkaj</SelectOption>
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col md={8} sm={24}>
+                    <span className={styles.submitButtons}>
+                      <Button type="primary" htmlType="submit">查询</Button>
+                      <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
+                    </span>
+                  </Col>
+                </Row>
+              </Form>
             </div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
