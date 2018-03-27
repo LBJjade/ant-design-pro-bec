@@ -211,6 +211,24 @@ export const getRouterData = (app) => {
     '/analysis/analysissetting': {
       component: dynamicWrapper(app, ['analysis'], () => import('../routes/Analysis/AnalysisSetting')),
     },
+    '/set/brand': {
+      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/BrandList')),
+    },
+    '/set/table': {
+      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/Brand/TableList')),
+    },
+    '/set/card': {
+      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/CardList')),
+    },
+    '/set/bigArea': {
+      component: dynamicWrapper(app, ['regionManage'], () => import('../routes/SysSet/Region/RegionTableList')),
+    },
+    '/set/district': {
+      component: dynamicWrapper(app, ['districtManage'], () => import('../routes/SysSet/District/DistrictTableList')),
+    },
+    '/set/shop': {
+      component: dynamicWrapper(app, ['shopManage'], () => import('../routes/SysSet/Shop/ShopTableList')),
+    },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

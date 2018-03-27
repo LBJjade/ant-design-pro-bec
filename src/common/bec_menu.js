@@ -162,6 +162,36 @@ const menuData = [{
     icon: 'team',
     path: 'roleuser',
   }],
+}, {
+  name: ' 平台设置',
+  icon: 'car',
+  path: 'set',
+  authority: ['admin'],
+  children: [{
+    name: '品牌管理基础',
+    icon: 'global',
+    path: 'brand',
+  }, {
+    name: '品牌管理标准',
+    icon: 'global',
+    path: 'table',
+  }, {
+    name: '品牌卡片',
+    icon: 'global',
+    path: 'card',
+  }, {
+    name: '大区管理',
+    icon: 'api',
+    path: 'bigArea',
+  }, {
+    name: '小区管理',
+    icon: 'safety',
+    path: 'district',
+  }, {
+    name: '门店管理',
+    icon: 'star',
+    path: 'shop',
+  }],
 }];
 
 function formatter(data, parentPath = '', parentAuthority) {
