@@ -16,6 +16,7 @@ const menuData = [{
   }, {
     name: '工作台',
     path: 'workplace',
+    // hideInBreadcrumb: true,
     // hideInMenu: true,
   }],
 }, {
@@ -164,7 +165,7 @@ const menuData = [{
   }],
 }];
 
-function formatter(data, parentPath = '', parentAuthority) {
+function formatter(data, parentPath = '/', parentAuthority) {
   return data.map((item) => {
     let { path } = item;
     if (!isUrl(path)) {
