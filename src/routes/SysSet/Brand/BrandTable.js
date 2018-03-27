@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
-import CreateForm from './AddFrom';
+import CreateForm from './creatForm';
 
 import styles from '../../../static/js/table.less';
 
