@@ -9,7 +9,7 @@ export async function getBrand(params) {
 }
 
 export async function postBrand(params) {
-  return request('/api/classes/brand', {
+  request('/api/classes/brand', {
     method: 'POST',
     body: params,
   });
@@ -18,7 +18,7 @@ export async function postBrand(params) {
 export async function putBrand(params) {
   let editid = params.eidtId;
   let data = params.fields;
-  return request(`/api/classes/brand/${editid}`, {
+  request(`/api/classes/brand/${editid}`, {
     method: 'PUT',
     body: data,
   });
@@ -33,7 +33,7 @@ export async function brandBatchDelete(params) {
 }
 
 export async function deleteBrand(params) {
-  return request('/api/classes/brand/' + params, {
+  request('/api/classes/brand/' + params, {
     method: 'DELETE',
   });
 }

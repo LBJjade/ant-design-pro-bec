@@ -23,26 +23,14 @@ export default {
         payload: response,
       });
     },
-    *storeBrand({ payload }, { call, put }) {
-      const response = yield call(postBrand, payload);
-      yield put({
-        type: 'changeBrands',
-        payload: response,
-      });
+    *storeBrand({ payload }, { call }) {
+      yield call(postBrand, payload);
     },
-    *coverBrand({ payload }, { call, put }) {
-      const response = yield call(putBrand, payload);
-      yield put({
-        type: 'changeBrands',
-        payload: response,
-      });
+    *coverBrand({ payload }, { call }) {
+      yield call(putBrand, payload);
     },
-    *removeBrand({ payload }, { call, put }) {
-      const response = yield call(deleteBrand, payload);
-      yield put({
-        type: 'changeBrands',
-        payload: response,
-      });
+    *removeBrand({ payload }, { call }) {
+      yield call(deleteBrand, payload);
     },
     *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(brandBatchDelete, payload);

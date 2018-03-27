@@ -114,7 +114,7 @@ export default class TableList extends PureComponent {
     }, {});
 
     const params = {
-      skip: ((pagination.current - 1) * pagination.pageSize) + 1,
+      skip: ((pagination.current - 1) * pagination.pageSize),
       limit: pagination.pageSize,
       count: true,
       ...formValues,
@@ -145,6 +145,12 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'brandManage/fetchBrand',
       payload: {},
+    });
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
     });
   };
 
@@ -365,7 +371,8 @@ export default class TableList extends PureComponent {
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          <SelectOption key="123" >sajkdfhkaj</SelectOption>
+                          { data.results.length > 0 ?  data.results.map(d => <SelectOption key={d.objectId} value={d.brandName}>{d.brandName}</SelectOption>) :
+                          <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
                     </FormItem>
