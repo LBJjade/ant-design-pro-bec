@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,eslint-disable react/jsx-wrap-multilines,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,no-multi-spaces,no-undef,object-curly-spacing */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
-import CreateEditForm from './EditFrom';
-import CreateAddForm from './AddFrom';
+import CreateForm from './AddFrom';
 
 import styles from '../../../static/js/table.less';
 
@@ -13,65 +12,6 @@ const SelectOption = Select.Option;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-
-function beforeUpload(file) {
-  const isJPG = file.type === 'image/jpeg';
-  if (!isJPG) {
-    message.error('You can only upload JPG file!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
-  }
-  return isJPG && isLt2M;
-}
-
-class Avatar extends React.Component {
-  state = {
-    loading: false,
-  };
-  handleChange = (info) => {
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl => this.setState({
-        imageUrl,
-        loading: false,
-      }));
-    }
-  }
-  render() {
-    const uploadButton = (
-      <div>
-        <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    );
-    const imageUrl = this.state.imageUrl;
-    return (
-      <Upload
-        name="avatar"
-        listType="picture-card"
-        className="avatar-uploader"
-        showUploadList={true}
-        action="http://localhost:80/upload/webUploader/img"
-        beforeUpload={beforeUpload}
-        onChange={this.handleChange}
-      >
-        {imageUrl ? <img src={imageUrl} alt="" /> : uploadButton}
-      </Upload>
-    );
-  }
-}
 @connect(({ brandManage, loading }) => ({
   brandManage,
   loading: loading.models.brandManage,
@@ -94,6 +34,7 @@ export default class TableList extends PureComponent {
     brandName: {},
     imgUrl: {},
     source: {},
+    title: {},
   };
 
   componentDidMount() {
@@ -224,6 +165,12 @@ export default class TableList extends PureComponent {
     this.props.dispatch({
       type: 'brandManage/fetchBrand',
     });
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
+    });
   };
   // handelDelete = (row) => {
   //   console.log(row);
@@ -238,14 +185,17 @@ export default class TableList extends PureComponent {
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
+      title: "新增",
     });
   };
 
-  handleEditModalVisible = (flag, orderNumber, brandName) => {
+  handleEditModalVisible = (flag, id, orderNumber, brandName) => {
     this.setState({
-      modalEditVisible: flag,
+      modalVisible: flag,
       orderNumber: orderNumber,
       brandName: brandName,
+      editId: id,
+      title: "编辑",
     });
   };
 
@@ -263,6 +213,12 @@ export default class TableList extends PureComponent {
     this.props.dispatch({
       type: 'brandManage/fetchBrand',
     });
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
+    });
   };
 
   handleEdit = (fields) => {
@@ -274,18 +230,25 @@ export default class TableList extends PureComponent {
 
     message.success('编辑成功');
     this.setState({
-      modalEditVisible: false,
+      modalVisible: false,
     });
 
     this.props.dispatch({
       type: 'brandManage/fetchBrand',
+    });
+
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
     });
   };
 
   render() {
     const { brandManage: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, modalEditVisible, orderNumber, brandName } = this.state;
+    const { selectedRows, modalVisible, orderNumber, brandName } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -309,7 +272,7 @@ export default class TableList extends PureComponent {
         render: (val, record) => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true, record.orderNumber, record.brandName)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.orderNumber, record.brandName)}>编辑</a>
           </span>),
         // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
@@ -331,7 +294,11 @@ export default class TableList extends PureComponent {
 
     const parentAddMethods = {
       handleAdd: this.handleAdd,
+      handleEdit: this.handleEdit,
+      orderNumber: orderNumber,
+      brandName: brandName,
       handleModalVisible: this.handleAddModalVisible,
+      title: this.state.title,
     };
 
     const parentEditMethods = {
@@ -371,7 +338,7 @@ export default class TableList extends PureComponent {
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data.results.length > 0 ?  data.results.map(d => <SelectOption key={d.objectId} value={d.brandName}>{d.brandName}</SelectOption>) :
+                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.brandName}>{d.brandName}</SelectOption>) :
                           <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
@@ -416,13 +383,9 @@ export default class TableList extends PureComponent {
             </div>
           </div>
         </Card>
-        <CreateAddForm
+        <CreateForm
           {...parentAddMethods}
           modalVisible={modalVisible}
-        />
-        <CreateEditForm
-          {...parentEditMethods}
-          modalEditVisible={modalEditVisible}
         />
       </PageHeaderLayout>
     );

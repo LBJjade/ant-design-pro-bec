@@ -1,6 +1,7 @@
-/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state */
+/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes */
 import React, { PureComponent } from 'react';
 import { Input, Modal, Form, Upload, Icon, InputNumber } from 'antd';
+import { stringify } from 'qs';
 
 const FormItem = Form.Item;
 
@@ -63,32 +64,41 @@ class Avatar extends React.Component {
   }
 }
 @Form.create()
-export default class CreateAddForm extends PureComponent {
+export default class CreateForm extends PureComponent {
   constructor(props) {
     super(props);
     const { pro } = props;
     this.state = {
       modalVisible: props.modalVisible,
       handleAdd: props.handleAdd,
+      handleEdit: props.handleEdit,
       handleModalVisible: props.handleModalVisible,
+      title: props.title,
       form: props.form,
     };
   }
 
   render() {
+    const { getFieldDecorator } = this.props.form;
+    const modalVisible = this.props.modalVisible;
+    const title = this.props.title;
+    const { orderNumber, brandName } = this.props;
     const okHandle = () => {
       this.state.form.validateFields((err, fieldsValue) => {
         if (err) return;
-        this.state.handleAdd(fieldsValue);
+        if (title === "编辑") {
+          this.state.handleEdit(fieldsValue);
+        } else {
+          this.state.handleAdd(fieldsValue);
+        }
       });
     };
-    const { getFieldDecorator } = this.props.form;
-    const modalVisible = this.props.modalVisible;
+
 
   return (
 
     <Modal
-      title="新增"
+      title={title}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => this.state.handleModalVisible(false)}
@@ -101,7 +111,7 @@ export default class CreateAddForm extends PureComponent {
         { getFieldDecorator('orderNumber', {
           rules: [{ required: true, message: '请输入编号...' }],
         })(
-          <InputNumber placeholder="请输入" />
+          title === "编辑" ? <InputNumber defaultValue={123} /> : <InputNumber placeholder="请输入" />
         )}
       </FormItem>
       <FormItem
@@ -112,7 +122,7 @@ export default class CreateAddForm extends PureComponent {
         { getFieldDecorator('brandName', {
           rules: [{ required: true, message: '请输入品牌名称...' }],
         })(
-          <Input placeholder="请输入" />
+          title === "编辑" ? <Input defaultValue="klasdjf" /> : <Input placeholder="请输入" />
         )}
       </FormItem>
     </Modal>
