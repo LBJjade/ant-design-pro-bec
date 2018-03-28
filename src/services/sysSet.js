@@ -3,13 +3,13 @@ import { stringify } from 'qs';
 import request, { requestParams2Url } from '../utils/request';
 
 export async function getBrand(params) {
-  return request(`/api/classes/brand?${stringify(params)}`, {
+  return request(`/api/classes/Brand?${stringify(params)}`, {
     method: 'GET',
   });
 }
 
 export async function postBrand(params) {
-  request('/api/classes/brand', {
+  request('/api/classes/Brand', {
     method: 'POST',
     body: params,
   });
@@ -18,7 +18,7 @@ export async function postBrand(params) {
 export async function putBrand(params) {
   let editid = params.eidtId;
   let data = params.fields;
-  request(`/api/classes/brand/${editid}`, {
+  request(`/api/classes/Brand/${editid}`, {
     method: 'PUT',
     body: data,
   });
@@ -26,35 +26,35 @@ export async function putBrand(params) {
 
 export async function brandBatchDelete(params) {
   for(let i = 0; i < params.length; i++) {
-    request(`/api/classes/brand/${params[i]}`, {
+    request(`/api/classes/Brand/${params[i]}`, {
       method: 'DELETE',
     });
   }
 }
 
 export async function deleteBrand(params) {
-  request('/api/classes/brand/' + params, {
+  request('/api/classes/Brand/' + params, {
     method: 'DELETE',
   });
 }
 
 export async function brandRequireQuery(params) {
   let url = requestParams2Url(params);
-  return request(`/api/classes/brand${url}`, {
+  return request(`/api/classes/Brand${url}`, {
     method: 'GET',
   });
 }
 
 export async function uploadLogo(params) {
   let require = `'where={${stringify(params)}}'`;
-  return request('/api/classes/brand/', {
+  return request('/api/classes/Brand/', {
     method: 'GET',
     data: require,
   }, 'where');
 }
 
 export async function getBrandName(params) {
-  return request(`/api/classes/brand?${stringify(params)}`, {
+  return request(`/api/classes/Brand?${stringify(params)}`, {
     method: 'GET',
   });
 }

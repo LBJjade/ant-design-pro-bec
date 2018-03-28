@@ -14,6 +14,7 @@ export default {
       results: [],
     },
     brands: [],
+    brandNos: [],
   },
 
   effects: {
@@ -61,6 +62,13 @@ export default {
         payload: response,
       });
     },
+    *exisBrandNos({ payload }, { call, put }) {
+      const response = yield call(brandRequireQuery, payload);
+      yield put({
+        type: 'brandNos',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -74,6 +82,12 @@ export default {
       return {
         ...state,
         brands: action.payload,
+      };
+    },
+    brandNos(state, action) {
+      return {
+        ...state,
+        brandNos: action.payload,
       };
     },
   },

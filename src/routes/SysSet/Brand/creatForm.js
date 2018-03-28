@@ -1,6 +1,6 @@
-/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes */
+/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes,react/no-unescaped-entities */
 import React, { PureComponent } from 'react';
-import { Input, Modal, Form, Upload, Icon, InputNumber } from 'antd';
+import { Input, Modal, Form, Upload, Icon } from 'antd';
 import { stringify } from 'qs';
 
 const FormItem = Form.Item;
@@ -77,6 +77,7 @@ export default class CreateForm extends PureComponent {
       title: props.title,
       form: props.form,
       validateBrand: props.validateBrand,
+      validateBrandNo: props.validateBrandNo,
     };
   }
 
@@ -84,7 +85,7 @@ export default class CreateForm extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const modalVisible = this.props.modalVisible;
     const title = this.props.title;
-    const { orderNumber, brandName } = this.props;
+    const { brandNo, brandName } = this.props;
     const okHandle = () => {
       this.state.form.validateFields((err, fieldsValue) => {
         if (err) return;
@@ -110,26 +111,49 @@ export default class CreateForm extends PureComponent {
         wrapperCol={{ span: 15 }}
         label="编号"
       >
-        { getFieldDecorator('orderNumber', {
-          rules: [{ required: true, message: '请输入编号...' }],
-          initialValue: orderNumber,
+        {title === "编辑" ?
+          getFieldDecorator('brandNo', {
+            rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: this.state.validateBrandNo }],
+            validateFirst: true,
+            validateTrigger: 'onBlur',
+            initialValue: brandNo,
+          })(
+            <Input />
+          ) :
+        getFieldDecorator('brandNo', {
+          rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: this.state.validateBrandNo }],
+          validateFirst: true,
+          validateTrigger: 'onBlur',
+          initialValue: '',
         })(
-          title === "编辑" ? <InputNumber /> : <InputNumber placeholder="请输入" />
-        )}
+          <Input placeholder="请输入" />
+          )
+        }
       </FormItem>
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="品牌名称"
       >
-        { getFieldDecorator('brandName', {
-          rules: [{ required: true, message: '请输入品牌名称...' }, { fieldname: 'brandName', required: true, message: '该品牌已存在', validator: this.state.validateBrand }],
-          validateFirst: true,
-          validateTrigger: 'onBlur',
-          initialValue: brandName,
-        })(
-          title === "编辑" ? <Input /> : <Input placeholder="请输入" />
-        )}
+        {
+          title === "编辑" ?
+            getFieldDecorator('brandName', {
+              rules: [{ required: true, message: '请输入品牌名称...' }, { fieldname: 'brandName', required: true, message: '该品牌已存在', validator: this.state.validateBrand }],
+              validateFirst: true,
+              validateTrigger: 'onBlur',
+              initialValue: brandName,
+            })(
+              <Input />
+            ) :
+            getFieldDecorator('brandName', {
+              rules: [{ required: true, message: '请输入品牌名称...' }, { fieldname: 'brandName', required: true, message: '该品牌已存在', validator: this.state.validateBrand }],
+              validateFirst: true,
+              validateTrigger: 'onBlur',
+              initialValue: '',
+            })(
+              <Input placeholder="请输入" />
+            )
+        }
       </FormItem>
     </Modal>
   );

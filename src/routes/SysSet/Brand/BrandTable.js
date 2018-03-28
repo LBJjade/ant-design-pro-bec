@@ -16,6 +16,7 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
   brandManage,
   loading: loading.models.brandManage,
   brands: brandManage.brands,
+  brandNos: brandManage.brandNos,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -31,7 +32,7 @@ export default class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
     editId: {},
-    orderNumber: {},
+    brandNo: {},
     brandName: {},
     imgUrl: {},
     source: {},
@@ -42,6 +43,11 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'brandManage/fetchBrand',
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
     });
   }
 
@@ -86,7 +92,11 @@ export default class TableList extends PureComponent {
     });
     dispatch({
       type: 'brandManage/fetchBrand',
-      payload: {},
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
     });
     this.setState({
       pagination: {
@@ -162,10 +172,6 @@ export default class TableList extends PureComponent {
       type: 'brandManage/removeBrand',
       payload: row,
     }).then(message.success('删除成功'));
-
-    this.props.dispatch({
-      type: 'brandManage/fetchBrand',
-    });
     this.setState({
       pagination: {
         current: 1,
@@ -180,6 +186,12 @@ export default class TableList extends PureComponent {
     this.props.dispatch({
       type: 'brandManage/batchRemoveDelete',
       payload: row,
+    }).then(message.success('删除成功'));
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
     });
   };
 
@@ -190,10 +202,10 @@ export default class TableList extends PureComponent {
     });
   };
 
-  handleEditModalVisible = (flag, id, orderNumber, brandName) => {
+  handleEditModalVisible = (flag, id, brandNo, brandName) => {
     this.setState({
       modalVisible: flag,
-      orderNumber: orderNumber,
+      brandNo: brandNo,
       brandName: brandName,
       editId: id,
       title: "编辑",
@@ -208,17 +220,11 @@ export default class TableList extends PureComponent {
 
     message.success('添加成功');
     this.setState({
-      modalVisible: false,
-    });
-
-    this.props.dispatch({
-      type: 'brandManage/fetchBrand',
-    });
-    this.setState({
       pagination: {
         current: 1,
         pageSize: 5,
       },
+      modalVisible: false,
     });
   };
 
@@ -231,18 +237,11 @@ export default class TableList extends PureComponent {
 
     message.success('编辑成功');
     this.setState({
-      modalVisible: false,
-    });
-
-    this.props.dispatch({
-      type: 'brandManage/fetchBrand',
-    });
-
-    this.setState({
       pagination: {
         current: 1,
         pageSize: 5,
       },
+      modalVisible: false,
     });
   };
 
@@ -267,11 +266,32 @@ export default class TableList extends PureComponent {
     }
   }
 
+  validateBrandNo = (rule, value, callback) => {
+    if (value === undefined || value === "") {
+      callback();
+    } else {
+      this.props.dispatch({
+        type: 'brandManage/exisBrandNos',
+        payload: { where: {brandNo: value} },
+      }).then(() => {
+        if (this.props.brandNos.results === undefined) {
+          callback();
+          return;
+        }
+        if (this.props.brandNos.results.length > 0) {
+          callback([new Error(rule.message)]);
+        } else {
+          callback();
+        }
+      });
+    }
+  }
+
 
   render() {
     const { brandManage: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, orderNumber, brandName } = this.state;
+    const { selectedRows, modalVisible, brandNo, brandName } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -283,7 +303,7 @@ export default class TableList extends PureComponent {
     const columns = [
       {
         title: '编号',
-        dataIndex: 'orderNumber',
+        dataIndex: 'brandNo',
       },
       {
         title: '品牌名称',
@@ -295,7 +315,7 @@ export default class TableList extends PureComponent {
         render: (val, record) => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.orderNumber, record.brandName)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.brandNo, record.brandName)}>编辑</a>
           </span>),
         // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
@@ -318,17 +338,18 @@ export default class TableList extends PureComponent {
     const parentAddMethods = {
       handleAdd: this.handleAdd,
       handleEdit: this.handleEdit,
-      orderNumber: orderNumber,
+      brandNo: brandNo,
       brandName: brandName,
       handleModalVisible: this.handleAddModalVisible,
       title: this.state.title,
       validateBrand: this.validateBrand,
+      validateBrandNo: this.validateBrandNo,
     };
 
     const parentEditMethods = {
       handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
-      orderNumber: orderNumber,
+      brandNo: brandNo,
       brandName: brandName,
     };
 
@@ -336,7 +357,7 @@ export default class TableList extends PureComponent {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
-      total: data.count,
+      total: data.count ? data.count : 1,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
       // onChange: this.handlePageChange,
     };
@@ -350,7 +371,7 @@ export default class TableList extends PureComponent {
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                   <Col md={4} sm={10}>
                     <FormItem label="编号">
-                      {getFieldDecorator('orderNumber')(
+                      {getFieldDecorator('brandNo')(
                         <InputNumber placeholder="请输入" />
                       )}
                     </FormItem>
