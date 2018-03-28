@@ -112,8 +112,9 @@ export default class CreateForm extends PureComponent {
       >
         { getFieldDecorator('orderNumber', {
           rules: [{ required: true, message: '请输入编号...' }],
+          initialValue: orderNumber,
         })(
-          title === "编辑" ? <InputNumber defaultValue={123} /> : <InputNumber placeholder="请输入" />
+          title === "编辑" ? <InputNumber /> : <InputNumber placeholder="请输入" />
         )}
       </FormItem>
       <FormItem
@@ -125,8 +126,9 @@ export default class CreateForm extends PureComponent {
           rules: [{ required: true, message: '请输入品牌名称...' }, { fieldname: 'brandName', required: true, message: '该品牌已存在', validator: this.state.validateBrand }],
           validateFirst: true,
           validateTrigger: 'onBlur',
+          initialValue: brandName,
         })(
-          title === "编辑" ? <Input defaultValue="klasdjf" /> : <Input placeholder="请输入" />
+          title === "编辑" ? <Input /> : <Input placeholder="请输入" />
         )}
       </FormItem>
     </Modal>
