@@ -63,6 +63,7 @@ class Avatar extends React.Component {
     );
   }
 }
+
 @Form.create()
 export default class CreateForm extends PureComponent {
   constructor(props) {
@@ -75,6 +76,7 @@ export default class CreateForm extends PureComponent {
       handleModalVisible: props.handleModalVisible,
       title: props.title,
       form: props.form,
+      validateBrand: props.validateBrand,
     };
   }
 
@@ -120,7 +122,7 @@ export default class CreateForm extends PureComponent {
         label="品牌名称"
       >
         { getFieldDecorator('brandName', {
-          rules: [{ required: true, message: '请输入品牌名称...' }],
+          rules: [{ required: true, message: '请输入品牌名称...' }, { fieldname: 'brandName', required: true, message: '该品牌已存在', validator: this.state.validateBrand }],
         })(
           title === "编辑" ? <Input defaultValue="klasdjf" /> : <Input placeholder="请输入" />
         )}

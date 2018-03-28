@@ -1,4 +1,4 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -15,6 +15,7 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 @connect(({ brandManage, loading }) => ({
   brandManage,
   loading: loading.models.brandManage,
+  brands: brandManage.brands,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -245,6 +246,25 @@ export default class TableList extends PureComponent {
     });
   };
 
+  validateBrand = (rule, value, callback) => {
+    const { brandManage: { brands } } = this.props;
+    if (value === undefined || value === "") {
+        callback();
+    } else {
+      this.props.dispatch({
+        type: 'brandManage/exisBrands',
+        payload: { where: {brandName: value} },
+      }).then(() => {
+        if (brands.length > 0) {
+          callback([new Error(rule.message)]);
+        } else {
+          callback();
+        }
+      });
+    }
+  }
+
+
   render() {
     const { brandManage: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
@@ -299,6 +319,7 @@ export default class TableList extends PureComponent {
       brandName: brandName,
       handleModalVisible: this.handleAddModalVisible,
       title: this.state.title,
+      validateBrand: this.validateBrand,
     };
 
     const parentEditMethods = {
