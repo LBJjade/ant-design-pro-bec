@@ -223,17 +223,11 @@ export const getRouterData = (app) => {
     '/module/resource': {
       component: dynamicWrapper(app, ['resourceManage'], () => import('../routes/Module/ResourceTableList')),
     },
-    '/comment/list': {
-      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/comment/TableList')),
-    },
     '/comment/base': {
-      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/comment/BasicList')),
-    },
-    '/comment/cart': {
-      component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/comment/CardList')),
+      component: dynamicWrapper(app, ['commentManage'], () => import('../routes/comment/CommentTable')),
     },
     '/comment/resource': {
-      component: dynamicWrapper(app, ['resourceManage'], () => import('../routes/comment/ResourceTableList')),
+      component: dynamicWrapper(app, ['praiseManage'], () => import('../routes/comment/PraiseTable')),
     },
     '/moduleDashboard/workspace': {
       component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workspace')),
