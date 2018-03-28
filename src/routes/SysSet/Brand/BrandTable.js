@@ -247,7 +247,6 @@ export default class TableList extends PureComponent {
   };
 
   validateBrand = (rule, value, callback) => {
-    const { brandManage: { brands } } = this.props;
     if (value === undefined || value === "") {
         callback();
     } else {
@@ -255,7 +254,11 @@ export default class TableList extends PureComponent {
         type: 'brandManage/exisBrands',
         payload: { where: {brandName: value} },
       }).then(() => {
-        if (brands.length > 0) {
+        if (this.props.brands.results === undefined) {
+          callback();
+          return;
+        }
+        if (this.props.brands.results.length > 0) {
           callback([new Error(rule.message)]);
         } else {
           callback();
