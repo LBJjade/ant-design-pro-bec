@@ -346,12 +346,6 @@ export default class TableList extends PureComponent {
       validateBrandNo: this.validateBrandNo,
     };
 
-    const parentEditMethods = {
-      handleEdit: this.handleEdit,
-      handleModalVisible: this.handleEditModalVisible,
-      brandNo: brandNo,
-      brandName: brandName,
-    };
 
     const paginationProps = {
       showSizeChanger: true,
@@ -420,7 +414,7 @@ export default class TableList extends PureComponent {
                     pagination={paginationProps}
                     dataSource={data.results}
                     onChange={this.handleStandardTableChange}
-                    rowSelection={rowSelection}
+                    // rowSelection={rowSelection}
                     onSelectRow={this.handleSelectRows}
                   />
                 </div>
