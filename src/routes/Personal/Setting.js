@@ -1,22 +1,24 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from 'antd';
+import { Form, Avatar } from 'antd';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './Personalize.less';
+import styles from './Setting.less';
 
 @connect(({ account, loading }) => ({
   account,
-
+  loading: account.loading,
 }))
 @Form.create()
-export default class Personalize extends Component {
+export default class Setting extends PureComponent {
   state = {};
 
   render() {
+    const { currentUser } = this.props.account;
     const pageHeaderContent = (
       <div className={styles.pageHeaderContent}>
         <div className={styles.avatar}>
-          <Avatar size="large" src="https://gitlab.becheer.com/uploads/system/user/avatar/2/avatar.png" />
+          <Avatar size="large" src={currentUser.avatar} />
         </div>
         <div className={styles.content}>
           <div className={styles.contentTitle}>早安，何群民，祝你开心每一天！</div>

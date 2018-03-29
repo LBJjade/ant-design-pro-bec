@@ -1,16 +1,8 @@
 import { stringify } from 'qs';
-import request from '../utils/request';
+import request, {requestParams2Url} from '../utils/request';
 
 export async function getUsers(params) {
-  return request(`/api/users?where=${JSON.stringify(params)}`, {
-    method: 'GET',
-  });
-}
-
-export async function getUsers2(params) {
-  // const { where, keys } = params;
-
-  return request(`/api/users?where=${JSON.stringify(params)}`, {
+  return request(`/api/users${requestParams2Url(params)}`, {
     method: 'GET',
   });
 }

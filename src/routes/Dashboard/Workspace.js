@@ -8,7 +8,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import EditableLinkGroup from '../../components/EditableLinkGroup';
 import { Radar } from '../../components/Charts';
 
-import styles from './WorkSpace.less';
+import styles from './Workspace.less';
 
 const links = [
   {

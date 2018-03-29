@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Form, Card, Table, Tabs, Icon, Select, Row, message, InputNumber } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import TableForm from './TableForm';
+import AnalysisRule from './AnalysisRule';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -214,7 +214,7 @@ export default class AnalysisSetting extends Component {
                   <TabPane tab={<span><Icon type="check" />必要条件</span>} key="required" forceRender={true}>
                     <Form.Item>
                       {getFieldDecorator('requirerule')(
-                        <TableForm
+                        <AnalysisRule
                           loading={loading}
                           dataKey='isRequired'
                           dataSource={analysisRuleRequired}
@@ -229,7 +229,7 @@ export default class AnalysisSetting extends Component {
                   <TabPane tab={<span><Icon type="ellipsis" />充分条件</span>} key="optional" forceRender={true}>
                     <Form.Item>
                       {getFieldDecorator('optional')(
-                        <TableForm
+                        <AnalysisRule
                           loading={loading}
                           dataKey='isOptional'
                           dataSource={analysisRuleOptional}

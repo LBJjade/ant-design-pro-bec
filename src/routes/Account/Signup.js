@@ -88,7 +88,8 @@ export default class Signup extends Component {
         if (rule.fieldname === 'username') {
           this.props.dispatch({
             type: 'signup/existUsername',
-            payload: { username: value },
+            // payload: { username: value },
+            payload: { where: { username: { $regex: `^${value}$`, $options: 'i', }, }, },
           }).then(() => {
             if (this.props.existUsername.results.length > 0) {
               callback([new Error(rule.message)]);
@@ -100,7 +101,8 @@ export default class Signup extends Component {
         if (rule.fieldname === 'email') {
           this.props.dispatch({
             type: 'signup/existEmail',
-            payload: { email: value },
+            // payload: { email: value },
+            payload: { where: { email: { $regex: `^${value}$`, $options: 'i', }, }, },
           }).then(() => {
             if (this.props.existEmail.results.length > 0) {
               callback([new Error(rule.message)]);
@@ -112,7 +114,8 @@ export default class Signup extends Component {
         if (rule.fieldname === 'mobile') {
           this.props.dispatch({
             type: 'signup/existMobile',
-            payload: { mobile: value },
+            // payload: { mobile: value },
+            payload: { where: { mobile: value }, },
           }).then(() => {
             if (this.props.existMobile.results.length > 0) {
               callback([new Error(rule.message)]);

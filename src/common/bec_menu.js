@@ -16,6 +16,7 @@ const menuData = [{
   }, {
     name: '工作台',
     path: 'workplace',
+    // hideInBreadcrumb: true,
     // hideInMenu: true,
   }],
 }, {
@@ -125,6 +126,16 @@ const menuData = [{
     path: 'register-result',
   }],
 }, {
+  name: '个人中心',
+  icon: 'user',
+  path: 'personal',
+  // hideInMenu: true,
+  children: [{
+    name: '设置',
+    path: 'setting',
+    // hideInMenu: true,
+  }],
+},{
   name: '使用文档',
   icon: 'book',
   path: 'http://pro.ant.design/docs/getting-started',
@@ -194,7 +205,7 @@ const menuData = [{
   }],
 }];
 
-function formatter(data, parentPath = '', parentAuthority) {
+function formatter(data, parentPath = '/', parentAuthority) {
   return data.map((item) => {
     let { path } = item;
     if (!isUrl(path)) {
