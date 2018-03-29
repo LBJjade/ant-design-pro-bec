@@ -213,7 +213,7 @@ export default class Signup extends Component {
     const value = form.getFieldValue('password');
     const passwordStatus = this.getPasswordStatus();
     return value && value.length ? (
-      <div className={styles[`progress-${passwordStatus}`]}>
+      <div className={styles['progress-'+passwordStatus]}>
         <Progress
           status={passwordProgressMap[passwordStatus]}
           className={styles.progress}

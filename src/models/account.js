@@ -1,6 +1,7 @@
-import { getUsers, getUserMe, getVerifyEmail } from '../services/account';
+import { getUsers, getUserMe, getVerifyEmail, putUser } from '../services/account';
 import { getNotices, putNotice } from '../services/notice';
 import store from "../index";
+import { message} from 'antd';
 
 export default {
   namespace: 'account',
@@ -10,6 +11,9 @@ export default {
     loading: false,
     currentUser: {},
     verifyResult: [],
+    existUsername: [],
+    existEmail: [],
+    existMobile: [],
   },
 
   effects: {
@@ -72,6 +76,38 @@ export default {
     *noticeRead({ payload }, { call }) {
       yield call(putNotice, payload);
     },
+    *existUsername({ payload }, { call, put }) {
+      const existUser = yield call(getUsers, payload);
+      yield put({
+        type: 'changeUsername',
+        payload: existUser,
+      });
+    },
+    *existEmail({ payload }, { call, put }) {
+      const existUser = yield call(getUsers, payload);
+      yield put({
+        type: 'changeEmail',
+        payload: existUser,
+      });
+    },
+    *existMobile({ payload }, { call, put }) {
+      const existUser = yield call(getUsers, payload);
+      yield put({
+        type: 'changeMobile',
+        payload: existUser,
+      });
+    },
+    *coverUser({ payload }, { call, put }) {
+      yield put({ type: 'changeLoading', payload: true});
+      const res = yield call(putUser, payload);
+      if (res.error === undefined) {
+        yield put({ type: 'resetUser', payload: { ...payload, ...res} });
+        message.success('保存成功！', 3);
+      } else {
+        message.error(`保存失败！${res.error}`, 5);
+      }
+      yield put({ type: 'changeLoading', payload: false});
+    },
   },
 
   reducers: {
@@ -116,6 +152,30 @@ export default {
       return {
         ...state,
         verifyResult: payload,
+      };
+    },
+    changeUsername(state, { payload }) {
+      return {
+        ...state,
+        existUsername: payload,
+      };
+    },
+    changeEmail(state, { payload }) {
+      return {
+        ...state,
+        existEmail: payload,
+      };
+    },
+    changeMobile(state, { payload }) {
+      return {
+        ...state,
+        existMobile: payload,
+      };
+    },
+    resetUser(state, { payload }) {
+      return {
+        ...state,
+        currentUser: payload,
       };
     },
   },

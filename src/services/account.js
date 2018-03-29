@@ -1,5 +1,6 @@
 import { stringify } from 'qs';
 import request, {requestParams2Url} from '../utils/request';
+import _ from 'lodash';
 
 export async function getUsers(params) {
   return request(`/api/users${requestParams2Url(params)}`, {
@@ -14,12 +15,22 @@ export async function postUser(params) {
   });
 }
 
+// export async function putUser(params) {
+//   const { objectid, data } = params;
+//   return request(`/api/users/${objectid}`, {
+//     method: 'PUT',
+//     headers: { 'X-Parse-Session-Token': localStorage.token },
+//     body: data,
+//   });
+// }
 export async function putUser(params) {
-  const { objectid, data } = params;
-  return request(`/api/users/${objectid}`, {
+  const param = _.clone(params);
+  const objectId = param.objectId;
+  delete param.objectId;
+  return request(`/api/users/${objectId}`, {
     method: 'PUT',
     headers: { 'X-Parse-Session-Token': localStorage.token },
-    body: data,
+    body: param,
   });
 }
 
