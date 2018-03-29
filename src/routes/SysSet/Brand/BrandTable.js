@@ -226,6 +226,15 @@ export default class TableList extends PureComponent {
       },
       modalVisible: false,
     });
+
+    this.props.dispatch({
+      type: 'brandManage/fetchBrand',
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
+    });
   };
 
   handleEdit = (fields) => {
@@ -242,6 +251,15 @@ export default class TableList extends PureComponent {
         pageSize: 5,
       },
       modalVisible: false,
+    });
+
+    this.props.dispatch({
+      type: 'brandManage/fetchBrand',
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
     });
   };
 
