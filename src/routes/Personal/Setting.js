@@ -18,6 +18,21 @@ export default class Setting extends Component {
   state = {
     prefix: '86',
     imageUrl: '',
+    isDirty: false,
+  };
+
+  onChange = (e) => {
+    const { target } = e;
+    if (target !== undefined) {
+      if (target.id === 'nickname') {
+        this.setState({ isDirty: !(this.props.currentUser.nickname === target.value) });
+      }
+      if (target.id === 'mobile') {
+        this.setState({ isDirty: !(this.props.currentUser.mobile === target.value) });
+      }
+    }
+    // this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+    // console.log(e);
   };
 
   greeting = () => {
@@ -133,12 +148,10 @@ export default class Setting extends Component {
   }
 
   render() {
-    const { form, loading } = this.props;
+    const { form, loading, currentUser } = this.props;
     const { getFieldDecorator } = form;
 
-    const { currentUser } = this.props;
-
-    const { prefix } = this.state;
+    const { prefix, isDirty } = this.state;
 
     let greetingWord = '';
     let subTitle = '';
@@ -212,7 +225,10 @@ export default class Setting extends Component {
                     rules: [
                       { fieldname: 'nickname', required: false, min: 3, message: '昵称长度不能小于 3 ' },
                     ],
-                  })(<Input placeholder={currentUser.nickname || '请输入您的昵称.'} prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
+                  })(<Input
+                    placeholder={currentUser.nickname || '请输入您的昵称.'}
+                    prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                    onChange={e => this.onChange(e)} />)}
                 </Form.Item>
                 <Form.Item { ...formItemLayout } label='手机号码'>
                   <Input.Group compact>
@@ -237,12 +253,13 @@ export default class Setting extends Component {
                       <Input
                         style={{ width: '80%' }}
                         placeholder={currentUser.mobile || '请输入您的手机号码.'}
+                        onChange={e => this.onChange(e)}
                       />
                     )}
                   </Input.Group>
                 </Form.Item>
                 <Form.Item {...submitFormLayout} style={{ marginTop: 32 }}>
-                  <Button type="primary" htmlType="submit" loading={loading}>保存</Button>
+                  <Button type="primary" htmlType="submit" loading={loading} disabled={!isDirty}>保存</Button>
                 </Form.Item>
               </Form>
             </Card>

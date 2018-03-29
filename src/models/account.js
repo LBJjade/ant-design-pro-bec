@@ -101,7 +101,7 @@ export default {
       yield put({ type: 'changeLoading', payload: true});
       const res = yield call(putUser, payload);
       if (res.error === undefined) {
-        yield put({ type: 'resetUser', payload: { ...payload, ...res} });
+        yield put({ type: 'resetUser', payload: { ...this.state.currentUser, ...res} });
         message.success('保存成功！', 3);
       } else {
         message.error(`保存失败！${res.error}`, 5);
