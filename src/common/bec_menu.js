@@ -170,6 +170,10 @@ const menuData = [{
   children: [{
     name: '品牌管理',
     icon: 'global',
+    path: 'analysis',
+  }, {
+    name: '品牌管理',
+    icon: 'global',
     path: 'table',
   }, {
     name: '品牌卡片',

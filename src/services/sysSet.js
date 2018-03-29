@@ -9,7 +9,7 @@ export async function getBrand(params) {
 }
 
 export async function postBrand(params) {
-  request('/api/classes/Brand', {
+  return request('/api/classes/Brand', {
     method: 'POST',
     body: params,
   });

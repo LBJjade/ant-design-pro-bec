@@ -25,14 +25,26 @@ export default {
         payload: response,
       });
     },
-    *storeBrand({ payload }, { call }) {
-      yield call(postBrand, payload);
+    *storeBrand({ payload }, { call, put }) {
+      const response = yield call(postBrand, payload);
+      yield put({
+        type: 'appendBrands',
+        payload: response,
+      });
     },
-    *coverBrand({ payload }, { call }) {
-      yield call(putBrand, payload);
+    *coverBrand({ payload }, { call, put }) {
+      const response = yield call(putBrand, payload);
+      yield put({
+        type: 'resetBrands',
+        payload: response,
+      });
     },
-    *removeBrand({ payload }, { call }) {
-      yield call(deleteBrand, payload);
+    *removeBrand({ payload }, { call, put }) {
+      const response = yield call(deleteBrand, payload);
+      yield put({
+        type: 'clearBrands',
+        payload: response,
+      });
     },
     *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(brandBatchDelete, payload);
@@ -73,6 +85,24 @@ export default {
 
   reducers: {
     changeBrands(state, action) {
+      return {
+        ...state,
+        data: action.payload,
+      };
+    },
+    appendBrands(state) {
+      return {
+        ...state,
+        data: action.payload,
+      };
+    },
+    resetBrands(state) {
+      return {
+        ...state,
+        data: action.payload,
+      };
+    },
+    clearBrands(state) {
       return {
         ...state,
         data: action.payload,

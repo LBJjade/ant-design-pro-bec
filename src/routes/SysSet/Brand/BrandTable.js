@@ -32,11 +32,12 @@ export default class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
     editId: {},
-    brandNo: {},
-    brandName: {},
+    brandNo: '',
+    brandName: '',
     imgUrl: {},
     source: {},
     title: {},
+    refrush: {},
   };
 
   componentDidMount() {
@@ -48,6 +49,12 @@ export default class TableList extends PureComponent {
         limit: 5,
         count: true,
       },
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      refrush: true,
     });
   }
 
@@ -198,6 +205,9 @@ export default class TableList extends PureComponent {
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
+      brandNo: "",
+      brandName: "",
+      editId: "",
       title: "新增",
     });
   };
@@ -216,25 +226,17 @@ export default class TableList extends PureComponent {
     this.props.dispatch({
       type: 'brandManage/storeBrand',
       payload: fields,
-    });
-
-    message.success('添加成功');
-    this.setState({
-      pagination: {
+    }).then(() => {
+      message.success('添加成功');
+      this.setState({
+        pagination: {
         current: 1,
         pageSize: 5,
       },
       modalVisible: false,
-    });
-
-    this.props.dispatch({
-      type: 'brandManage/fetchBrand',
-      payload: {
-        skip: 0,
-        limit: 5,
-        count: true,
-      },
-    });
+      });
+    }
+    );
   };
 
   handleEdit = (fields) => {
@@ -252,39 +254,31 @@ export default class TableList extends PureComponent {
       },
       modalVisible: false,
     });
-
-    this.props.dispatch({
-      type: 'brandManage/fetchBrand',
-      payload: {
-        skip: 0,
-        limit: 5,
-        count: true,
-      },
-    });
   };
 
-  validateBrand = (rule, value, callback) => {
-    if (value === undefined || value === "") {
-        callback();
-    } else {
-      this.props.dispatch({
-        type: 'brandManage/exisBrands',
-        payload: { where: {brandName: value} },
-      }).then(() => {
-        if (this.props.brands.results === undefined) {
-          callback();
-          return;
-        }
-        if (this.props.brands.results.length > 0) {
-          callback([new Error(rule.message)]);
-        } else {
-          callback();
-        }
-      });
-    }
-  }
+  // validateBrand = (rule, value, callback) => {
+  //   if (value === undefined || value === "") {
+  //       callback();
+  //   } else {
+  //     this.props.dispatch({
+  //       type: 'brandManage/exisBrands',
+  //       payload: { where: {brandName: value} },
+  //     }).then(() => {
+  //       if (this.props.brands.results === undefined) {
+  //         callback();
+  //         return;
+  //       }
+  //       if (this.props.brands.results.length > 0) {
+  //         callback([new Error(rule.message)]);
+  //       } else {
+  //         callback();
+  //       }
+  //     });
+  //   }
+  // }
 
   validateBrandNo = (rule, value, callback) => {
+    const {brandManage: { brandNos } } = this.props;
     if (value === undefined || value === "") {
       callback();
     } else {
@@ -356,11 +350,8 @@ export default class TableList extends PureComponent {
     const parentAddMethods = {
       handleAdd: this.handleAdd,
       handleEdit: this.handleEdit,
-      brandNo: brandNo,
-      brandName: brandName,
       handleModalVisible: this.handleAddModalVisible,
       title: this.state.title,
-      validateBrand: this.validateBrand,
       validateBrandNo: this.validateBrandNo,
     };
 
@@ -381,10 +372,10 @@ export default class TableList extends PureComponent {
             <div className={styles.tableListForm}>
               <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                  <Col md={4} sm={10}>
+                  <Col md={8} sm={24}>
                     <FormItem label="编号">
                       {getFieldDecorator('brandNo')(
-                        <InputNumber placeholder="请输入" />
+                        <Input placeholder="请输入" />
                       )}
                     </FormItem>
                   </Col>
@@ -443,6 +434,8 @@ export default class TableList extends PureComponent {
         <CreateForm
           {...parentAddMethods}
           modalVisible={modalVisible}
+          brandNo={this.state.brandNo}
+          brandName={this.state.brandName}
         />
       </PageHeaderLayout>
     );

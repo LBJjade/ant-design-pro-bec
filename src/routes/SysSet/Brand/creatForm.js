@@ -76,86 +76,75 @@ export default class CreateForm extends PureComponent {
       handleModalVisible: props.handleModalVisible,
       title: props.title,
       form: props.form,
-      validateBrand: props.validateBrand,
       validateBrandNo: props.validateBrandNo,
+      brandNo: props.brandNo,
+      brandName: props.brandName,
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    // console.log(nextProps);
+    this.setState({
+      brandNo: nextProps.brandNo,
+      brandName: nextProps.brandName,
+    });
+  }
+  okHandle = () => {
+    this.state.form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      if (title === "编辑") {
+        this.state.handleEdit(fieldsValue);
+      } else {
+        this.state.handleAdd(fieldsValue);
+      }
+    });
+  };
   render() {
     const { getFieldDecorator } = this.props.form;
     const modalVisible = this.props.modalVisible;
     const title = this.props.title;
-    const { brandNo, brandName } = this.props;
-    const okHandle = () => {
-      this.state.form.validateFields((err, fieldsValue) => {
-        if (err) return;
-        if (title === "编辑") {
-          this.state.handleEdit(fieldsValue);
-        } else {
-          this.state.handleAdd(fieldsValue);
-        }
-      });
-    };
+    const { brandNo, brandName } = this.state;
 
 
-  return (
+    return (
 
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => this.state.handleModalVisible(false)}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="编号"
+      <Modal
+        title={title}
+        visible={modalVisible}
+        onOk={this.okHandle}
+        onCancel={() => this.state.handleModalVisible(false)}
       >
-        {title === "编辑" ?
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="编号"
+        >
+          {
           getFieldDecorator('brandNo', {
             rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: this.state.validateBrandNo }],
             validateFirst: true,
             validateTrigger: 'onBlur',
-            initialValue: brandNo,
+            initialValue: this.state.brandNo,
           })(
-            <Input />
-          ) :
-        getFieldDecorator('brandNo', {
-          rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: this.state.validateBrandNo }],
-          validateFirst: true,
-          validateTrigger: 'onBlur',
-          initialValue: '',
-        })(
-          <Input placeholder="请输入" />
-          )
-        }
-      </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="品牌名称"
-      >
-        {
-          title === "编辑" ?
-            getFieldDecorator('brandName', {
-              rules: [{ required: true, message: '请输入品牌名称...' }, { fieldname: 'brandName', required: true, message: '该品牌已存在', validator: this.state.validateBrand }],
-              validateFirst: true,
-              validateTrigger: 'onBlur',
-              initialValue: brandName,
-            })(
-              <Input />
-            ) :
-            getFieldDecorator('brandName', {
-              rules: [{ required: true, message: '请输入品牌名称...' }, { fieldname: 'brandName', required: true, message: '该品牌已存在', validator: this.state.validateBrand }],
-              validateFirst: true,
-              validateTrigger: 'onBlur',
-              initialValue: '',
-            })(
-              <Input placeholder="请输入" />
+            <Input placeholder="请输入" />
             )
-        }
-      </FormItem>
-    </Modal>
-  );
+          }
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="品牌名称"
+        >
+          {
+              getFieldDecorator('brandName', {
+                rules: [{ required: true, message: '请输入品牌名称...' }],
+                initialValue: this.state.brandName,
+              })(
+                <Input placeholder="请输入" />
+              )
+          }
+        </FormItem>
+      </Modal>
+    );
  }
 }

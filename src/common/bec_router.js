@@ -211,6 +211,9 @@ export const getRouterData = (app) => {
     '/analysis/analysissetting': {
       component: dynamicWrapper(app, ['analysis'], () => import('../routes/Analysis/AnalysisSetting')),
     },
+    '/set/analysis': {
+      component: dynamicWrapper(app, ['analysis'], () => import('../routes/SysSet/Analysis/AnalysisSetting')),
+    },
     '/set/brand': {
       component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/BrandList')),
     },
