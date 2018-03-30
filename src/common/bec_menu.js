@@ -203,6 +203,16 @@ const menuData = [{
     icon: 'star',
     path: 'shop',
   }],
+}, {
+  name: '基础数据',
+  icon: 'user',
+  path: 'basic',
+  authority: ['admin','guest'],
+  children: [{
+    name: '城市管理',
+    icon: 'user',
+    path: 'city',
+  }],
 }];
 
 function formatter(data, parentPath = '/', parentAuthority) {
