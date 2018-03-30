@@ -68,17 +68,15 @@ class Avatar extends React.Component {
 export default class CreateForm extends PureComponent {
   constructor(props) {
     super(props);
-    const { pro } = props;
     this.state = {
-      modalVisible: props.modalVisible,
-      handleAdd: props.handleAdd,
-      handleEdit: props.handleEdit,
-      handleModalVisible: props.handleModalVisible,
-      title: props.title,
-      form: props.form,
-      validateBrandNo: props.validateBrandNo,
-      brandNo: props.brandNo,
-      brandName: props.brandName,
+      modalVisible: this.props.modalVisible,
+      handleAdd: this.props.handleAdd,
+      handleEdit: this.props.handleEdit,
+      handleModalVisible: this.props.handleModalVisible,
+      title: this.props.title,
+      validateBrandNo: this.props.validateBrandNo,
+      brandNo: this.props.brandNo,
+      brandName: this.props.brandName,
     };
   }
 
@@ -87,6 +85,8 @@ export default class CreateForm extends PureComponent {
     this.setState({
       brandNo: nextProps.brandNo,
       brandName: nextProps.brandName,
+      modalVisible: nextProps.modalVisible,
+      title: nextProps.title,
     });
   }
   okHandle = () => {
@@ -101,13 +101,10 @@ export default class CreateForm extends PureComponent {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const modalVisible = this.props.modalVisible;
-    const title = this.props.title;
-    const { brandNo, brandName } = this.state;
+    const { brandNo, brandName, title, modalVisible } = this.state;
 
 
     return (
-
       <Modal
         title={title}
         visible={modalVisible}
@@ -124,7 +121,7 @@ export default class CreateForm extends PureComponent {
             rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: this.state.validateBrandNo }],
             validateFirst: true,
             validateTrigger: 'onBlur',
-            initialValue: this.state.brandNo,
+            initialValue: brandNo,
           })(
             <Input placeholder="请输入" />
             )
@@ -138,7 +135,7 @@ export default class CreateForm extends PureComponent {
           {
               getFieldDecorator('brandName', {
                 rules: [{ required: true, message: '请输入品牌名称...' }],
-                initialValue: this.state.brandName,
+                initialValue: brandName,
               })(
                 <Input placeholder="请输入" />
               )
