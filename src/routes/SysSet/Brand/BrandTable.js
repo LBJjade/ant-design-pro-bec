@@ -36,8 +36,7 @@ export default class TableList extends PureComponent {
     brandName: '',
     imgUrl: {},
     source: {},
-    title: {},
-    refrush: {},
+    title: '',
   };
 
   componentDidMount() {
@@ -303,7 +302,7 @@ export default class TableList extends PureComponent {
   render() {
     const { brandManage: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, brandNo, brandName } = this.state;
+    const { selectedRows, modalVisible, title, brandNo, brandName } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -346,15 +345,6 @@ export default class TableList extends PureComponent {
         name: record.name,
       }),
     };
-
-    const parentAddMethods = {
-      handleAdd: this.handleAdd,
-      handleEdit: this.handleEdit,
-      handleModalVisible: this.handleAddModalVisible,
-      title: this.state.title,
-      validateBrandNo: this.validateBrandNo,
-    };
-
 
     const paginationProps = {
       showSizeChanger: true,
@@ -432,10 +422,14 @@ export default class TableList extends PureComponent {
           </div>
         </Card>
         <CreateForm
-          {...parentAddMethods}
+          handleAdd={this.handleAdd}
+          handleEdit={this.handleEdit}
+          handleModalVisible={this.handleAddModalVisible}
+          title={title}
+          validateBrandNo={this.validateBrandNo}
           modalVisible={modalVisible}
-          brandNo={this.state.brandNo}
-          brandName={this.state.brandName}
+          brandNo={brandNo}
+          brandName={brandName}
         />
       </PageHeaderLayout>
     );
