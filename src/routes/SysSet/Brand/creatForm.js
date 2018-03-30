@@ -91,6 +91,12 @@ export default class CreateForm extends PureComponent {
     });
   };
 
+  onclose = () => {
+    const { handleModalVisible } = this.state;
+    handleModalVisible(false);
+    this.props.form.resetFields();
+  };
+
   okHandle = () => {
     const { form, title, handleEdit, handleAdd } = this.state;
     form.validateFields((err, fieldsValue) => {
@@ -114,7 +120,7 @@ export default class CreateForm extends PureComponent {
         title={title}
         visible={modalVisible}
         onOk={this.okHandle}
-        onCancel={() => handleModalVisible(false)}
+        onCancel={() => this.onclose()}
       >
         <FormItem
           labelCol={{ span: 5 }}
