@@ -1,4 +1,4 @@
-/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes,react/no-unescaped-entities */
+/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes,react/no-unescaped-entities,no-extra-semi */
 import React, { PureComponent } from 'react';
 import { Input, Modal, Form, Upload, Icon } from 'antd';
 import { stringify } from 'qs';
@@ -74,11 +74,12 @@ export default class CreateForm extends PureComponent {
       handleEdit: this.props.handleEdit,
       handleModalVisible: this.props.handleModalVisible,
       title: this.props.title,
+      form: this.props.form,
       validateBrandNo: this.props.validateBrandNo,
       brandNo: this.props.brandNo,
       brandName: this.props.brandName,
     };
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     // console.log(nextProps);
@@ -88,20 +89,24 @@ export default class CreateForm extends PureComponent {
       modalVisible: nextProps.modalVisible,
       title: nextProps.title,
     });
-  }
+  };
+
   okHandle = () => {
-    this.state.form.validateFields((err, fieldsValue) => {
+    const { form, title, handleEdit, handleAdd } = this.state;
+    form.validateFields((err, fieldsValue) => {
       if (err) return;
       if (title === "编辑") {
-        this.state.handleEdit(fieldsValue);
+        handleEdit(fieldsValue);
       } else {
-        this.state.handleAdd(fieldsValue);
+        handleAdd(fieldsValue);
       }
     });
   };
+
+
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { brandNo, brandName, title, modalVisible } = this.state;
+    const { brandNo, brandName, title, modalVisible, handleModalVisible, validateBrandNo } = this.state;
 
 
     return (
@@ -109,7 +114,7 @@ export default class CreateForm extends PureComponent {
         title={title}
         visible={modalVisible}
         onOk={this.okHandle}
-        onCancel={() => this.state.handleModalVisible(false)}
+        onCancel={() => handleModalVisible(false)}
       >
         <FormItem
           labelCol={{ span: 5 }}
@@ -118,7 +123,7 @@ export default class CreateForm extends PureComponent {
         >
           {
           getFieldDecorator('brandNo', {
-            rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: this.state.validateBrandNo }],
+            rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: validateBrandNo }],
             validateFirst: true,
             validateTrigger: 'onBlur',
             initialValue: brandNo,
