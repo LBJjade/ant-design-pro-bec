@@ -9,7 +9,7 @@ export async function getBrand(params) {
 }
 
 export async function postBrand(params) {
-  return request('/api/classes/Brand', {
+  request('/api/classes/Brand', {
     method: 'POST',
     body: params,
   });
@@ -33,7 +33,7 @@ export async function brandBatchDelete(params) {
 }
 
 export async function deleteBrand(params) {
-  request('/api/classes/Brand/' + params, {
+  return request('/api/classes/Brand/' + params, {
     method: 'DELETE',
   });
 }

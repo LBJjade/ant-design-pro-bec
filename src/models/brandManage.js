@@ -1,4 +1,5 @@
-/* eslint-disable keyword-spacing,no-undef */
+/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable */
+import { Message } from 'antd';
 import { getBrand, postBrand, putBrand, brandBatchDelete, deleteBrand, brandRequireQuery, uploadLogo } from '../services/sysSet';
 
 export default {
@@ -27,24 +28,66 @@ export default {
     },
     *storeBrand({ payload }, { call, put }) {
       const response = yield call(postBrand, payload);
-      yield put({
-        type: 'appendBrands',
-        payload: response,
-      });
+      if(response !== undefined) {
+        if(JSON.parse(response).error === undefined) {
+          yield put({
+            type: 'appendBrands',
+            payload: response,
+          });
+          Message.success('新增成功');
+        }else{
+          yield put({
+            type: 'appendBrands',
+            payload: response,
+          });
+          Message.success('新增成功');
+        }
+      }else{
+        yield put({
+          type: 'appendBrands',
+          payload: response,
+        });
+        Message.success('新增成功');
+      }
     },
     *coverBrand({ payload }, { call, put }) {
       const response = yield call(putBrand, payload);
-      yield put({
-        type: 'resetBrands',
-        payload: response,
-      });
+      if(response !== undefined) {
+        if(JSON.parse(response).error === undefined) {
+          yield put({
+            type: 'resetBrands',
+            payload: response,
+          });
+          Message.success('编辑成功');
+        }else{
+          yield put({
+            type: 'resetBrands',
+            payload: response,
+          });
+          Message.success('编辑失败');
+        }
+      }else{
+        yield put({
+          type: 'resetBrands',
+        });
+        Message.success('编辑成功');
+      }
     },
     *removeBrand({ payload }, { call, put }) {
       const response = yield call(deleteBrand, payload);
-      yield put({
-        type: 'clearBrands',
-        payload: response,
-      });
+      if(JSON.parse(response).error === undefined) {
+        yield put({
+          type: 'clearBrands',
+          payload: response,
+        });
+        Message.success('删除成功');
+      }else{
+        yield put({
+          type: 'clearBrands',
+          payload: response,
+        });
+        Message.success('删除失败');
+      }
     },
     *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(brandBatchDelete, payload);
@@ -90,22 +133,19 @@ export default {
         data: action.payload,
       };
     },
-    appendBrands(state) {
+    appendBrands(state, action) {
       return {
         ...state,
-        data: action.payload,
       };
     },
     resetBrands(state) {
       return {
         ...state,
-        data: action.payload,
       };
     },
-    clearBrands(state) {
+    clearBrands(state, action) {
       return {
         ...state,
-        data: action.payload,
       };
     },
     brands(state, action) {

@@ -1,4 +1,4 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -17,6 +17,7 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
   loading: loading.models.brandManage,
   brands: brandManage.brands,
   brandNos: brandManage.brandNos,
+  requestError: brandManage.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -143,6 +144,20 @@ export default class TableList extends PureComponent {
     });
   };
 
+  handelDelete = (row) => {
+    const {brandManage: { requestError } } = this.props;
+    this.props.dispatch({
+      type: 'brandManage/removeBrand',
+      payload: row,
+    });
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
+    });
+  };
+
   handleSearch = (e) => {
     e.preventDefault();
 
@@ -170,19 +185,6 @@ export default class TableList extends PureComponent {
           pageSize: data.results.length,
         },
       });
-    });
-  };
-
-  handelDelete = (row) => {
-    this.props.dispatch({
-      type: 'brandManage/removeBrand',
-      payload: row,
-    }).then(message.success('删除成功'));
-    this.setState({
-      pagination: {
-        current: 1,
-        pageSize: 5,
-      },
     });
   };
   // handelDelete = (row) => {
@@ -222,36 +224,36 @@ export default class TableList extends PureComponent {
   };
 
   handleAdd = (fields) => {
+    const {brandManage: { requestError } } = this.props;
     this.props.dispatch({
       type: 'brandManage/storeBrand',
       payload: fields,
     }).then(() => {
-      message.success('添加成功');
       this.setState({
         pagination: {
-        current: 1,
-        pageSize: 5,
-      },
-      modalVisible: false,
+          current: 1,
+          pageSize: 5,
+        },
+        modalVisible: false,
       });
     }
     );
   };
 
   handleEdit = (fields) => {
+    const {brandManage: { requestError } } = this.props;
     let eidtId = this.state.editId;
     this.props.dispatch({
       type: 'brandManage/coverBrand',
       payload: { fields, eidtId },
-    });
-
-    message.success('编辑成功');
-    this.setState({
-      pagination: {
-        current: 1,
-        pageSize: 5,
-      },
-      modalVisible: false,
+    }).then(() => {
+        this.setState({
+          pagination: {
+            current: 1,
+            pageSize: 5,
+          },
+          modalVisible: false,
+        });
     });
   };
 

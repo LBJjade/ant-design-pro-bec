@@ -98,13 +98,15 @@ export default class CreateForm extends PureComponent {
   };
 
   okHandle = () => {
-    const { form, title, handleEdit, handleAdd } = this.state;
+    const { form, title, handleEdit, brandNo, handleAdd } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      if (title === "编辑") {
+      if (brandNo !== "") {
         handleEdit(fieldsValue);
+        this.props.form.resetFields();
       } else {
         handleAdd(fieldsValue);
+        this.props.form.resetFields();
       }
     });
   };
@@ -112,7 +114,7 @@ export default class CreateForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { brandNo, brandName, title, modalVisible, handleModalVisible, validateBrandNo } = this.state;
+    const { brandNo, brandName, title, modalVisible, validateBrandNo } = this.state;
 
 
     return (
