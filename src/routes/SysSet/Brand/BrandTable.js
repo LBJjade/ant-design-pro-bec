@@ -27,6 +27,7 @@ export default class TableList extends PureComponent {
       current: 1,
       total: 0,
     },
+    data: {},
     modalVisible: false,
     modalEditVisible: false,
     expandForm: false,
@@ -145,10 +146,11 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {brandManage: { requestError } } = this.props;
+    const {brandManage: { data } } = this.props;
     this.props.dispatch({
       type: 'brandManage/removeBrand',
       payload: row,
+    }).then(() => {
     });
     this.setState({
       pagination: {

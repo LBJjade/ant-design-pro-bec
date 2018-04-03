@@ -1,4 +1,4 @@
-/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable */
+/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
 import { getBrand, postBrand, putBrand, brandBatchDelete, deleteBrand, brandRequireQuery, uploadLogo } from '../services/sysSet';
 
@@ -16,6 +16,9 @@ export default {
     },
     brands: [],
     brandNos: [],
+    newdata: {
+      results: [],
+    },
   },
 
   effects: {
@@ -28,27 +31,11 @@ export default {
     },
     *storeBrand({ payload }, { call, put }) {
       const response = yield call(postBrand, payload);
-      if(response !== undefined) {
-        if(JSON.parse(response).error === undefined) {
-          yield put({
-            type: 'appendBrands',
-            payload: response,
-          });
-          Message.success('新增成功');
-        }else{
-          yield put({
-            type: 'appendBrands',
-            payload: response,
-          });
-          Message.success('新增成功');
-        }
-      }else{
-        yield put({
-          type: 'appendBrands',
-          payload: response,
-        });
-        Message.success('新增成功');
-      }
+      yield put({
+        type: 'appendBrands',
+        payload: { data: payload, object: response },
+      });
+      Message.success('新增成功');
     },
     *coverBrand({ payload }, { call, put }) {
       const response = yield call(putBrand, payload);
@@ -64,7 +51,7 @@ export default {
             type: 'resetBrands',
             payload: response,
           });
-          Message.success('编辑失败');
+          Message.error('编辑失败');
         }
       }else{
         yield put({
@@ -86,7 +73,7 @@ export default {
           type: 'clearBrands',
           payload: response,
         });
-        Message.success('删除失败');
+        Message.error('删除失败');
       }
     },
     *batchRemoveDelete({ payload }, { call, put }) {
@@ -136,6 +123,15 @@ export default {
     appendBrands(state, action) {
       return {
         ...state,
+        data: {
+          results: state.data.results.map(item => {
+            if (item.objectId === action.payload.objectId) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+        },
       };
     },
     resetBrands(state) {
