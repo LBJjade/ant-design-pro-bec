@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing */
-import { getSource, addResource, resourceEdit, resourceBatchDelete, resourceDelete, resourceRequireQuery } from '../services/module';
+import { getSource, addResource, resourceEdit, resourceBatchDelete, resourceDelete } from '../services/module';
 
 export default {
   namespace: 'resourceManage',
@@ -44,13 +44,6 @@ export default {
       const response = yield call(resourceBatchDelete, payload);
       yield put({
         type: 'deleteResources',
-        payload: response,
-      });
-    },
-    *requireQuery({ payload }, { call, put }) {
-      const response = yield call(resourceRequireQuery, payload);
-      yield put({
-        type: 'queryResult',
         payload: response,
       });
     },

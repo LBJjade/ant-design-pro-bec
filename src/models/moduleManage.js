@@ -1,5 +1,5 @@
 /* eslint-disable keyword-spacing */
-import { getModule, postModule, moduleEdit, moduleBatchDelete, moduleDelete, moduleRequireQuery } from '../services/module';
+import { getModule, postModule, moduleEdit, moduleBatchDelete, moduleDelete } from '../services/module';
 
 export default {
   namespace: 'moduleManage',
@@ -44,13 +44,6 @@ export default {
       const response = yield call(moduleBatchDelete, payload);
       yield put({
         type: 'deleteModules',
-        payload: response,
-      });
-    },
-    *requireQuery({ payload }, { call, put }) {
-      const response = yield call(moduleRequireQuery, payload);
-      yield put({
-        type: 'queryResult',
         payload: response,
       });
     },
