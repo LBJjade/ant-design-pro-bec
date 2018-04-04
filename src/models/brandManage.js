@@ -43,19 +43,20 @@ export default {
         if(JSON.parse(response).error === undefined) {
           yield put({
             type: 'resetBrands',
-            payload: response,
+            payload: payload,
           });
           Message.success('编辑成功');
         }else{
           yield put({
             type: 'resetBrands',
-            payload: response,
+            payload: payload,
           });
           Message.error('编辑失败');
         }
       }else{
         yield put({
           type: 'resetBrands',
+          payload: payload,
         });
         Message.success('编辑成功');
       }
@@ -65,13 +66,13 @@ export default {
       if(JSON.parse(response).error === undefined) {
         yield put({
           type: 'clearBrands',
-          payload: response,
+          payload: payload,
         });
         Message.success('删除成功');
       }else{
         yield put({
           type: 'clearBrands',
-          payload: response,
+          payload: payload,
         });
         Message.error('删除失败');
       }
@@ -128,14 +129,26 @@ export default {
         },
       };
     },
-    resetBrands(state) {
+    resetBrands(state, action) {
       return {
         ...state,
+        data: {
+          results: state.data.results.map(item => {
+            if (item.objectId === action.payload.ojId) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+        },
       };
     },
     clearBrands(state, action) {
       return {
         ...state,
+        data: {
+          results: state.data.results.filter(item => item.objectId !== action.payload),
+        },
       };
     },
     brands(state, action) {

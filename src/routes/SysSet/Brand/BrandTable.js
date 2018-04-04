@@ -244,10 +244,10 @@ export default class TableList extends PureComponent {
 
   handleEdit = (fields) => {
     const {brandManage: { requestError } } = this.props;
-    let eidtId = this.state.editId;
+    const ojId = this.state.editId;
     this.props.dispatch({
       type: 'brandManage/coverBrand',
-      payload: { fields, eidtId },
+      payload: { ...fields, ojId },
     }).then(() => {
         this.setState({
           pagination: {
