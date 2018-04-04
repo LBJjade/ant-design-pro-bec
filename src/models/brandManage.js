@@ -33,7 +33,7 @@ export default {
       const response = yield call(postBrand, payload);
       yield put({
         type: 'appendBrands',
-        payload: { data: payload, object: response },
+        payload: { results: [Object.assign(payload, response)] },
       });
       Message.success('新增成功');
     },
@@ -124,13 +124,7 @@ export default {
       return {
         ...state,
         data: {
-          results: state.data.results.map(item => {
-            if (item.objectId === action.payload.objectId) {
-              return action.payload;
-            } else {
-              return item;
-            }
-          }),
+          results: state.data.results.concat(action.payload.results),
         },
       };
     },
