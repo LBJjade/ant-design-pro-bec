@@ -126,6 +126,7 @@ export default {
         ...state,
         data: {
           results: state.data.results.concat(action.payload.results),
+          count: state.data.count + 1,
         },
       };
     },
@@ -140,6 +141,7 @@ export default {
               return item;
             }
           }),
+          count: state.data.count,
         },
       };
     },
@@ -148,6 +150,7 @@ export default {
         ...state,
         data: {
           results: state.data.results.filter(item => item.objectId !== action.payload),
+          count: state.data.count - 1,
         },
       };
     },

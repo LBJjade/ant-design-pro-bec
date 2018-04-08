@@ -354,7 +354,7 @@ export default class TableList extends PureComponent {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
-      total: data.count ? data.count : 1,
+      total: data.count,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
       // onChange: this.handlePageChange,
     };
