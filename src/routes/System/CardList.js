@@ -8,14 +8,14 @@ import Ellipsis from '../../components/Ellipsis';
 
 import styles from './CardList.less';
 
-@connect(({ moduleManage, loading }) => ({
-  moduleManage,
-  loading: loading.models.moduleManage,
+@connect(({ role, loading }) => ({
+  role,
+  loading: loading.models.role,
 }))
 export default class CardList extends PureComponent {
   componentDidMount() {
     this.props.dispatch({
-      type: 'moduleManage/fetch',
+      type: 'role/fetch',
       payload: {
         count: 8,
       },
@@ -23,7 +23,7 @@ export default class CardList extends PureComponent {
   }
 
   render() {
-    const { moduleManage: { data }, loading } = this.props;
+    const { role: { data }, loading } = this.props;
 
     const content = (
       <div className={styles.pageHeaderContent}>
@@ -36,10 +36,10 @@ export default class CardList extends PureComponent {
             <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg" /> 快速开始
           </a>
           <a>
-            <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/NbuDUAuBlIApFuDvWiND.svg" /> 产品简介
+            <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/NbuDUAuBlIApFuDvWiND.svg" /> 角色简介
           </a>
           <a>
-            <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg" /> 产品文档
+            <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg" /> 角色文档
           </a>
         </div>
       </div>
@@ -65,13 +65,13 @@ export default class CardList extends PureComponent {
             dataSource={['', ...data.results]}
             renderItem={item => (item ? (
 // eslint-disable-next-line react/jsx-indent
-                <List.Item key={item.id}>
-                  <Card hoverable className={styles.card} actions={[<a>操作一</a>, <a>操作二</a>]}>
+                <List.Item key={item.roleId}>
+                  <Card hoverable className={styles.card} actions={[<a>编辑</a>, <a>删除</a>]}>
                     <Card.Meta
                       avatar={<img alt="" className={styles.cardAvatar} src={item.avatar} />}
-                      title={<a href="#">{item.username}</a>}
+                      title={<a href="#">{item.roleName}</a>}
                       description={(
-                        <Ellipsis className={styles.item} lines={3}>{item.mobile}</Ellipsis>
+                        <Ellipsis className={styles.item} lines={3}>{item.moduleName}</Ellipsis>
                       )}
                     />
                   </Card>
@@ -79,7 +79,7 @@ export default class CardList extends PureComponent {
               ) : (
                 <List.Item>
                   <Button type="dashed" className={styles.newButton}>
-                    <Icon type="plus" /> 新增产品
+                    <Icon type="plus" /> 新增角色
                   </Button>
                 </List.Item>
               )

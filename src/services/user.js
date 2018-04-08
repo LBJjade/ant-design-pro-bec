@@ -19,3 +19,22 @@ export async function getUsers(params) {
     method: 'GET',
   });
 }
+
+export async function queryRole() {
+  return request('/api/role');
+}
+
+export async function queryCurrentRole() {
+  return request('/api/currentUser');
+}
+
+export async function getUserListRole(params) {
+  return request(`/api/Role?${stringify(params)}`);
+}
+
+
+export async function getRole() {
+  return request('/api/classes/role', {
+    method: 'GET',
+  });
+}
