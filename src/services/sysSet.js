@@ -16,7 +16,7 @@ export async function postBrand(params) {
 }
 
 export async function putBrand(params) {
-  let editid = params.eidtId;
+  let editid = params.ojId;
   let data = params.fields;
   request(`/api/classes/Brand/${editid}`, {
     method: 'PUT',

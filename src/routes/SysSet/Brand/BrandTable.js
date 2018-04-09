@@ -259,19 +259,27 @@ export default class TableList extends PureComponent {
   };
 
   handleEdit = (fields) => {
-    const {brandManage: { requestError } } = this.props;
+    const { dispatch } = this.props;
     const ojId = this.state.editId;
-    this.props.dispatch({
+    dispatch({
       type: 'brandManage/coverBrand',
-      payload: { ...fields, ojId },
+      payload: { fields, ojId },
     }).then(() => {
-        this.setState({
+      dispatch({
+      type: 'brandManage/fetchBrand',
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
+    });
+      this.setState({
           pagination: {
             current: 1,
             pageSize: 5,
           },
           modalVisible: false,
-        });
+      });
     });
   };
 

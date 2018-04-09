@@ -41,23 +41,11 @@ export default {
       const response = yield call(putBrand, payload);
       if(response !== undefined) {
         if(JSON.parse(response).error === undefined) {
-          yield put({
-            type: 'resetBrands',
-            payload: payload,
-          });
           Message.success('编辑成功');
         }else{
-          yield put({
-            type: 'resetBrands',
-            payload: payload,
-          });
           Message.error('编辑失败');
         }
       }else{
-        yield put({
-          type: 'resetBrands',
-          payload: payload,
-        });
         Message.success('编辑成功');
       }
     },
