@@ -64,16 +64,8 @@ export default {
     *removeBrand({ payload }, { call, put }) {
       const response = yield call(deleteBrand, payload);
       if(JSON.parse(response).error === undefined) {
-        yield put({
-          type: 'clearBrands',
-          payload: payload,
-        });
         Message.success('删除成功');
       }else{
-        yield put({
-          type: 'clearBrands',
-          payload: payload,
-        });
         Message.error('删除失败');
       }
     },
