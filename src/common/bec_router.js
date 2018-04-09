@@ -220,8 +220,8 @@ export const getRouterData = (app) => {
     '/module/cart': {
       component: dynamicWrapper(app, ['moduleManage'], () => import('../routes/Module/CardList')),
     },
-    '/module/resource': {
-      component: dynamicWrapper(app, ['resourceManage'], () => import('../routes/Module/ResourceTableList')),
+    '/module/Resource': {
+      component: dynamicWrapper(app, ['resourceManage'], () => import('../routes/Module/Resource/ResourceTable')),
     },
     '/comment/base': {
       component: dynamicWrapper(app, ['commentManage'], () => import('../routes/comment/CommentTable')),

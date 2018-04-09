@@ -173,7 +173,7 @@ const menuData = [{
   }, {
     name: '数字资源管理',
     icon: 'folder-open',
-    path: 'resource',
+    path: 'Resource',
   }],
 }, {
   name: '评论点赞管理',

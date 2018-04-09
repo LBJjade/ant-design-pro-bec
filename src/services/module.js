@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus,spaced-comment,prefer-const,keyword-spacing,prefer-template */
-import request from '../utils/request';
+import { stringify } from 'qs';
+import request, { requestParams2Url } from '../utils/request';
 
 
 //module
@@ -76,3 +77,45 @@ export async function resourceDelete(params) {
   });
 }
 
+export async function getResource(params) {
+  return request(`/api/classes/moduleResource?${stringify(params)}`, {
+    method: 'GET',
+  });
+}
+
+export async function postResource(params) {
+  return request('/api/classes/moduleResource', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function putResource(params) {
+  let editid = params.ojId;
+  let data = params.fields;
+  request(`/api/classes/moduleResource/${editid}`, {
+    method: 'PUT',
+    body: data,
+  });
+}
+
+export async function ResourceBatchDelete(params) {
+  for(let i = 0; i < params.length; i++) {
+    request(`/api/classes/moduleResource/${params[i]}`, {
+      method: 'DELETE',
+    });
+  }
+}
+
+export async function deleteResource(params) {
+  return request('/api/classes/moduleResource/' + params, {
+    method: 'DELETE',
+  });
+}
+
+export async function ResourceRequireQuery(params) {
+  let url = requestParams2Url(params);
+  return request(`/api/classes/moduleResource${url}`, {
+    method: 'GET',
+  });
+}

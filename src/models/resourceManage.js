@@ -1,5 +1,6 @@
-/* eslint-disable keyword-spacing */
-import { getSource, addResource, resourceEdit, resourceBatchDelete, resourceDelete } from '../services/module';
+/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
+import { Message } from 'antd';
+import { getResource, postResource, putResource, resourceBatchDelete, deleteResource, resourceRequireQuery, uploadLogo } from '../services/module';
 
 export default {
   namespace: 'resourceManage',
@@ -8,42 +9,86 @@ export default {
     data: {
       results: [],
       count: 0,
+      state: [],
+    },
+    list: {
+      results: [],
+    },
+    resources: [],
+    resourceNos: [],
+    newdata: {
+      results: [],
     },
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(getSource, payload);
+    *fetchResource({ payload }, { call, put }) {
+      const response = yield call(getResource, payload);
       yield put({
         type: 'changeResources',
         payload: response,
       });
     },
-    *add({ payload }, { call, put }) {
-      const response = yield call(addResource, payload);
+    *storeResource({ payload }, { call, put }) {
+      const response = yield call(postResource, payload);
       yield put({
-        type: 'addResources',
-        payload: response,
+        type: 'appendResources',
+        payload: { results: [Object.assign(payload, response)] },
       });
+      Message.success('新增成功');
     },
-    *edit({ payload }, { call, put }) {
-      const response = yield call(resourceEdit, payload);
-      yield put({
-        type: 'editResources',
-        payload: response,
-      });
+    *coverResource({ payload }, { call, put }) {
+      const response = yield call(putResource, payload);
+      if(response !== undefined) {
+        if(JSON.parse(response).error === undefined) {
+          Message.success('编辑成功');
+        }else{
+          Message.error('编辑失败');
+        }
+      }else{
+        Message.success('编辑成功');
+      }
     },
-    *delete({ payload }, { call, put }) {
-      const response = yield call(resourceDelete, payload);
-      yield put({
-        type: 'deleteResources',
-        payload: response,
-      });
+    *removeResource({ payload }, { call, put }) {
+      const response = yield call(deleteResource, payload);
+      if(JSON.parse(response).error === undefined) {
+        Message.success('删除成功');
+      }else{
+        Message.error('删除失败');
+      }
     },
-    *batchDelete({ payload }, { call, put }) {
+    *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(resourceBatchDelete, payload);
       yield put({
-        type: 'deleteResources',
+        type: 'changeResources',
+        payload: response,
+      });
+    },
+    *requireQuery({ payload }, { call, put }) {
+      const response = yield call(resourceRequireQuery, payload);
+      yield put({
+        type: 'changeResources',
+        payload: response,
+      });
+    },
+    *upload({ payload }, { call, put }) {
+      const response = yield call(uploadLogo, payload);
+      yield put({
+        type: 'changeResources',
+        payload: response,
+      });
+    },
+    *exisResources({ payload }, { call, put }) {
+      const response = yield call(resourceRequireQuery, payload);
+      yield put({
+        type: 'resources',
+        payload: response,
+      });
+    },
+    *exisResourceNos({ payload }, { call, put }) {
+      const response = yield call(resourceRequireQuery, payload);
+      yield put({
+        type: 'resourceNos',
         payload: response,
       });
     },
@@ -56,29 +101,50 @@ export default {
         data: action.payload,
       };
     },
-  },
-  addResources(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  editResources(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  deleteResources(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  queryResult(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
+    appendResources(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.concat(action.payload.results),
+          count: state.data.count + 1,
+        },
+      };
+    },
+    resetResources(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.map(item => {
+            if (item.objectId === action.payload.ojId) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+          count: state.data.count,
+        },
+      };
+    },
+    clearResources(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.filter(item => item.objectId !== action.payload),
+          count: state.data.count - 1,
+        },
+      };
+    },
+    resources(state, action) {
+      return {
+        ...state,
+        resources: action.payload,
+      };
+    },
+    resourceNos(state, action) {
+      return {
+        ...state,
+        resourceNos: action.payload,
+      };
+    },
   },
 };
