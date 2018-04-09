@@ -9,6 +9,7 @@ import styles from './TableList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const { TextArea } = Input;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 const CreateAddForm = Form.create()((props) => {
@@ -44,6 +45,17 @@ const CreateAddForm = Form.create()((props) => {
       >
         {form.getFieldDecorator('resourceBrief', {
           rules: [{ required: true, message: '请输入资源简介...' }],
+        })(
+          <TextArea rows={4} placeholder="请输入" />
+        )}
+      </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="资源路径"
+      >
+        {form.getFieldDecorator('qrCodeUrl', {
+          rules: [{ required: true, message: '请输入资源路径...' }],
         })(
           <Input placeholder="请输入" />
         )}
@@ -85,6 +97,17 @@ const CreateEditForm = Form.create()((props) => {
       >
         {form.getFieldDecorator('resourceBrief', {
           rules: [{ required: true, message: '请输入资源简介...' }],
+        })(
+          <TextArea rows={4} placeholder="请输入" />
+        )}
+      </FormItem>
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="资源路径"
+      >
+        {form.getFieldDecorator('qrCodeUrl', {
+          rules: [{ required: true, message: '请输入资源路径...' }],
         })(
           <Input placeholder="请输入" />
         )}
@@ -303,22 +326,9 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="资源简介">
-              {getFieldDecorator('resourceBrief')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
-              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a>
             </span>
           </Col>
         </Row>
@@ -335,16 +345,6 @@ export default class TableList extends PureComponent {
             <FormItem label="资源名称">
               {getFieldDecorator('no')(
                 <Input placeholder="请输入" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="资源简介">
-              {getFieldDecorator('resourceBrief')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
               )}
             </FormItem>
           </Col>

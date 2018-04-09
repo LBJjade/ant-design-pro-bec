@@ -23,7 +23,7 @@ const menuData = [{
   name: '表单页',
   icon: 'form',
   path: 'form',
-  authority: ['a'],
+  authority: ['admin'],
   children: [{
     name: '基础表单',
     path: 'basic-form',
