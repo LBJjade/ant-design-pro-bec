@@ -147,6 +147,7 @@ export default class TableList extends PureComponent {
 
   handelDelete = (row) => {
     const {brandManage: { data }, dispatch } = this.props;
+    const { pagination: {current} } = this.state;
     dispatch({
       type: 'brandManage/removeBrand',
       payload: row,
@@ -170,6 +171,12 @@ export default class TableList extends PureComponent {
         dispatch({
           type: 'brandManage/fetchBrand',
           payload: params,
+        });
+        this.setState({
+          pagination: {
+            current: current - 1,
+            pageSize: 5,
+          },
         });
       }
     });
@@ -283,27 +290,6 @@ export default class TableList extends PureComponent {
       });
     });
   };
-
-  // validateBrand = (rule, value, callback) => {
-  //   if (value === undefined || value === "") {
-  //       callback();
-  //   } else {
-  //     this.props.dispatch({
-  //       type: 'brandManage/exisBrands',
-  //       payload: { where: {brandName: value} },
-  //     }).then(() => {
-  //       if (this.props.brands.results === undefined) {
-  //         callback();
-  //         return;
-  //       }
-  //       if (this.props.brands.results.length > 0) {
-  //         callback([new Error(rule.message)]);
-  //       } else {
-  //         callback();
-  //       }
-  //     });
-  //   }
-  // }
 
   validateBrandNo = (rule, value, callback) => {
     const { brandNo } = this.state;
