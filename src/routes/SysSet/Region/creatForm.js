@@ -75,8 +75,8 @@ export default class CreateForm extends PureComponent {
       handleModalVisible: this.props.handleModalVisible,
       title: this.props.title,
       form: this.props.form,
-      validateRegionNo: this.props.validateRegionNo,
-      regionNo: this.props.regionNo,
+      validateDistrict: this.props.validateDistrict,
+      district: this.props.district,
       regionName: this.props.regionName,
     };
   };
@@ -84,7 +84,7 @@ export default class CreateForm extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // console.log(nextProps);
     this.setState({
-      regionNo: nextProps.regionNo,
+      district: nextProps.district,
       regionName: nextProps.regionName,
       modalVisible: nextProps.modalVisible,
       title: nextProps.title,
@@ -98,10 +98,10 @@ export default class CreateForm extends PureComponent {
   };
 
   okHandle = () => {
-    const { form, title, handleEdit, regionNo, handleAdd } = this.state;
+    const { form, title, handleEdit, district, handleAdd } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      if (regionNo !== "") {
+      if (district !== "") {
         handleEdit(fieldsValue);
         this.props.form.resetFields();
       } else {
@@ -114,7 +114,7 @@ export default class CreateForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { regionNo, regionName, title, modalVisible, validateRegionNo } = this.state;
+    const { district, regionName, title, modalVisible, validateDistrict } = this.state;
 
 
     return (
@@ -130,11 +130,11 @@ export default class CreateForm extends PureComponent {
           label="编号"
         >
           {
-          getFieldDecorator('regionNo', {
-            rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'regionNo', required: true, message: '该编号已存在', validator: validateRegionNo }],
+          getFieldDecorator('district', {
+            rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'district', required: true, message: '该编号已存在', validator: validateDistrict }],
             validateFirst: true,
             validateTrigger: 'onBlur',
-            initialValue: regionNo,
+            initialValue: district,
           })(
             <Input placeholder="请输入" />
             )

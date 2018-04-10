@@ -1,9 +1,11 @@
 /* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes,react/no-unescaped-entities,no-extra-semi */
 import React, { PureComponent } from 'react';
-import { Input, Modal, Form, Upload, Icon } from 'antd';
+import { Input, Modal, Form, Upload, Icon, Select } from 'antd';
 import { stringify } from 'qs';
 
 const FormItem = Form.Item;
+const { Option } = Select;
+const SelectOption = Select.Option;
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -75,17 +77,17 @@ export default class CreateForm extends PureComponent {
       handleModalVisible: this.props.handleModalVisible,
       title: this.props.title,
       form: this.props.form,
-      validateBrandNo: this.props.validateBrandNo,
-      brandNo: this.props.brandNo,
-      brandName: this.props.brandName,
+      validateDistrictNo: this.props.validateDistrictNo,
+      districtNo: this.props.districtNo,
+      districtName: this.props.districtName,
     };
   };
 
   componentWillReceiveProps(nextProps) {
     // console.log(nextProps);
     this.setState({
-      brandNo: nextProps.brandNo,
-      brandName: nextProps.brandName,
+      districtNo: nextProps.districtNo,
+      districtName: nextProps.districtName,
       modalVisible: nextProps.modalVisible,
       title: nextProps.title,
     });
@@ -98,10 +100,10 @@ export default class CreateForm extends PureComponent {
   };
 
   okHandle = () => {
-    const { form, title, handleEdit, brandNo, handleAdd } = this.state;
+    const { form, title, handleEdit, districtNo, handleAdd } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      if (brandNo !== "") {
+      if (districtNo !== "") {
         handleEdit(fieldsValue);
         this.props.form.resetFields();
       } else {
@@ -114,7 +116,8 @@ export default class CreateForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { brandNo, brandName, title, modalVisible, validateBrandNo } = this.state;
+    const { option, option2 } = this.props;
+    const { districtNo, districtName, title, modalVisible, validateDistrictNo } = this.state;
 
 
     return (
@@ -130,11 +133,11 @@ export default class CreateForm extends PureComponent {
           label="编号"
         >
           {
-          getFieldDecorator('brandNo', {
-            rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'brandNo', required: true, message: '该编号已存在', validator: validateBrandNo }],
+          getFieldDecorator('districtNo', {
+            rules: [{ required: true, message: '请输入编号...' }, { fieldname: 'districtNo', required: true, message: '该编号已存在', validator: validateDistrictNo }],
             validateFirst: true,
             validateTrigger: 'onBlur',
-            initialValue: brandNo,
+            initialValue: districtNo,
           })(
             <Input placeholder="请输入" />
             )
@@ -143,16 +146,48 @@ export default class CreateForm extends PureComponent {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="品牌名称"
+          label="小区名称"
         >
           {
-              getFieldDecorator('brandName', {
-                rules: [{ required: true, message: '请输入品牌名称...' }],
-                initialValue: brandName,
+              getFieldDecorator('districtName', {
+                rules: [{ required: true, message: '请输入小区名称...' }],
+                initialValue: districtName,
               })(
                 <Input placeholder="请输入" />
               )
           }
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="关联品牌"
+        >
+          {getFieldDecorator('brandName', {
+            rules: [{ required: true, message: '请选择关联品牌...' }],
+          })(
+            <Select
+              placeholder="请选择"
+              style={{ width: '100%' }}
+            >
+              {option.map(d => <SelectOption key={d.objectId} value={d.brandName} >{d.brandName}</SelectOption>)}
+            </Select>
+          )}
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="关联大区"
+        >
+          {getFieldDecorator('regionName', {
+            rules: [{ required: true, message: '请选择关联大区...' }],
+          })(
+            <Select
+              placeholder="请选择"
+              style={{ width: '100%' }}
+            >
+              {option2.map(d => <SelectOption key={d.objectId} value={d.regionName} >{d.regionName}</SelectOption>)}
+            </Select>
+          )}
         </FormItem>
       </Modal>
     );

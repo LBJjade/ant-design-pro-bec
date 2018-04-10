@@ -1,5 +1,6 @@
-/* eslint-disable keyword-spacing */
-import { districtQuery, districtAdd, districtEdit, districtBatchDelete, districtDelete, districtRequireQuery, getBrand, getRegion } from '../services/sysSet';
+/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
+import { Message } from 'antd';
+import { getDistrict, postDistrict, putDistrict, districtBatchDelete, deleteDistrict, districtRequireQuery, uploadLogo, getBrand, getRegion } from '../services/sysSet';
 
 export default {
   namespace: 'districtManage',
@@ -8,47 +9,58 @@ export default {
     data: {
       results: [],
       count: 0,
+      state: [],
     },
-    list: {
+    brands: {
       results: [],
-      count: 0,
     },
-    regionsResults: {
+    regions: {
       results: [],
-      count: 0,
+    },
+    districts: [],
+    districtNos: [],
+    newdata: {
+      results: [],
     },
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(districtQuery, payload);
+    *fetchDistrict({ payload }, { call, put }) {
+      const response = yield call(getDistrict, payload);
       yield put({
         type: 'changeDistricts',
         payload: response,
       });
     },
-    *add({ payload }, { call, put }) {
-      const response = yield call(districtAdd, payload);
+    *storeDistrict({ payload }, { call, put }) {
+      const response = yield call(postDistrict, payload);
       yield put({
-        type: 'changeDistricts',
-        payload: response,
+        type: 'appendDistricts',
+        payload: { results: [Object.assign(payload, response)] },
       });
+      Message.success('新增成功');
     },
-    *edit({ payload }, { call, put }) {
-      const response = yield call(districtEdit, payload);
-      yield put({
-        type: 'changeDistricts',
-        payload: response,
-      });
+    *coverDistrict({ payload }, { call, put }) {
+      const response = yield call(putDistrict, payload);
+      if(response !== undefined) {
+        if(JSON.parse(response).error === undefined) {
+          Message.success('编辑成功');
+        }else{
+          Message.error('编辑失败');
+        }
+      }else{
+        Message.success('编辑成功');
+      }
     },
-    *delete({ payload }, { call, put }) {
-      const response = yield call(districtDelete, payload);
-      yield put({
-        type: 'changeDistricts',
-        payload: response,
-      });
+    *removeDistrict({ payload }, { call, put }) {
+      const response = yield call(deleteDistrict, payload);
+      if(JSON.parse(response).error === undefined) {
+        Message.success('删除成功');
+      }else{
+        Message.error('删除失败');
+      }
     },
-    *batchDelete({ payload }, { call, put }) {
+    *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(districtBatchDelete, payload);
       yield put({
         type: 'changeDistricts',
@@ -62,17 +74,38 @@ export default {
         payload: response,
       });
     },
-    *brandQuery({ payload }, { call, put }) {
-      const response = yield call(getBrand, payload);
+    *upload({ payload }, { call, put }) {
+      const response = yield call(uploadLogo, payload);
       yield put({
-        type: 'brands',
+        type: 'changeDistricts',
         payload: response,
       });
     },
-    *regionQuery({ payload }, { call, put }) {
+    *exisDistricts({ payload }, { call, put }) {
+      const response = yield call(districtRequireQuery, payload);
+      yield put({
+        type: 'districts',
+        payload: response,
+      });
+    },
+    *exisDistrictNos({ payload }, { call, put }) {
+      const response = yield call(districtRequireQuery, payload);
+      yield put({
+        type: 'districtNos',
+        payload: response,
+      });
+    },
+    *getBrands({ payload }, { call, put }) {
+      const response = yield call(getBrand, payload);
+      yield put({
+        type: 'haveBrands',
+        payload: response,
+      });
+    },
+    *getRegions({ payload }, { call, put }) {
       const response = yield call(getRegion, payload);
       yield put({
-        type: 'regions',
+        type: 'haveRegions',
         payload: response,
       });
     },
@@ -85,16 +118,61 @@ export default {
         data: action.payload,
       };
     },
-    brands(state, action) {
+    appendDistricts(state, action) {
       return {
         ...state,
-        list: action.payload,
+        data: {
+          results: state.data.results.concat(action.payload.results),
+          count: state.data.count + 1,
+        },
       };
     },
-    regions(state, action) {
+    resetDistricts(state, action) {
       return {
         ...state,
-        regionsResults: action.payload,
+        data: {
+          results: state.data.results.map(item => {
+            if (item.objectId === action.payload.ojId) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+          count: state.data.count,
+        },
+      };
+    },
+    clearDistricts(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.filter(item => item.objectId !== action.payload),
+          count: state.data.count - 1,
+        },
+      };
+    },
+    districts(state, action) {
+      return {
+        ...state,
+        districts: action.payload,
+      };
+    },
+    districtNos(state, action) {
+      return {
+        ...state,
+        districtNos: action.payload,
+      };
+    },
+    haveBrands(state, action) {
+      return {
+        ...state,
+        brands: action.payload,
+      };
+    },
+    haveRegions(state, action) {
+      return {
+        ...state,
+        regions: action.payload,
       };
     },
   },

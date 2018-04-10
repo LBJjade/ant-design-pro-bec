@@ -221,10 +221,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/CardList')),
     },
     '/set/bigArea': {
-      component: dynamicWrapper(app, ['regionManage'], () => import('../routes/SysSet/Region/RegionTableList')),
+      component: dynamicWrapper(app, ['regionManage'], () => import('../routes/SysSet/Region/RegionTable')),
     },
     '/set/district': {
-      component: dynamicWrapper(app, ['districtManage'], () => import('../routes/SysSet/District/DistrictTableList')),
+      component: dynamicWrapper(app, ['districtManage'], () => import('../routes/SysSet/District/DistrictTable')),
     },
     '/set/shop': {
       component: dynamicWrapper(app, ['shopManage'], () => import('../routes/SysSet/Shop/ShopTableList')),

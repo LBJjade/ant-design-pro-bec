@@ -147,24 +147,38 @@ export default class TableList extends PureComponent {
 
   handelDelete = (row) => {
     const {regionManage: { data }, dispatch } = this.props;
+    const { pagination: {current} } = this.state;
     dispatch({
       type: 'regionManage/removeRegion',
       payload: row,
     }).then(() => {
-      dispatch({
-        type: 'regionManage/fetchRegion',
-        payload: {
-          skip: 0,
-          limit: 5,
+      if(data.results.length > 1) {
+        const params = {
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+          limit: this.state.pagination.pageSize,
           count: true,
-        },
-      });
-    });
-    this.setState({
-      pagination: {
-        current: 1,
-        pageSize: 5,
-      },
+        };
+        dispatch({
+          type: 'regionManage/fetchRegion',
+          payload: params,
+        });
+      }else{
+        const params = {
+          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize),
+          limit: this.state.pagination.pageSize,
+          count: true,
+        };
+        dispatch({
+          type: 'regionManage/fetchRegion',
+          payload: params,
+        });
+        this.setState({
+          pagination: {
+            current: current - 1,
+            pageSize: 5,
+          },
+        });
+      }
     });
   };
 
@@ -239,19 +253,16 @@ export default class TableList extends PureComponent {
       type: 'regionManage/storeRegion',
       payload: fields,
     }).then(() => {
+        const params = {
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+          limit: this.state.pagination.pageSize,
+          count: true,
+        };
         dispatch({
           type: 'regionManage/fetchRegion',
-          payload: {
-            skip: 0,
-            limit: 5,
-            count: true,
-          },
+          payload: params,
         });
         this.setState({
-          pagination: {
-            current: 1,
-            pageSize: 5,
-          },
           modalVisible: false,
         });
       }
@@ -265,47 +276,26 @@ export default class TableList extends PureComponent {
       type: 'regionManage/coverRegion',
       payload: { fields, ojId },
     }).then(() => {
+      const params = {
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+        limit: this.state.pagination.pageSize,
+        count: true,
+      };
       dispatch({
         type: 'regionManage/fetchRegion',
-        payload: {
-          skip: 0,
-          limit: 5,
-          count: true,
-        },
+        payload: params,
       });
       this.setState({
-        pagination: {
-          current: 1,
-          pageSize: 5,
-        },
         modalVisible: false,
       });
     });
   };
 
-  // validateRegion = (rule, value, callback) => {
-  //   if (value === undefined || value === "") {
-  //       callback();
-  //   } else {
-  //     this.props.dispatch({
-  //       type: 'regionManage/exisRegions',
-  //       payload: { where: {regionName: value} },
-  //     }).then(() => {
-  //       if (this.props.regions.results === undefined) {
-  //         callback();
-  //         return;
-  //       }
-  //       if (this.props.regions.results.length > 0) {
-  //         callback([new Error(rule.message)]);
-  //       } else {
-  //         callback();
-  //       }
-  //     });
-  //   }
-  // }
-
   validateRegionNo = (rule, value, callback) => {
-    const {regionManage: { regionNos } } = this.props;
+    const { regionNo } = this.state;
+    if(value === regionNo) {
+      callback();
+    }
     if (value === undefined || value === "") {
       callback();
     } else {
@@ -357,10 +347,9 @@ export default class TableList extends PureComponent {
         dataIndex: 'objectId',
         render: (val, record) => (
           <span>
-            <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
             <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.regionNo, record.regionName)}>编辑</a>
+            <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
           </span>),
-        // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
     ];
 
@@ -384,7 +373,7 @@ export default class TableList extends PureComponent {
       pageSize: this.state.pagination.pageSize,
       total: data.count,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
-      current: this.state.pagination.current,
+      // current: this.state.pagination.current,
       // onChange: this.handlePageChange,
     };
 
@@ -410,7 +399,7 @@ export default class TableList extends PureComponent {
                           style={{ width: '100%' }}
                         >
                           { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.regionName}>{d.regionName}</SelectOption>) :
-                          <SelectOption key="1" > 暂无</SelectOption> }
+                            <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
                     </FormItem>

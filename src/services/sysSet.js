@@ -81,42 +81,6 @@ export async function deleteRegion(params) {
   });
 }
 
-// export async function getRegion(params) {
-//   return request(`/api/classes/Region?${stringify(params)}`, {
-//     method: 'GET',
-//   });
-// }
-//
-// export async function postRegion(params) {
-//   return request('/api/classes/Region', {
-//     method: 'POST',
-//     body: params,
-//   });
-// }
-//
-// export async function putRegion(params) {
-//   let editid = params.eidtId;
-//   let data = params.fields;
-//   return request(`/api/classes/Region/${editid}`, {
-//     method: 'PUT',
-//     body: data,
-//   });
-// }
-//
-// export async function regionBatchDelete(params) {
-//   for(let i = 0; i < params.length; i++) {
-//     request(`/api/classes/Region/${params[i]}`, {
-//       method: 'DELETE',
-//     });
-//   }
-// }
-//
-// export async function deleteRegion(params) {
-//   return request('/api/classes/Region/' + params, {
-//     method: 'DELETE',
-//   });
-// }
-
 export async function regionRequireQuery(params) {
   let url = requestParams2Url(params);
   return request(`/api/classes/Region${url}`, {
@@ -124,12 +88,49 @@ export async function regionRequireQuery(params) {
   });
 }
 
-export async function regionBrandQuery(params) {
-  let url = requestParams2Url(params);
-  return request(`/api/classes/AnalysisRule${url}`, {
+export async function getDistrict(params) {
+  return request(`/api/classes/District?${stringify(params)}`, {
     method: 'GET',
   });
 }
+
+export async function postDistrict(params) {
+  return request('/api/classes/District', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function putDistrict(params) {
+  let editid = params.ojId;
+  let data = params.fields;
+  request(`/api/classes/District/${editid}`, {
+    method: 'PUT',
+    body: data,
+  });
+}
+
+export async function districtBatchDelete(params) {
+  for(let i = 0; i < params.length; i++) {
+    request(`/api/classes/Brand/${params[i]}`, {
+      method: 'DELETE',
+    });
+  }
+}
+
+export async function deleteDistrict(params) {
+  return request('/api/classes/District/' + params, {
+    method: 'DELETE',
+  });
+}
+
+export async function districtRequireQuery(params) {
+  let url = requestParams2Url(params);
+  return request(`/api/classes/District${url}`, {
+    method: 'GET',
+  });
+}
+
 
 export async function districtQuery(params) {
   return request(`/api/classes/District?${stringify(params)}`, {
@@ -153,26 +154,10 @@ export async function districtEdit(params) {
   });
 }
 
-export async function districtBatchDelete(params) {
-  for(let i = 0; i < params.length; i++) {
-    request(`/api/classes/District/${params[i]}`, {
-      method: 'DELETE',
-    });
-  }
-}
-
 export async function districtDelete(params) {
   return request('/api/classes/District/' + params, {
     method: 'DELETE',
   });
-}
-
-export async function districtRequireQuery(params) {
-  let require = `'where={${stringify(params)}}'`;
-  return request('/api/classes/District/', {
-    method: 'GET',
-    data: require,
-  }, 'where');
 }
 
 export async function shopQuery(params) {
