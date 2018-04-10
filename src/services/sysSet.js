@@ -53,12 +53,6 @@ export async function uploadLogo(params) {
   }, 'where');
 }
 
-export async function getBrandName(params) {
-  return request(`/api/classes/Brand?${stringify(params)}`, {
-    method: 'GET',
-  });
-}
-
 export async function getRegion(params) {
   return request(`/api/classes/Region?${stringify(params)}`, {
     method: 'GET',
@@ -73,20 +67,12 @@ export async function postRegion(params) {
 }
 
 export async function putRegion(params) {
-  let editid = params.eidtId;
+  let editid = params.ojId;
   let data = params.fields;
-  return request(`/api/classes/Region/${editid}`, {
+  request(`/api/classes/Region/${editid}`, {
     method: 'PUT',
     body: data,
   });
-}
-
-export async function regionBatchDelete(params) {
-  for(let i = 0; i < params.length; i++) {
-    request(`/api/classes/Region/${params[i]}`, {
-      method: 'DELETE',
-    });
-  }
 }
 
 export async function deleteRegion(params) {
@@ -95,9 +81,45 @@ export async function deleteRegion(params) {
   });
 }
 
+// export async function getRegion(params) {
+//   return request(`/api/classes/Region?${stringify(params)}`, {
+//     method: 'GET',
+//   });
+// }
+//
+// export async function postRegion(params) {
+//   return request('/api/classes/Region', {
+//     method: 'POST',
+//     body: params,
+//   });
+// }
+//
+// export async function putRegion(params) {
+//   let editid = params.eidtId;
+//   let data = params.fields;
+//   return request(`/api/classes/Region/${editid}`, {
+//     method: 'PUT',
+//     body: data,
+//   });
+// }
+//
+// export async function regionBatchDelete(params) {
+//   for(let i = 0; i < params.length; i++) {
+//     request(`/api/classes/Region/${params[i]}`, {
+//       method: 'DELETE',
+//     });
+//   }
+// }
+//
+// export async function deleteRegion(params) {
+//   return request('/api/classes/Region/' + params, {
+//     method: 'DELETE',
+//   });
+// }
+
 export async function regionRequireQuery(params) {
   let url = requestParams2Url(params);
-  return request(`/api/classes/brand${url}`, {
+  return request(`/api/classes/Region${url}`, {
     method: 'GET',
   });
 }

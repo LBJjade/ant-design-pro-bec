@@ -1,22 +1,23 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,react/no-multi-comp,prefer-destructuring,react/jsx-boolean-value,quote-props,key-spacing,quotes,quotes,no-undef,no-unused-expressions,no-plusplus,no-empty */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
-
-import CreateAddForm from './AddFrom';
-import CreateEditForm from './EditFrom';
+import CreateForm from './creatForm';
 
 import styles from '../../../static/js/table.less';
 
 const FormItem = Form.Item;
-const { Option } = Select;
 const SelectOption = Select.Option;
+const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 @connect(({ regionManage, loading }) => ({
   regionManage,
   loading: loading.models.regionManage,
+  regions: regionManage.regions,
+  regionNos: regionManage.regionNos,
+  requestError: regionManage.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -26,42 +27,35 @@ export default class TableList extends PureComponent {
       current: 1,
       total: 0,
     },
+    data: {},
     modalVisible: false,
     modalEditVisible: false,
     expandForm: false,
     selectedRows: [],
     formValues: {},
     editId: {},
+    regionNo: '',
+    regionName: '',
     imgUrl: {},
+    source: {},
+    title: '',
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
       type: 'regionManage/fetchRegion',
-    });
-    dispatch({
-      type: 'regionManage/brandQuery',
-    });
-    // const { regionManage: { data } } = this.props;
-    // const results = data.results;
-    // for (let i = 0; i < results.length; i++) {
-    //
-    // };
-    dispatch({
-      type: 'regionManage/requireQuery',
       payload: {
-        where: {
-          "$relatedTo": {
-            "object": {
-              "__type":"Pointer",
-              "className":"Region",
-              "objectId":"wtnJcWgIeg",
-            },
-            "key":"relatebrand",
-          },
-        },
+        skip: 0,
+        limit: 5,
+        count: true,
       },
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      refrush: true,
     });
   }
 
@@ -76,7 +70,7 @@ export default class TableList extends PureComponent {
     }, {});
 
     const params = {
-      skip: ((pagination.current - 1) * pagination.pageSize) + 1,
+      skip: ((pagination.current - 1) * pagination.pageSize),
       limit: pagination.pageSize,
       count: true,
       ...formValues,
@@ -106,13 +100,17 @@ export default class TableList extends PureComponent {
     });
     dispatch({
       type: 'regionManage/fetchRegion',
-      payload: {},
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
     });
-  };
-
-  toggleForm = () => {
     this.setState({
-      expandForm: !this.state.expandForm,
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
     });
   };
 
@@ -147,10 +145,33 @@ export default class TableList extends PureComponent {
     });
   };
 
+  handelDelete = (row) => {
+    const {regionManage: { data }, dispatch } = this.props;
+    dispatch({
+      type: 'regionManage/removeRegion',
+      payload: row,
+    }).then(() => {
+      dispatch({
+        type: 'regionManage/fetchRegion',
+        payload: {
+          skip: 0,
+          limit: 5,
+          count: true,
+        },
+      });
+    });
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
+    });
+  };
+
   handleSearch = (e) => {
     e.preventDefault();
 
-    const { dispatch, form } = this.props;
+    const {regionManage: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -166,15 +187,14 @@ export default class TableList extends PureComponent {
 
       dispatch({
         type: 'regionManage/requireQuery',
-        payload: values,
-      });
-    });
-  };
+        payload: { where: values },
+      }).then(message.success('查询成功'));
 
-  handelDelete = (row) => {
-    this.props.dispatch({
-      type: 'regionManage/removeRegion',
-      payload: row,
+      this.setState({
+        pagination: {
+          pageSize: data.results.length,
+        },
+      });
     });
   };
   // handelDelete = (row) => {
@@ -182,17 +202,13 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'regionManage/batchDelete',
+      type: 'regionManage/batchRemoveDelete',
       payload: row,
-    });
-  };
-
-  handelEdit = (rows, data) => {
-    this.props.dispatch({
-      type: 'regionManage/coverRegion',
-      payload: {
-        row: rows,
-        data: data,
+    }).then(message.success('删除成功'));
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
       },
     });
   };
@@ -200,95 +216,121 @@ export default class TableList extends PureComponent {
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
+      regionNo: "",
+      regionName: "",
+      editId: "",
+      title: "新增",
     });
   };
 
-  handleEditModalVisible = (flag, data) => {
+  handleEditModalVisible = (flag, id, regionNo, regionName) => {
     this.setState({
-      modalEditVisible: !!flag,
-      editId: data,
+      modalVisible: flag,
+      regionNo: regionNo,
+      regionName: regionName,
+      editId: id,
+      title: "编辑",
     });
   };
 
   handleAdd = (fields) => {
-    this.props.dispatch({
+    const { dispatch } = this.props;
+    dispatch({
       type: 'regionManage/storeRegion',
       payload: fields,
-    });
-
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
-
-    this.props.dispatch({
-      type: 'regionManage/fetchRegion',
-      payload: {},
-    });
+    }).then(() => {
+        dispatch({
+          type: 'regionManage/fetchRegion',
+          payload: {
+            skip: 0,
+            limit: 5,
+            count: true,
+          },
+        });
+        this.setState({
+          pagination: {
+            current: 1,
+            pageSize: 5,
+          },
+          modalVisible: false,
+        });
+      }
+    );
   };
 
   handleEdit = (fields) => {
-    let eidtId = this.state.editId;
-    this.props.dispatch({
+    const { dispatch } = this.props;
+    const ojId = this.state.editId;
+    dispatch({
       type: 'regionManage/coverRegion',
-      payload: { fields, eidtId },
-    });
-
-    message.success('编辑成功');
-    this.setState({
-      modalEditVisible: false,
-    });
-
-    this.props.dispatch({
-      type: 'regionManage/fetchRegion',
-      payload: {},
+      payload: { fields, ojId },
+    }).then(() => {
+      dispatch({
+        type: 'regionManage/fetchRegion',
+        payload: {
+          skip: 0,
+          limit: 5,
+          count: true,
+        },
+      });
+      this.setState({
+        pagination: {
+          current: 1,
+          pageSize: 5,
+        },
+        modalVisible: false,
+      });
     });
   };
 
-  renderSimpleForm() {
-    const { getFieldDecorator } = this.props.form;
-    const { regionManage: { data } } = this.props;
-    const results = data.results;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={4} sm={10}>
-            <FormItem label="编号">
-              {getFieldDecorator('orderNumber')(
-                <InputNumber placeholder="请输入" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="大区名称">
-              {getFieldDecorator('regionName')(
-                <Select
-                  placeholder="请选择"
-                  style={{ width: '100%' }}
-                >
-                  {results.map(d => <SelectOption key={d.objectId} >{d.regionName}</SelectOption>)}
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
+  // validateRegion = (rule, value, callback) => {
+  //   if (value === undefined || value === "") {
+  //       callback();
+  //   } else {
+  //     this.props.dispatch({
+  //       type: 'regionManage/exisRegions',
+  //       payload: { where: {regionName: value} },
+  //     }).then(() => {
+  //       if (this.props.regions.results === undefined) {
+  //         callback();
+  //         return;
+  //       }
+  //       if (this.props.regions.results.length > 0) {
+  //         callback([new Error(rule.message)]);
+  //       } else {
+  //         callback();
+  //       }
+  //     });
+  //   }
+  // }
+
+  validateRegionNo = (rule, value, callback) => {
+    const {regionManage: { regionNos } } = this.props;
+    if (value === undefined || value === "") {
+      callback();
+    } else {
+      this.props.dispatch({
+        type: 'regionManage/exisRegionNos',
+        payload: { where: {regionNo: value} },
+      }).then(() => {
+        if (this.props.regionNos.results === undefined) {
+          callback();
+          return;
+        }
+        if (this.props.regionNos.results.length > 0) {
+          callback([new Error(rule.message)]);
+        } else {
+          callback();
+        }
+      });
+    }
   }
 
-  renderForm() {
-    return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
-  }
 
   render() {
-    const { regionManage: { data, list }, loading } = this.props;
-    const { selectedRows, modalVisible, modalEditVisible } = this.state;
+    const { regionManage: { data }, list, loading } = this.props;
+    const { getFieldDecorator } = this.props.form;
+    const { selectedRows, modalVisible, title, regionNo, regionName } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -300,7 +342,7 @@ export default class TableList extends PureComponent {
     const columns = [
       {
         title: '编号',
-        dataIndex: 'orderNumber',
+        dataIndex: 'regionNo',
       },
       {
         title: '大区名称',
@@ -313,10 +355,10 @@ export default class TableList extends PureComponent {
       {
         title: '操作',
         dataIndex: 'objectId',
-        render: val => (
+        render: (val, record) => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.regionNo, record.regionName)}>编辑</a>
           </span>),
         // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
@@ -336,24 +378,13 @@ export default class TableList extends PureComponent {
       }),
     };
 
-    const parentAddMethods = {
-      handleAdd: this.handleAdd,
-      handleModalVisible: this.handleAddModalVisible,
-      option: list.results,
-    };
-
-    const parentEditMethods = {
-      handleEdit: this.handleEdit,
-      handleModalVisible: this.handleEditModalVisible,
-      option: list.results,
-    };
-
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
       total: data.count,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
+      current: this.state.pagination.current,
       // onChange: this.handlePageChange,
     };
 
@@ -362,7 +393,36 @@ export default class TableList extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
-              {this.renderForm()}
+              <Form onSubmit={this.handleSearch} layout="inline">
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                  <Col md={8} sm={24}>
+                    <FormItem label="编号">
+                      {getFieldDecorator('regionNo')(
+                        <Input placeholder="请输入" />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col md={8} sm={24}>
+                    <FormItem label="大区名称">
+                      {getFieldDecorator('regionName')(
+                        <Select
+                          placeholder="请选择"
+                          style={{ width: '100%' }}
+                        >
+                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.regionName}>{d.regionName}</SelectOption>) :
+                          <SelectOption key="1" > 暂无</SelectOption> }
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col md={8} sm={24}>
+                    <span className={styles.submitButtons}>
+                      <Button type="primary" htmlType="submit">查询</Button>
+                      <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
+                    </span>
+                  </Col>
+                </Row>
+              </Form>
             </div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
@@ -386,7 +446,7 @@ export default class TableList extends PureComponent {
                     pagination={paginationProps}
                     dataSource={data.results}
                     onChange={this.handleStandardTableChange}
-                    rowSelection={rowSelection}
+                    // rowSelection={rowSelection}
                     onSelectRow={this.handleSelectRows}
                   />
                 </div>
@@ -394,13 +454,15 @@ export default class TableList extends PureComponent {
             </div>
           </div>
         </Card>
-        <CreateAddForm
-          {...parentAddMethods}
+        <CreateForm
+          handleAdd={this.handleAdd}
+          handleEdit={this.handleEdit}
+          handleModalVisible={this.handleAddModalVisible}
+          title={title}
+          validateRegionNo={this.validateRegionNo}
           modalVisible={modalVisible}
-        />
-        <CreateEditForm
-          {...parentEditMethods}
-          modalEditVisible={modalEditVisible}
+          regionNo={regionNo}
+          regionName={regionName}
         />
       </PageHeaderLayout>
     );

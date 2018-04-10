@@ -151,20 +151,27 @@ export default class TableList extends PureComponent {
       type: 'brandManage/removeBrand',
       payload: row,
     }).then(() => {
-      dispatch({
-        type: 'brandManage/fetchBrand',
-        payload: {
-          skip: 0,
-          limit: 5,
+      if(data.results.length > 1) {
+        const params = {
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+          limit: this.state.pagination.pageSize,
           count: true,
-        },
-      });
-    });
-    this.setState({
-      pagination: {
-        current: 1,
-        pageSize: 5,
-      },
+        };
+        dispatch({
+          type: 'brandManage/fetchBrand',
+          payload: params,
+        });
+      }else{
+        const params = {
+          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize),
+          limit: this.state.pagination.pageSize,
+          count: true,
+        };
+        dispatch({
+          type: 'brandManage/fetchBrand',
+          payload: params,
+        });
+      }
     });
   };
 
@@ -239,19 +246,16 @@ export default class TableList extends PureComponent {
       type: 'brandManage/storeBrand',
       payload: fields,
     }).then(() => {
-      dispatch({
-        type: 'brandManage/fetchBrand',
-        payload: {
-          skip: 0,
-          limit: 5,
+        const params = {
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+          limit: this.state.pagination.pageSize,
           count: true,
-        },
-      });
+        };
+        dispatch({
+          type: 'brandManage/fetchBrand',
+          payload: params,
+        });
       this.setState({
-        pagination: {
-          current: 1,
-          pageSize: 5,
-        },
         modalVisible: false,
       });
     }
@@ -265,19 +269,16 @@ export default class TableList extends PureComponent {
       type: 'brandManage/coverBrand',
       payload: { fields, ojId },
     }).then(() => {
-      dispatch({
-      type: 'brandManage/fetchBrand',
-      payload: {
-        skip: 0,
-        limit: 5,
+      const params = {
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+        limit: this.state.pagination.pageSize,
         count: true,
-      },
-    });
+      };
+      dispatch({
+        type: 'brandManage/fetchBrand',
+        payload: params,
+      });
       this.setState({
-          pagination: {
-            current: 1,
-            pageSize: 5,
-          },
           modalVisible: false,
       });
     });
@@ -305,7 +306,10 @@ export default class TableList extends PureComponent {
   // }
 
   validateBrandNo = (rule, value, callback) => {
-    const {brandManage: { brandNos } } = this.props;
+    const { brandNo } = this.state;
+    if(value === brandNo) {
+      callback();
+    }
     if (value === undefined || value === "") {
       callback();
     } else {
@@ -380,7 +384,7 @@ export default class TableList extends PureComponent {
       pageSize: this.state.pagination.pageSize,
       total: data.count,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
-      current: this.state.pagination.current,
+      // current: this.state.pagination.current,
       // onChange: this.handlePageChange,
     };
 

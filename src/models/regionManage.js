@@ -1,5 +1,6 @@
-/* eslint-disable keyword-spacing,comma-dangle */
-import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, getBrand } from '../services/sysSet';
+/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
+import { Message } from 'antd';
+import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, uploadLogo } from '../services/sysSet';
 
 export default {
   namespace: 'regionManage',
@@ -8,14 +9,15 @@ export default {
     data: {
       results: [],
       count: 0,
+      state: [],
     },
     list: {
       results: [],
-      count: 0,
     },
-    rebrands: {
+    regions: [],
+    regionNos: [],
+    newdata: {
       results: [],
-      count: 0,
     },
   },
 
@@ -30,25 +32,32 @@ export default {
     *storeRegion({ payload }, { call, put }) {
       const response = yield call(postRegion, payload);
       yield put({
-        type: 'changeRegions',
-        payload: response,
+        type: 'appendRegions',
+        payload: { results: [Object.assign(payload, response)] },
       });
+      Message.success('新增成功');
     },
     *coverRegion({ payload }, { call, put }) {
       const response = yield call(putRegion, payload);
-      yield put({
-        type: 'changeRegions',
-        payload: response,
-      });
+      if(response !== undefined) {
+        if(JSON.parse(response).error === undefined) {
+          Message.success('编辑成功');
+        }else{
+          Message.error('编辑失败');
+        }
+      }else{
+        Message.success('编辑成功');
+      }
     },
     *removeRegion({ payload }, { call, put }) {
       const response = yield call(deleteRegion, payload);
-      yield put({
-        type: 'changeRegions',
-        payload: response,
-      });
+      if(JSON.parse(response).error === undefined) {
+        Message.success('删除成功');
+      }else{
+        Message.error('删除失败');
+      }
     },
-    *batchDelete({ payload }, { call, put }) {
+    *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(regionBatchDelete, payload);
       yield put({
         type: 'changeRegions',
@@ -58,14 +67,28 @@ export default {
     *requireQuery({ payload }, { call, put }) {
       const response = yield call(regionRequireQuery, payload);
       yield put({
-        type: 'requireBrands',
+        type: 'changeRegions',
         payload: response,
       });
     },
-    *brandQuery({ payload }, { call, put }) {
-      const response = yield call(getBrand, payload);
+    *upload({ payload }, { call, put }) {
+      const response = yield call(uploadLogo, payload);
       yield put({
-        type: 'brands',
+        type: 'changeRegions',
+        payload: response,
+      });
+    },
+    *exisRegions({ payload }, { call, put }) {
+      const response = yield call(regionRequireQuery, payload);
+      yield put({
+        type: 'regions',
+        payload: response,
+      });
+    },
+    *exisRegionNos({ payload }, { call, put }) {
+      const response = yield call(regionRequireQuery, payload);
+      yield put({
+        type: 'regionNos',
         payload: response,
       });
     },
@@ -78,16 +101,49 @@ export default {
         data: action.payload,
       };
     },
-    brands(state, action) {
+    appendRegions(state, action) {
       return {
         ...state,
-        list: action.payload,
+        data: {
+          results: state.data.results.concat(action.payload.results),
+          count: state.data.count + 1,
+        },
       };
     },
-    requireBrands(state, action) {
+    resetRegions(state, action) {
       return {
         ...state,
-        rebrands: action.payload,
+        data: {
+          results: state.data.results.map(item => {
+            if (item.objectId === action.payload.ojId) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+          count: state.data.count,
+        },
+      };
+    },
+    clearRegions(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.filter(item => item.objectId !== action.payload),
+          count: state.data.count - 1,
+        },
+      };
+    },
+    regions(state, action) {
+      return {
+        ...state,
+        regions: action.payload,
+      };
+    },
+    regionNos(state, action) {
+      return {
+        ...state,
+        regionNos: action.payload,
       };
     },
   },
