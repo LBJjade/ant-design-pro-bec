@@ -131,32 +131,46 @@ export async function districtRequireQuery(params) {
   });
 }
 
-
-export async function districtQuery(params) {
-  return request(`/api/classes/District?${stringify(params)}`, {
+export async function getShop(params) {
+  return request(`/api/classes/Shop?${stringify(params)}`, {
     method: 'GET',
   });
 }
 
-export async function districtAdd(params) {
-  return request('/api/classes/District', {
+export async function postShop(params) {
+  return request('/api/classes/Shop', {
     method: 'POST',
     body: params,
   });
 }
 
-export async function districtEdit(params) {
-  let editid = params.eidtId;
+export async function putShop(params) {
+  let editid = params.ojId;
   let data = params.fields;
-  return request(`/api/classes/District/${editid}`, {
+  request(`/api/classes/Shop/${editid}`, {
     method: 'PUT',
     body: data,
   });
 }
 
-export async function districtDelete(params) {
-  return request('/api/classes/District/' + params, {
+export async function shopBatchDelete(params) {
+  for(let i = 0; i < params.length; i++) {
+    request(`/api/classes/Shop/${params[i]}`, {
+      method: 'DELETE',
+    });
+  }
+}
+
+export async function deleteShop(params) {
+  return request('/api/classes/Shop/' + params, {
     method: 'DELETE',
+  });
+}
+
+export async function shopRequireQuery(params) {
+  let url = requestParams2Url(params);
+  return request(`/api/classes/Shop${url}`, {
+    method: 'GET',
   });
 }
 
@@ -186,13 +200,5 @@ export async function shopDelete(params) {
   return request('/api/classes/Shop/' + params, {
     method: 'DELETE',
   });
-}
-
-export async function shopRequireQuery(params) {
-  let require = `'where={${stringify(params)}}'`;
-  return request('/api/classes/Shop/', {
-    method: 'GET',
-    data: require,
-  }, 'where');
 }
 
