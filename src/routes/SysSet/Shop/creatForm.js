@@ -197,7 +197,7 @@ export default class CreateForm extends PureComponent {
           wrapperCol={{ span: 15 }}
           label="关联小区"
         >
-          {getFieldDecorator('regionName', {
+          {getFieldDecorator('districtName', {
             rules: [{ required: true, message: '请选择关联小区...' }],
           })(
             <Select
