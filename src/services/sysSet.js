@@ -1,4 +1,4 @@
-/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len,prefer-const,no-unused-vars,prefer-destructuring,no-undef,import/no-named-as-default,import/no-duplicates */
+/* eslint-disable no-plusplus,keyword-spacing,semi,prefer-template,no-template-curly-in-string,array-callback-return,max-len,prefer-const,no-unused-vars,prefer-destructuring,no-undef,import/no-named-as-default,import/no-duplicates,quotes,no-useless-concat */
 import { stringify } from 'qs';
 import request, { requestParams2Url } from '../utils/request';
 
@@ -89,7 +89,7 @@ export async function regionRequireQuery(params) {
 }
 
 export async function getDistrict(params) {
-  return request(`/api/classes/District?${stringify(params)}`, {
+  return request("/api/classes/District?include=pointerBrand&include=pointerRegion&" + `${stringify(params)}`, {
     method: 'GET',
   });
 }
