@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import { Form, List, Card, Row, Col, Input, Button, Icon, Menu, Table } from 'antd';
-import CityModal from './CityModal';
+import { Form, List, Card, Row, Col, Input, Button, Icon, Menu, Table, Modal } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -17,6 +16,7 @@ export default class City extends PureComponent {
   state = {
     cityModal: {
       visible: false,
+      objectId: '',
       cityNo: '',
       cityName: '',
     },
@@ -34,11 +34,12 @@ export default class City extends PureComponent {
 
   };
 
-  showModal = (record) => {
+  modalOpen = (e, record) => {
     if (record === undefined) {
       this.setState({
         cityModal: {
           visible: true,
+          objectId: '',
           cityNo: '',
           cityName: '',
           objectId: '',
@@ -48,6 +49,7 @@ export default class City extends PureComponent {
       this.setState({
         cityModal: {
           visible: true,
+          objectId: record.objectId,
           cityNo: record.cityNo,
           cityName: record.cityName,
           objectId: record.objectId,
@@ -56,16 +58,26 @@ export default class City extends PureComponent {
     }
   };
 
-  closeModal = () => {
+  modalClose = () => {
     this.setState({
       visible: false,
       cityModal: {
         visible: false,
+        objectId: '',
         cityNo: '',
         cityName: '',
         objectId: '',
       },
     });
+  };
+
+  modalOk = (e) => {
+    e.preventDefault();
+    // this.props.form.validateFields({ force: true }, (err, values) => {
+    //   if (err === null || !err) {
+    //     this.props.onOk(values);
+    //   }
+    // });
   };
 
   render() {
@@ -89,7 +101,7 @@ export default class City extends PureComponent {
         return (
           <span>
             {/*<Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>*/}
-            <a onClick={() => this.showModal(record)}>编辑</a>
+            <a onClick={(e) => this.modalOpen(e, record)}>编辑</a>
           </span>
         );
       }
@@ -108,33 +120,48 @@ export default class City extends PureComponent {
 
     return (
       <PageHeaderLayout>
-        <Form>
-          <Form.Item>
-            <Card>
-              <Table
-                loading={loading}
-                dataSource={data.results}
-                columns={columns}
-                rowKey='objectId'
-                pagination={false}
-              />
-            </Card>
-            <Card>
-              <Button type="primary" loading={loading} onClick={this.showModal} >新增</Button>
-            </Card>
-          </Form.Item>
-          <Form.Item>
-            {getFieldDecorator('cityDetail', {
-              initialValue: cityModal,
-            })(
-              <CityModal
-                visible={cityModal.visible}
-                cityModal={cityModal}
-                onClose={() => this.closeModal()}
-              />
-            )}
-          </Form.Item>
-        </Form>
+        <Card>
+          <Table
+            loading={loading}
+            dataSource={data.results}
+            columns={columns}
+            rowKey='objectId'
+            pagination={false}
+          />
+        </Card>
+        <Card>
+          <Button type="primary" loading={loading} onClick={e => this.modalOpen(e)} >新增</Button>
+        </Card>
+        <Card>
+          <Modal
+            title="Basic Modal"
+            visible={cityModal.visible}
+            onOk={e => this.modalOk(e)}
+            onCancel={this.modalClose}
+          >
+            <Form>
+              { getFieldDecorator('objectId', {
+                initialValue: cityModal.objectId,
+              })(
+                <Input type='hidden'/>
+              )}
+              <Form.Item label='城市编号' >
+                { getFieldDecorator('cityNo', {
+                  initialValue: cityModal.cityNo,
+                })(
+                  <Input />
+                )	}
+              </Form.Item>
+              <Form.Item label='城市名称'>
+                { getFieldDecorator('cityName', {
+                  initialValue: cityModal.cityName,
+                })(
+                  <Input />
+                )	}
+              </Form.Item>
+            </Form>
+          </Modal>
+        </Card>
       </PageHeaderLayout>
     );
   }

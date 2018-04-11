@@ -17,21 +17,23 @@ export default class CityModal extends Component {
       visible: nextProps.value.visible,
       cityModal: {
         visible: nextProps.value.visible,
+        objectId: nextProps.value.objectId,
         cityNo: nextProps.value.cityNo,
         cityName: nextProps.value.cityName,
       },
     });
   };
 
-  // componentWillUnmount() {
-  //   this.props.form.setFieldsValue({
-  //     cityNo: this.state.cityModal.cityNo,
-  //     cityName: this.state.cityModal.cityName,
-  //   });
-  // }
+  onOk = (e) => {
+    // e.preventDefault();
+    this.props.form.validateFields({ force: true }, (err, values) => {
+      if (err === null || !err) {
+        this.props.onOk(values);
+      }
+    });
+  };
 
   onClose = () => {
-
     this.props.form.resetFields();
     this.props.onClose();
   };
@@ -42,24 +44,27 @@ export default class CityModal extends Component {
     const visible = this.props.visible;
     const { cityModal } = this.props;
 
-    // this.props.form.resetFields();
-
     return (
       <Modal
         title="Basic Modal"
         visible={visible}
-        onOk={this.onClose}
+        onOk={this.onOk}
         onCancel={this.onClose}
       >
         <Form>
-          <Form.Item label='城市编号：'>
+          { getFieldDecorator('objectId', {
+              initialValue: cityModal.objectId,
+            })(
+              <Input type='hidden'/>
+            )}
+          <Form.Item label='城市编号' >
             { getFieldDecorator('cityNo', {
               initialValue: cityModal.cityNo,
             })(
               <Input />
             )	}
           </Form.Item>
-          <Form.Item label='城市名称：'>
+          <Form.Item label='城市名称'>
             { getFieldDecorator('cityName', {
               initialValue: cityModal.cityName,
             })(

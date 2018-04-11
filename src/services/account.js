@@ -47,10 +47,10 @@ export async function getUserMe() {
   });
 }
 
-export async function postPasswordReset(email) {
+export async function postRequestPasswordReset(params) {
   return request('/api/requestPasswordReset', {
     method: 'POST',
-    body: email,
+    body: params,
   });
 }
 

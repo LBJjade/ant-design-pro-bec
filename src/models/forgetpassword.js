@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
 import { Message } from 'antd';
-import { getUsers, postUser, putUser, postPasswordReset } from '../services/account';
+import { getUsers, postUser, putUser, postRequestPasswordReset } from '../services/account';
 
 export default {
   namespace: 'forgetpassword',
@@ -23,30 +23,25 @@ export default {
       yield put({ type: 'saveStepFormData', payload });
       yield put({ type: 'changeSubmitting', payload: true });
       const resUser = yield call(getUsers, payload);
-      yield put({ type: 'changeSubmitting', payload: false });
       if (resUser.error !== undefined) {
         Message.error(`帐户邮箱不存在。${resUser.error}`, 3);
       } else {
-        yield put({ type: 'changeSubmitting', payload: true });
-        const resReset = yield call(postPasswordReset, payload);
-        yield put({ type: 'changeSubmitting', payload: false });
+        const resReset = yield call(postRequestPasswordReset, payload);
         if (resReset.error !== undefined) {
           Message.error(`重置密码验证邮件发送失败！${resReset.error}`, 5);
         } else {
           Message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱并进行重置密码。', 5);
         }
       }
+      yield put({ type: 'changeSubmitting', payload: false });
     },
     *submitPasswordReset({ payload }, { call, put }) {
       yield put({ type: 'changeSubmitting', payload: true });
       const resUser = yield call(getUsers, { objectId: payload.objectid });
-      yield put({ type: 'changeSubmitting', payload: false });
       if (resUser.error !== undefined) {
         Message.error(`帐户邮箱不存在。${resUser.error}`, 5);
       } else {
-        yield put({ type: 'changeSubmitting', payload: true });
         const ret = yield call(putUser, payload);
-        yield put({ type: 'changeSubmitting', payload: false });
         if (ret.error === undefined) {
           Message.success('密码重置成功！', 5);
           yield put(routerRedux.push('/account/forgetpassword/result'));
@@ -54,6 +49,7 @@ export default {
           Message.error(`密码重置失败！${ret.error}`, 5);
         }
       }
+      yield put({ type: 'changeSubmitting', payload: false });
     },
     *submitStepForm({ payload }, { call, put }) {
       yield call(postUser, payload);
