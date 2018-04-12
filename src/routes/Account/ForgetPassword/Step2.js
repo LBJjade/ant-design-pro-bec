@@ -98,8 +98,7 @@ export default class Step2 extends React.PureComponent {
           dispatch({
             type: 'forgetpassword/submitPasswordReset',
             payload: {
-              token: this.state.token,
-              objectid: this.state.objectid,
+              objectId: this.state.objectid,
               data: {
                 ...values,
               },

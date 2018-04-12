@@ -8,7 +8,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import EditableLinkGroup from '../../components/EditableLinkGroup';
 import { Radar } from '../../components/Charts';
 
-import styles from './Workspace.less';
+import styles from './Workplace.less';
 
 const links = [
   {
@@ -70,12 +70,13 @@ const members = [
   },
 ];
 
-@connect(({ project, activities, chart, loading }) => ({
+@connect(({ project, activities, chart, loading, account }) => ({
   project,
   activities,
   chart,
   projectLoading: loading.effects['project/fetchNotice'],
   activitiesLoading: loading.effects['activities/fetchList'],
+  account,
 }))
 export default class Workplace extends PureComponent {
   componentDidMount() {
@@ -131,22 +132,44 @@ export default class Workplace extends PureComponent {
     });
   }
 
+  greeting = () => {
+    const hour = new Date().getHours();
+    const greets = [
+      {greeting: '夜深了', dayPart: 6},
+      {greeting: '早安', dayPart: 10},
+      {greeting: '上午好', dayPart: 12},
+      {greeting: '中午好', dayPart: 14},
+      {greeting: '下午好', dayPart: 18},
+      {greeting: '晚安', dayPart: 24}];
+    const greet = greets.filter(item => item.dayPart >= hour);
+    return greet[0].greeting;
+  };
+
   render() {
+    let greetingWord = '';
+    let subTitle = '';
+
     const {
       project: { notice },
       projectLoading,
       activitiesLoading,
       chart: { radarData },
+      account: { currentUser },
     } = this.props;
+
+    if (currentUser.username) {
+      greetingWord = `${ this.greeting() }，${currentUser.nickname || currentUser.username || ''}，祝你开心每一天！`;
+      subTitle = '交互专家 | 广州品清科技有限公司';
+    }
 
     const pageHeaderContent = (
       <div className={styles.pageHeaderContent}>
         <div className={styles.avatar}>
-          <Avatar size="large" src="https://gitlab.becheer.com/uploads/system/user/avatar/2/avatar.png" />
+          <Avatar size="large" src={ currentUser.avatar || '' } />
         </div>
         <div className={styles.content}>
-          <div className={styles.contentTitle}>早安，何群民，祝你开心每一天！</div>
-          <div>交互专家 | 蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED</div>
+          <div className={styles.contentTitle}>{ greetingWord } </div>
+          <div>{ subTitle }</div>
         </div>
       </div>
     );

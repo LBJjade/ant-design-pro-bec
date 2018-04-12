@@ -131,7 +131,7 @@ const menuData = [{
   path: 'personal',
   // hideInMenu: true,
   children: [{
-    name: '设置',
+    name: '个人设置',
     path: 'setting',
     // hideInMenu: true,
   }],
@@ -198,6 +198,16 @@ const menuData = [{
     name: '门店管理',
     icon: 'star',
     path: 'shop',
+  }],
+}, {
+  name: '基础数据',
+  icon: 'user',
+  path: 'basic',
+  authority: ['admin','guest'],
+  children: [{
+    name: '城市管理',
+    icon: 'user',
+    path: 'city',
   }],
 }];
 
