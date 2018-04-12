@@ -135,7 +135,7 @@ const menuData = [{
     path: 'setting',
     // hideInMenu: true,
   }],
-},{
+}, {
   name: '使用文档',
   icon: 'book',
   path: 'http://pro.ant.design/docs/getting-started',
@@ -174,11 +174,15 @@ const menuData = [{
     path: 'roleuser',
   }],
 }, {
-  name: ' 平台设置',
-  icon: 'car',
-  path: 'set',
-  authority: ['admin'],
+  name: '基础数据',
+  icon: 'user',
+  path: 'basic',
+  authority: ['admin', 'guest'],
   children: [{
+    name: '城市管理',
+    icon: 'user',
+    path: 'city',
+  }, {
     name: '品牌管理',
     icon: 'global',
     path: 'table',
@@ -198,16 +202,6 @@ const menuData = [{
     name: '门店管理',
     icon: 'star',
     path: 'shop',
-  }],
-}, {
-  name: '基础数据',
-  icon: 'user',
-  path: 'basic',
-  authority: ['admin','guest'],
-  children: [{
-    name: '城市管理',
-    icon: 'user',
-    path: 'city',
   }],
 }];
 
