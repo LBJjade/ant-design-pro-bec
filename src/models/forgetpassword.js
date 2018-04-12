@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { Message } from 'antd';
+import { message } from 'antd';
 import { getUsers, postUser, putUser, postRequestPasswordReset } from '../services/account';
 
 export default {
@@ -8,6 +8,7 @@ export default {
   state: {
     userValidating: [],
     email: '',
+    existEmail: [],
   },
 
   effects: {
@@ -24,13 +25,13 @@ export default {
       yield put({ type: 'changeSubmitting', payload: true });
       const resUser = yield call(getUsers, payload);
       if (resUser.error !== undefined) {
-        Message.error(`帐户邮箱不存在。${resUser.error}`, 3);
+        message.error(`帐户邮箱不存在。${resUser.error}`, 3);
       } else {
         const resReset = yield call(postRequestPasswordReset, payload);
         if (resReset.error !== undefined) {
-          Message.error(`重置密码验证邮件发送失败！${resReset.error}`, 5);
+          message.error(`重置密码验证邮件发送失败！${resReset.error}`, 5);
         } else {
-          Message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱并进行重置密码。', 5);
+          message.success('已发送请求重置密码邮件至帐户邮箱，请开启邮箱并进行重置密码。', 5);
         }
       }
       yield put({ type: 'changeSubmitting', payload: false });
@@ -39,14 +40,14 @@ export default {
       yield put({ type: 'changeSubmitting', payload: true });
       const resUser = yield call(getUsers, { objectId: payload.objectid });
       if (resUser.error !== undefined) {
-        Message.error(`帐户邮箱不存在。${resUser.error}`, 5);
+        message.error(`帐户邮箱不存在。${resUser.error}`, 5);
       } else {
         const ret = yield call(putUser, payload);
         if (ret.error === undefined) {
-          Message.success('密码重置成功！', 5);
+          message.success('密码重置成功！', 5);
           yield put(routerRedux.push('/account/forgetpassword/result'));
         } else {
-          Message.error(`密码重置失败！${ret.error}`, 5);
+          message.error(`密码重置失败！${ret.error}`, 5);
         }
       }
       yield put({ type: 'changeSubmitting', payload: false });
@@ -58,6 +59,13 @@ export default {
         payload,
       });
       yield put(routerRedux.push('/account/forgetpassword/result'));
+    },
+    *existEmail({ payload }, { call, put }) {
+      const existUser = yield call(getUsers, payload);
+      yield put({
+        type: 'changeEmail',
+        payload: existUser,
+      });
     },
   },
 
@@ -84,6 +92,12 @@ export default {
       return {
         ...state,
         payload,
+      };
+    },
+    changeEmail(state, { payload }) {
+      return {
+        ...state,
+        existEmail: payload,
       };
     },
   },

@@ -46,7 +46,7 @@ class AccountLayout extends React.PureComponent {
                   <span className={styles.title}>Becheer Pro</span>
                 </Link>
               </div>
-              <div className={styles.desc}>当前最流行的视觉设计及WebUI设计规范</div>
+              <div className={styles.desc}>当前最流行的Web视觉设计及UI设计规范</div>
             </div>
             <Switch>
               {getRoutes(match.path, routerData).map(item =>

@@ -14,7 +14,8 @@ const formItemLayout = {
 
 @connect(({ forgetpassword }) => ({
   data: forgetpassword.step,
-  validating: forgetpassword.userValidating,
+  // validating: forgetpassword.userValidating,
+  existEmail: forgetpassword.existEmail,
 }))
 @Form.create()
 export default class Step1 extends React.PureComponent {
@@ -29,23 +30,16 @@ export default class Step1 extends React.PureComponent {
       } else {
         if (rule.fieldname === 'email') {
           this.props.dispatch({
-            type: 'forgetpassword/validate',
-            payload: { email: value },
+            type: 'forgetpassword/existEmail',
+            payload: { where: { email: { $regex: `^${value}$`, $options: 'i', }, }, },
+          }).then(() => {
+            if (this.props.existEmail.results.length <= 0) {
+              callback([new Error(rule.message)]);
+            } else {
+              callback();
+            }
           });
         }
-        if (rule.fieldname === 'mobile') {
-          this.props.dispatch({
-            type: 'forgetpassword/validate',
-            payload: { mobile: value },
-          });
-        }
-        setTimeout(() => {
-          if (this.props.validating.results.length <= 0) {
-            callback([new Error(rule.message)]);
-          } else {
-            callback();
-          }
-        }, 800);
       }
     }
   }
