@@ -23,14 +23,36 @@ export default class LoginPage extends Component {
   handleSubmit = (err, values) => {
     // const { type } = this.state;
     if (!err) {
-      this.props.dispatch({
-        type: 'login/login',
-        payload: {
-          ...values,
-          emailVerified: true,
-          // type,
-        },
-      });
+      // this.props.dispatch({
+      //   type: 'login/login',
+      //   payload: {
+      //     ...values,
+      //     emailVerified: true,
+      //     // type,
+      //   },
+      // });
+      const emailReg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
+      if (emailReg.test(values.username)) {
+        this.props.dispatch({
+          type: 'login/login',
+          payload: {
+            email: values.username,
+            password: values.password,
+            emailVerified: true,
+            // type,
+          },
+        });
+      } else {
+        this.props.dispatch({
+          type: 'login/login',
+          payload: {
+            username: values.username,
+            password: values.password,
+            emailVerified: true,
+            // type,
+          },
+        });
+      }
     }
   }
 
@@ -63,7 +85,7 @@ export default class LoginPage extends Component {
               login.submitting === false &&
               this.renderMessage('帐户或密码错误')
             }
-            <UserName name="username" placeholder="请输入帐号" />
+            <UserName name="username" placeholder="请输入帐号或邮箱" />
             <Password name="password" placeholder="请输入密码" />
           </Tab>
           <Tab key="mobile" tab="手机号登录">
