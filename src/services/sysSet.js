@@ -107,15 +107,17 @@ export async function getDistrict(params) {
 }
 
 export async function postDistrict(params) {
+  let data = Object.assign(params.fields, params.pointerBrand, params.pointerRegion);
   return request('/api/classes/District', {
     method: 'POST',
-    body: params,
+    body: data,
   });
 }
 
 export async function putDistrict(params) {
   let editid = params.ojId;
-  let data = params.fields;
+  // let data = params.fields;
+  let data = Object.assign(params.fields, params.pointerBrand, params.pointerRegion);
   request(`/api/classes/District/${editid}`, {
     method: 'PUT',
     body: data,
