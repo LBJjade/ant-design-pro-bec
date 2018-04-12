@@ -239,6 +239,7 @@ export default class TableList extends PureComponent {
       regionName: "",
       editId: "",
       title: "新增",
+      pointerbrand: "",
     });
   };
 
