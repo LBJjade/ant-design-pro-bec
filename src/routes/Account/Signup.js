@@ -242,7 +242,7 @@ export default class Signup extends Component {
                 { fieldname: 'username', required: true, message: '该帐号已被使用。', validator: this.handleValidate },
               ],
               validateFirst: true,
-              validateTrigger: 'onBlur',
+              validateTrigger: 'onChange',
             })(<Input size="large" placeholder="帐号" prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
           </Item>
           <Item>

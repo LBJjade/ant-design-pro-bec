@@ -16,9 +16,9 @@ const columns = [{
   dataIndex: 'operate',
 }];
 
-@connect(({ brandManage, loading }) => ({
-  brandManage,
-  loading: loading.models.brandManage,
+@connect(({ brand, loading }) => ({
+  brand,
+  loading: loading.models.brand,
 }))
 export default class UserList extends PureComponent {
   state = {
@@ -37,7 +37,7 @@ export default class UserList extends PureComponent {
       count: true,
     };
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brand/fetch',
       payload: parsedata,
     });
   }
@@ -64,7 +64,7 @@ export default class UserList extends PureComponent {
     }
 
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brand/fetch',
       payload: params,
     });
     this.setState({
@@ -83,7 +83,7 @@ export default class UserList extends PureComponent {
       count: true,
     };
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brand/fetch',
       payload: parsedata,
     });
     this.setState({
@@ -95,7 +95,7 @@ export default class UserList extends PureComponent {
   }
 
   render() {
-    const { brandManage: { data }, loading } = this.props;
+    const { brand: { data }, loading } = this.props;
 
     const paginationProps = {
       showSizeChanger: true,
