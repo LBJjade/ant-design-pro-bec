@@ -54,7 +54,7 @@ export async function uploadLogo(params) {
 }
 
 export async function getRegion(params) {
-  return request(`/api/classes/Region?${stringify(params)}`, {
+  return request("/api/classes/Region?include=pointerBrand&" + `${stringify(params)}`, {
     method: 'GET',
   });
 }

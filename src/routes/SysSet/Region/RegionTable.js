@@ -340,7 +340,7 @@ export default class TableList extends PureComponent {
       },
       {
         title: '关联品牌',
-        dataIndex: 'descript',
+        dataIndex: 'pointerBrand.brandName',
       },
       {
         title: '操作',
@@ -399,7 +399,7 @@ export default class TableList extends PureComponent {
                           style={{ width: '100%' }}
                         >
                           { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.regionName}>{d.regionName}</SelectOption>) :
-                            <SelectOption key="1" > 暂无</SelectOption> }
+                          <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
                     </FormItem>
