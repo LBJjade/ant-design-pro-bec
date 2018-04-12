@@ -343,7 +343,7 @@ export default class TableList extends PureComponent {
         dataIndex: 'objectId',
         render: (val, record) => (
           <span>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.brandNo, record.brandName)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.brandNo, record.brandName)}>编辑  </a>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
           </span>),
       },

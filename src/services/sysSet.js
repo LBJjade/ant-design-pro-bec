@@ -60,15 +60,27 @@ export async function getRegion(params) {
 }
 
 export async function postRegion(params) {
+  let data = Object.assign(params.fields, params.pointerBrand);
   return request('/api/classes/Region', {
     method: 'POST',
-    body: params,
+    body: data,
   });
 }
 
+// export async function putRegion(params) {
+//   let editid = params.ojId;
+//   let data1 = params.fields;
+//   // let data = Object.assign(params.fields, params.pointerBrand);
+//   request(`/api/classes/Region/${editid}`, {
+//     method: 'PUT',
+//     body: data1,
+//   });
+// }
+
 export async function putRegion(params) {
   let editid = params.ojId;
-  let data = params.fields;
+  // let data = params.fields;
+  let data = Object.assign(params.fields, params.pointerBrand);
   request(`/api/classes/Region/${editid}`, {
     method: 'PUT',
     body: data,

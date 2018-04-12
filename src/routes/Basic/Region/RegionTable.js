@@ -1,4 +1,4 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-console */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-console,quote-props */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -36,6 +36,8 @@ export default class TableList extends PureComponent {
     editId: {},
     regionNo: '',
     regionName: '',
+    pointerbrand: '',
+    brands: '',
     imgUrl: {},
     source: {},
     title: '',
@@ -50,6 +52,9 @@ export default class TableList extends PureComponent {
         limit: 5,
         count: true,
       },
+    });
+    dispatch({
+      type: 'region/getBrands',
     });
   }
 
@@ -237,21 +242,29 @@ export default class TableList extends PureComponent {
     });
   };
 
-  handleEditModalVisible = (flag, id, regionNo, regionName) => {
+  handleEditModalVisible = (flag, id, regionNo, regionName, pointerbrand) => {
     this.setState({
       modalVisible: flag,
       regionNo: regionNo,
       regionName: regionName,
       editId: id,
       title: "编辑",
+      pointerbrand: pointerbrand,
     });
   };
 
   handleAdd = (fields) => {
     const { dispatch } = this.props;
+    const pointerBrand = {
+      pointerBrand:{
+        "__type": "Pointer",
+        "className": "Brand",
+        "objectId": fields.brandName,
+      },
+    };
     dispatch({
       type: 'region/storeRegion',
-      payload: fields,
+      payload: { fields, pointerBrand},
     }).then(() => {
         const params = {
           skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
@@ -272,9 +285,16 @@ export default class TableList extends PureComponent {
   handleEdit = (fields) => {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
+    const pointerBrand = {
+      pointerBrand:{
+        "__type": "Pointer",
+        "className": "Brand",
+        "objectId": fields.brandName,
+      },
+    };
     dispatch({
       type: 'region/coverRegion',
-      payload: { fields, ojId },
+      payload: { fields, pointerBrand, ojId },
     }).then(() => {
       const params = {
         skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
@@ -318,9 +338,9 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { region: { data }, list, loading } = this.props;
+    const { region: { data, brands }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, title, regionNo, regionName } = this.state;
+    const { selectedRows, modalVisible, title, regionNo, regionName, pointerbrand } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -347,7 +367,7 @@ export default class TableList extends PureComponent {
         dataIndex: 'objectId',
         render: (val, record) => (
           <span>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.regionNo, record.regionName)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.regionNo, record.regionName, record.pointerBrand)}>编辑  </a>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
           </span>),
       },
@@ -452,6 +472,8 @@ export default class TableList extends PureComponent {
           modalVisible={modalVisible}
           regionNo={regionNo}
           regionName={regionName}
+          pointerbrand={pointerbrand}
+          brands={brands.results}
         />
       </PageHeaderLayout>
     );
