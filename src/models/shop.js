@@ -1,9 +1,9 @@
 /* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getBrand, postBrand, putBrand, brandBatchDelete, deleteBrand, brandRequireQuery, uploadLogo } from '../services/sysSet';
+import { getShop, postShop, putShop, shopBatchDelete, deleteShop, shopRequireQuery, uploadLogo, getBrand, getRegion, getDistrict } from '../services/sysSet';
 
 export default {
-  namespace: 'brandManage',
+  namespace: 'shop',
 
   state: {
     data: {
@@ -11,34 +11,40 @@ export default {
       count: 0,
       state: [],
     },
-    list: {
+    brands: {
       results: [],
     },
-    brands: [],
-    brandNos: [],
+    regions: {
+      results: [],
+    },
+    districts: {
+      results: [],
+    },
+    shops: [],
+    shopNos: [],
     newdata: {
       results: [],
     },
   },
 
   effects: {
-    *fetchBrand({ payload }, { call, put }) {
-      const response = yield call(getBrand, payload);
+    *fetchShop({ payload }, { call, put }) {
+      const response = yield call(getShop, payload);
       yield put({
-        type: 'changeBrands',
+        type: 'changeShops',
         payload: response,
       });
     },
-    *storeBrand({ payload }, { call, put }) {
-      const response = yield call(postBrand, payload);
+    *storeShop({ payload }, { call, put }) {
+      const response = yield call(postShop, payload);
       yield put({
-        type: 'appendBrands',
+        type: 'appendShops',
         payload: { results: [Object.assign(payload, response)] },
       });
       Message.success('新增成功');
     },
-    *coverBrand({ payload }, { call, put }) {
-      const response = yield call(putBrand, payload);
+    *coverShop({ payload }, { call, put }) {
+      const response = yield call(putShop, payload);
       if(response !== undefined) {
         if(JSON.parse(response).error === undefined) {
           Message.success('编辑成功');
@@ -49,8 +55,8 @@ export default {
         Message.success('编辑成功');
       }
     },
-    *removeBrand({ payload }, { call, put }) {
-      const response = yield call(deleteBrand, payload);
+    *removeShop({ payload }, { call, put }) {
+      const response = yield call(deleteShop, payload);
       if(JSON.parse(response).error === undefined) {
         Message.success('删除成功');
       }else{
@@ -58,50 +64,70 @@ export default {
       }
     },
     *batchRemoveDelete({ payload }, { call, put }) {
-      const response = yield call(brandBatchDelete, payload);
+      const response = yield call(shopBatchDelete, payload);
       yield put({
-        type: 'changeBrands',
+        type: 'changeShops',
         payload: response,
       });
     },
     *requireQuery({ payload }, { call, put }) {
-      const response = yield call(brandRequireQuery, payload);
+      const response = yield call(shopRequireQuery, payload);
       yield put({
-        type: 'changeBrands',
+        type: 'changeShops',
         payload: response,
       });
     },
     *upload({ payload }, { call, put }) {
       const response = yield call(uploadLogo, payload);
       yield put({
-        type: 'changeBrands',
+        type: 'changeShops',
         payload: response,
       });
     },
-    *exisBrands({ payload }, { call, put }) {
-      const response = yield call(brandRequireQuery, payload);
+    *exisShops({ payload }, { call, put }) {
+      const response = yield call(shopRequireQuery, payload);
       yield put({
-        type: 'brands',
+        type: 'shops',
         payload: response,
       });
     },
-    *exisBrandNos({ payload }, { call, put }) {
-      const response = yield call(brandRequireQuery, payload);
+    *exisShopNos({ payload }, { call, put }) {
+      const response = yield call(shopRequireQuery, payload);
       yield put({
-        type: 'brandNos',
+        type: 'shopNos',
+        payload: response,
+      });
+    },
+    *getBrands({ payload }, { call, put }) {
+      const response = yield call(getBrand, payload);
+      yield put({
+        type: 'haveBrands',
+        payload: response,
+      });
+    },
+    *getRegions({ payload }, { call, put }) {
+      const response = yield call(getRegion, payload);
+      yield put({
+        type: 'haveRegions',
+        payload: response,
+      });
+    },
+    *getDistricts({ payload }, { call, put }) {
+      const response = yield call(getDistrict, payload);
+      yield put({
+        type: 'haveDistricts',
         payload: response,
       });
     },
   },
-
   reducers: {
-    changeBrands(state, action) {
+    changeShops(state, action) {
       return {
         ...state,
         data: action.payload,
       };
     },
-    appendBrands(state, action) {
+    appendShops(state, action) {
       return {
         ...state,
         data: {
@@ -110,7 +136,7 @@ export default {
         },
       };
     },
-    resetBrands(state, action) {
+    resetShops(state, action) {
       return {
         ...state,
         data: {
@@ -125,7 +151,7 @@ export default {
         },
       };
     },
-    clearBrands(state, action) {
+    clearShops(state, action) {
       return {
         ...state,
         data: {
@@ -134,16 +160,34 @@ export default {
         },
       };
     },
-    brands(state, action) {
+    shops(state, action) {
+      return {
+        ...state,
+        shops: action.payload,
+      };
+    },
+    shopNos(state, action) {
+      return {
+        ...state,
+        shopNos: action.payload,
+      };
+    },
+    haveBrands(state, action) {
       return {
         ...state,
         brands: action.payload,
       };
     },
-    brandNos(state, action) {
+    haveRegions(state, action) {
       return {
         ...state,
-        brandNos: action.payload,
+        regions: action.payload,
+      };
+    },
+    haveDistricts(state, action) {
+      return {
+        ...state,
+        districts: action.payload,
       };
     },
   },

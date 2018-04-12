@@ -11,12 +11,12 @@ const FormItem = Form.Item;
 const SelectOption = Select.Option;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-@connect(({ districtManage, loading }) => ({
-  districtManage,
-  loading: loading.models.districtManage,
-  districts: districtManage.districts,
-  districtNos: districtManage.districtNos,
-  requestError: districtManage.requestError,
+@connect(({ district, loading }) => ({
+  district,
+  loading: loading.models.district,
+  districts: district.districts,
+  districtNos: district.districtNos,
+  requestError: district.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -43,7 +43,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'districtManage/fetchDistrict',
+      type: 'district/fetchDistrict',
       payload: {
         skip: 0,
         limit: 5,
@@ -51,10 +51,10 @@ export default class TableList extends PureComponent {
       },
     });
     dispatch({
-      type: 'districtManage/getBrands',
+      type: 'district/getBrands',
     });
     dispatch({
-      type: 'districtManage/getRegions',
+      type: 'district/getRegions',
     });
   }
 
@@ -86,7 +86,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'districtManage/fetchDistrict',
+      type: 'district/fetchDistrict',
       payload: params,
     });
     this.setState({
@@ -104,7 +104,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'districtManage/fetchDistrict',
+      type: 'district/fetchDistrict',
       payload: {
         skip: 0,
         limit: 5,
@@ -128,7 +128,7 @@ export default class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'districtManage/remove',
+          type: 'district/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -151,10 +151,10 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {districtManage: { data }, dispatch } = this.props;
+    const {district: { data }, dispatch } = this.props;
     const { pagination: {current} } = this.state;
     dispatch({
-      type: 'districtManage/removeDistrict',
+      type: 'district/removeDistrict',
       payload: row,
     }).then(() => {
       if(data.results.length > 1) {
@@ -164,7 +164,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'districtManage/fetchDistrict',
+          type: 'district/fetchDistrict',
           payload: params,
         });
       }else{
@@ -174,7 +174,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'districtManage/fetchDistrict',
+          type: 'district/fetchDistrict',
           payload: params,
         });
         this.setState({
@@ -190,7 +190,7 @@ export default class TableList extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {districtManage: { data }, dispatch, form } = this.props;
+    const {district: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -205,7 +205,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'districtManage/requireQuery',
+        type: 'district/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
 
@@ -221,7 +221,7 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'districtManage/batchRemoveDelete',
+      type: 'district/batchRemoveDelete',
       payload: row,
     }).then(message.success('删除成功'));
     this.setState({
@@ -255,7 +255,7 @@ export default class TableList extends PureComponent {
   handleAdd = (fields) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'districtManage/storeDistrict',
+      type: 'district/storeDistrict',
       payload: fields,
     }).then(() => {
         const params = {
@@ -264,7 +264,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'districtManage/fetchDistrict',
+          type: 'district/fetchDistrict',
           payload: params,
         });
         this.setState({
@@ -278,7 +278,7 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
     dispatch({
-      type: 'districtManage/coverDistrict',
+      type: 'district/coverDistrict',
       payload: { fields, ojId },
     }).then(() => {
       const params = {
@@ -287,7 +287,7 @@ export default class TableList extends PureComponent {
         count: true,
       };
       dispatch({
-        type: 'districtManage/fetchDistrict',
+        type: 'district/fetchDistrict',
         payload: params,
       });
       this.setState({
@@ -305,7 +305,7 @@ export default class TableList extends PureComponent {
       callback();
     } else {
       this.props.dispatch({
-        type: 'districtManage/exisDistrictNos',
+        type: 'district/exisDistrictNos',
         payload: { where: {districtNo: value} },
       }).then(() => {
         if (this.props.districtNos.results === undefined) {
@@ -323,7 +323,7 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { districtManage: { data, brands, regions }, loading } = this.props;
+    const { district: { data, brands, regions }, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { selectedRows, modalVisible, title, districtNo, districtName } = this.state;
 

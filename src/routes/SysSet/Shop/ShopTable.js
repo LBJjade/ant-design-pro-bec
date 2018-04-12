@@ -11,12 +11,12 @@ const FormItem = Form.Item;
 const SelectOption = Select.Option;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-@connect(({ shopManage, loading }) => ({
-  shopManage,
-  loading: loading.models.shopManage,
-  shops: shopManage.shops,
-  shopNos: shopManage.shopNos,
-  requestError: shopManage.requestError,
+@connect(({ shop, loading }) => ({
+  shop,
+  loading: loading.models.shop,
+  shops: shop.shops,
+  shopNos: shop.shopNos,
+  requestError: shop.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -45,7 +45,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'shopManage/fetchShop',
+      type: 'shop/fetchShop',
       payload: {
         skip: 0,
         limit: 5,
@@ -53,13 +53,13 @@ export default class TableList extends PureComponent {
       },
     });
     dispatch({
-      type: 'shopManage/getBrands',
+      type: 'shop/getBrands',
     });
     dispatch({
-      type: 'shopManage/getRegions',
+      type: 'shop/getRegions',
     });
     dispatch({
-      type: 'shopManage/getDistricts',
+      type: 'shop/getDistricts',
     });
   }
 
@@ -91,7 +91,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'shopManage/fetchShop',
+      type: 'shop/fetchShop',
       payload: params,
     });
     this.setState({
@@ -109,7 +109,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'shopManage/fetchShop',
+      type: 'shop/fetchShop',
       payload: {
         skip: 0,
         limit: 5,
@@ -133,7 +133,7 @@ export default class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'shopManage/remove',
+          type: 'shop/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -156,10 +156,10 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {shopManage: { data }, dispatch } = this.props;
+    const {shop: { data }, dispatch } = this.props;
     const { pagination: {current} } = this.state;
     dispatch({
-      type: 'shopManage/removeShop',
+      type: 'shop/removeShop',
       payload: row,
     }).then(() => {
       if(data.results.length > 1) {
@@ -169,7 +169,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'shopManage/fetchShop',
+          type: 'shop/fetchShop',
           payload: params,
         });
       }else{
@@ -179,7 +179,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'shopManage/fetchShop',
+          type: 'shop/fetchShop',
           payload: params,
         });
         this.setState({
@@ -195,7 +195,7 @@ export default class TableList extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {shopManage: { data }, dispatch, form } = this.props;
+    const {shop: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -210,7 +210,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'shopManage/requireQuery',
+        type: 'shop/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
 
@@ -226,7 +226,7 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'shopManage/batchRemoveDelete',
+      type: 'shop/batchRemoveDelete',
       payload: row,
     }).then(message.success('删除成功'));
     this.setState({
@@ -264,7 +264,7 @@ export default class TableList extends PureComponent {
   handleAdd = (fields) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'shopManage/storeShop',
+      type: 'shop/storeShop',
       payload: fields,
     }).then(() => {
         const params = {
@@ -273,7 +273,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'shopManage/fetchShop',
+          type: 'shop/fetchShop',
           payload: params,
         });
         this.setState({
@@ -287,7 +287,7 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
     dispatch({
-      type: 'shopManage/coverShop',
+      type: 'shop/coverShop',
       payload: { fields, ojId },
     }).then(() => {
       const params = {
@@ -296,7 +296,7 @@ export default class TableList extends PureComponent {
         count: true,
       };
       dispatch({
-        type: 'shopManage/fetchShop',
+        type: 'shop/fetchShop',
         payload: params,
       });
       this.setState({
@@ -314,7 +314,7 @@ export default class TableList extends PureComponent {
       callback();
     } else {
       this.props.dispatch({
-        type: 'shopManage/exisShopNos',
+        type: 'shop/exisShopNos',
         payload: { where: {shopNo: value} },
       }).then(() => {
         if (this.props.shopNos.results === undefined) {
@@ -332,7 +332,7 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { shopManage: { data, brands, regions, districts }, loading } = this.props;
+    const { shop: { data, brands, regions, districts }, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { selectedRows, modalVisible, title, shopNo, shopName, address, contactTel } = this.state;
 
@@ -437,7 +437,7 @@ export default class TableList extends PureComponent {
                           style={{ width: '100%' }}
                         >
                           { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.shopName}>{d.shopName}</SelectOption>) :
-                            <SelectOption key="1" > 暂无</SelectOption> }
+                          <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
                     </FormItem>

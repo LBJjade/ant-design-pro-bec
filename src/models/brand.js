@@ -1,9 +1,9 @@
 /* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getDistrict, postDistrict, putDistrict, districtBatchDelete, deleteDistrict, districtRequireQuery, uploadLogo, getBrand, getRegion } from '../services/sysSet';
+import { getBrand, postBrand, putBrand, brandBatchDelete, deleteBrand, brandRequireQuery, uploadLogo } from '../services/sysSet';
 
 export default {
-  namespace: 'districtManage',
+  namespace: 'brand',
 
   state: {
     data: {
@@ -11,37 +11,34 @@ export default {
       count: 0,
       state: [],
     },
-    brands: {
+    list: {
       results: [],
     },
-    regions: {
-      results: [],
-    },
-    districts: [],
-    districtNos: [],
+    brands: [],
+    brandNos: [],
     newdata: {
       results: [],
     },
   },
 
   effects: {
-    *fetchDistrict({ payload }, { call, put }) {
-      const response = yield call(getDistrict, payload);
+    *fetchBrand({ payload }, { call, put }) {
+      const response = yield call(getBrand, payload);
       yield put({
-        type: 'changeDistricts',
+        type: 'changeBrands',
         payload: response,
       });
     },
-    *storeDistrict({ payload }, { call, put }) {
-      const response = yield call(postDistrict, payload);
+    *storeBrand({ payload }, { call, put }) {
+      const response = yield call(postBrand, payload);
       yield put({
-        type: 'appendDistricts',
+        type: 'appendBrands',
         payload: { results: [Object.assign(payload, response)] },
       });
       Message.success('新增成功');
     },
-    *coverDistrict({ payload }, { call, put }) {
-      const response = yield call(putDistrict, payload);
+    *coverBrand({ payload }, { call, put }) {
+      const response = yield call(putBrand, payload);
       if(response !== undefined) {
         if(JSON.parse(response).error === undefined) {
           Message.success('编辑成功');
@@ -52,8 +49,8 @@ export default {
         Message.success('编辑成功');
       }
     },
-    *removeDistrict({ payload }, { call, put }) {
-      const response = yield call(deleteDistrict, payload);
+    *removeBrand({ payload }, { call, put }) {
+      const response = yield call(deleteBrand, payload);
       if(JSON.parse(response).error === undefined) {
         Message.success('删除成功');
       }else{
@@ -61,64 +58,50 @@ export default {
       }
     },
     *batchRemoveDelete({ payload }, { call, put }) {
-      const response = yield call(districtBatchDelete, payload);
+      const response = yield call(brandBatchDelete, payload);
       yield put({
-        type: 'changeDistricts',
+        type: 'changeBrands',
         payload: response,
       });
     },
     *requireQuery({ payload }, { call, put }) {
-      const response = yield call(districtRequireQuery, payload);
+      const response = yield call(brandRequireQuery, payload);
       yield put({
-        type: 'changeDistricts',
+        type: 'changeBrands',
         payload: response,
       });
     },
     *upload({ payload }, { call, put }) {
       const response = yield call(uploadLogo, payload);
       yield put({
-        type: 'changeDistricts',
+        type: 'changeBrands',
         payload: response,
       });
     },
-    *exisDistricts({ payload }, { call, put }) {
-      const response = yield call(districtRequireQuery, payload);
+    *exisBrands({ payload }, { call, put }) {
+      const response = yield call(brandRequireQuery, payload);
       yield put({
-        type: 'districts',
+        type: 'brands',
         payload: response,
       });
     },
-    *exisDistrictNos({ payload }, { call, put }) {
-      const response = yield call(districtRequireQuery, payload);
+    *exisBrandNos({ payload }, { call, put }) {
+      const response = yield call(brandRequireQuery, payload);
       yield put({
-        type: 'districtNos',
-        payload: response,
-      });
-    },
-    *getBrands({ payload }, { call, put }) {
-      const response = yield call(getBrand, payload);
-      yield put({
-        type: 'haveBrands',
-        payload: response,
-      });
-    },
-    *getRegions({ payload }, { call, put }) {
-      const response = yield call(getRegion, payload);
-      yield put({
-        type: 'haveRegions',
+        type: 'brandNos',
         payload: response,
       });
     },
   },
 
   reducers: {
-    changeDistricts(state, action) {
+    changeBrands(state, action) {
       return {
         ...state,
         data: action.payload,
       };
     },
-    appendDistricts(state, action) {
+    appendBrands(state, action) {
       return {
         ...state,
         data: {
@@ -127,7 +110,7 @@ export default {
         },
       };
     },
-    resetDistricts(state, action) {
+    resetBrands(state, action) {
       return {
         ...state,
         data: {
@@ -142,7 +125,7 @@ export default {
         },
       };
     },
-    clearDistricts(state, action) {
+    clearBrands(state, action) {
       return {
         ...state,
         data: {
@@ -151,28 +134,16 @@ export default {
         },
       };
     },
-    districts(state, action) {
-      return {
-        ...state,
-        districts: action.payload,
-      };
-    },
-    districtNos(state, action) {
-      return {
-        ...state,
-        districtNos: action.payload,
-      };
-    },
-    haveBrands(state, action) {
+    brands(state, action) {
       return {
         ...state,
         brands: action.payload,
       };
     },
-    haveRegions(state, action) {
+    brandNos(state, action) {
       return {
         ...state,
-        regions: action.payload,
+        brandNos: action.payload,
       };
     },
   },

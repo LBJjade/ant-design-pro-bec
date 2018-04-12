@@ -1,4 +1,4 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-console */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -12,12 +12,12 @@ const SelectOption = Select.Option;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-@connect(({ regionManage, loading }) => ({
-  regionManage,
-  loading: loading.models.regionManage,
-  regions: regionManage.regions,
-  regionNos: regionManage.regionNos,
-  requestError: regionManage.requestError,
+@connect(({ region, loading }) => ({
+  region,
+  loading: loading.models.region,
+  regions: region.regions,
+  regionNos: region.regionNos,
+  requestError: region.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -44,7 +44,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'regionManage/fetchRegion',
+      type: 'region/fetchRegion',
       payload: {
         skip: 0,
         limit: 5,
@@ -81,7 +81,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'regionManage/fetchRegion',
+      type: 'region/fetchRegion',
       payload: params,
     });
     this.setState({
@@ -99,7 +99,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'regionManage/fetchRegion',
+      type: 'region/fetchRegion',
       payload: {
         skip: 0,
         limit: 5,
@@ -123,7 +123,7 @@ export default class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'regionManage/remove',
+          type: 'region/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -146,10 +146,10 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {regionManage: { data }, dispatch } = this.props;
+    const {region: { data }, dispatch } = this.props;
     const { pagination: {current} } = this.state;
     dispatch({
-      type: 'regionManage/removeRegion',
+      type: 'region/removeRegion',
       payload: row,
     }).then(() => {
       if(data.results.length > 1) {
@@ -159,7 +159,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'regionManage/fetchRegion',
+          type: 'region/fetchRegion',
           payload: params,
         });
       }else{
@@ -169,7 +169,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'regionManage/fetchRegion',
+          type: 'region/fetchRegion',
           payload: params,
         });
         this.setState({
@@ -185,7 +185,7 @@ export default class TableList extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {regionManage: { data }, dispatch, form } = this.props;
+    const {region: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -200,7 +200,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'regionManage/requireQuery',
+        type: 'region/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
 
@@ -216,7 +216,7 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'regionManage/batchRemoveDelete',
+      type: 'region/batchRemoveDelete',
       payload: row,
     }).then(message.success('删除成功'));
     this.setState({
@@ -250,7 +250,7 @@ export default class TableList extends PureComponent {
   handleAdd = (fields) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'regionManage/storeRegion',
+      type: 'region/storeRegion',
       payload: fields,
     }).then(() => {
         const params = {
@@ -259,7 +259,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'regionManage/fetchRegion',
+          type: 'region/fetchRegion',
           payload: params,
         });
         this.setState({
@@ -273,7 +273,7 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
     dispatch({
-      type: 'regionManage/coverRegion',
+      type: 'region/coverRegion',
       payload: { fields, ojId },
     }).then(() => {
       const params = {
@@ -282,7 +282,7 @@ export default class TableList extends PureComponent {
         count: true,
       };
       dispatch({
-        type: 'regionManage/fetchRegion',
+        type: 'region/fetchRegion',
         payload: params,
       });
       this.setState({
@@ -300,7 +300,7 @@ export default class TableList extends PureComponent {
       callback();
     } else {
       this.props.dispatch({
-        type: 'regionManage/exisRegionNos',
+        type: 'region/exisRegionNos',
         payload: { where: {regionNo: value} },
       }).then(() => {
         if (this.props.regionNos.results === undefined) {
@@ -318,7 +318,7 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { regionManage: { data }, list, loading } = this.props;
+    const { region: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { selectedRows, modalVisible, title, regionNo, regionName } = this.state;
 

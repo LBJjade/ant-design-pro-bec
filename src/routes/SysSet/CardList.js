@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef,no-unused-vars */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Card, Button, Icon, List } from 'antd';
@@ -8,9 +8,9 @@ import Ellipsis from '../../components/Ellipsis';
 
 import styles from './CardList.less';
 
-@connect(({ brandManage, loading }) => ({
-  brandManage,
-  loading: loading.models.brandManage,
+@connect(({ brand, loading }) => ({
+  brand,
+  loading: loading.models.brand,
 }))
 export default class CardList extends PureComponent {
   state = {
@@ -24,7 +24,7 @@ export default class CardList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brand/fetch',
     });
   }
 
@@ -50,7 +50,7 @@ export default class CardList extends PureComponent {
     }
 
     dispatch({
-      type: 'brandManage/fetch',
+      type: 'brand/fetch',
       payload: params,
     });
     this.setState({
@@ -81,7 +81,7 @@ export default class CardList extends PureComponent {
   }
 
   render() {
-    const { brandManage: { data }, loading } = this.props;
+    const { brand: { data }, loading } = this.props;
 
     const paginationProps = {
       showSizeChanger: true,

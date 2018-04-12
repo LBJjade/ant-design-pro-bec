@@ -12,12 +12,12 @@ const SelectOption = Select.Option;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-@connect(({ brandManage, loading }) => ({
-  brandManage,
-  loading: loading.models.brandManage,
-  brands: brandManage.brands,
-  brandNos: brandManage.brandNos,
-  requestError: brandManage.requestError,
+@connect(({ brand, loading }) => ({
+  brand,
+  loading: loading.models.brand,
+  brands: brand.brands,
+  brandNos: brand.brandNos,
+  requestError: brand.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -44,7 +44,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'brandManage/fetchBrand',
+      type: 'brand/fetchBrand',
       payload: {
         skip: 0,
         limit: 5,
@@ -81,7 +81,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'brandManage/fetchBrand',
+      type: 'brand/fetchBrand',
       payload: params,
     });
     this.setState({
@@ -99,7 +99,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'brandManage/fetchBrand',
+      type: 'brand/fetchBrand',
       payload: {
         skip: 0,
         limit: 5,
@@ -123,7 +123,7 @@ export default class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'brandManage/remove',
+          type: 'brand/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -146,10 +146,10 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {brandManage: { data }, dispatch } = this.props;
+    const {brand: { data }, dispatch } = this.props;
     const { pagination: {current} } = this.state;
     dispatch({
-      type: 'brandManage/removeBrand',
+      type: 'brand/removeBrand',
       payload: row,
     }).then(() => {
       if(data.results.length > 1) {
@@ -159,7 +159,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'brandManage/fetchBrand',
+          type: 'brand/fetchBrand',
           payload: params,
         });
       }else{
@@ -169,7 +169,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'brandManage/fetchBrand',
+          type: 'brand/fetchBrand',
           payload: params,
         });
         this.setState({
@@ -185,7 +185,7 @@ export default class TableList extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {brandManage: { data }, dispatch, form } = this.props;
+    const {brand: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -200,7 +200,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'brandManage/requireQuery',
+        type: 'brand/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
 
@@ -216,7 +216,7 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'brandManage/batchRemoveDelete',
+      type: 'brand/batchRemoveDelete',
       payload: row,
     }).then(message.success('删除成功'));
     this.setState({
@@ -250,7 +250,7 @@ export default class TableList extends PureComponent {
   handleAdd = (fields) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'brandManage/storeBrand',
+      type: 'brand/storeBrand',
       payload: fields,
     }).then(() => {
         const params = {
@@ -259,7 +259,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'brandManage/fetchBrand',
+          type: 'brand/fetchBrand',
           payload: params,
         });
       this.setState({
@@ -273,7 +273,7 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
     dispatch({
-      type: 'brandManage/coverBrand',
+      type: 'brand/coverBrand',
       payload: { fields, ojId },
     }).then(() => {
       const params = {
@@ -282,7 +282,7 @@ export default class TableList extends PureComponent {
         count: true,
       };
       dispatch({
-        type: 'brandManage/fetchBrand',
+        type: 'brand/fetchBrand',
         payload: params,
       });
       this.setState({
@@ -300,7 +300,7 @@ export default class TableList extends PureComponent {
       callback();
     } else {
       this.props.dispatch({
-        type: 'brandManage/exisBrandNos',
+        type: 'brand/exisBrandNos',
         payload: { where: {brandNo: value} },
       }).then(() => {
         if (this.props.brandNos.results === undefined) {
@@ -318,7 +318,7 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { brandManage: { data }, list, loading } = this.props;
+    const { brand: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { selectedRows, modalVisible, title, brandNo, brandName } = this.state;
 
