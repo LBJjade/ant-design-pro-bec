@@ -215,22 +215,22 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['analysis'], () => import('../routes/Analysis/AnalysisSetting')),
     },
     '/set/brand': {
-      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/BrandList')),
+      component: dynamicWrapper(app, ['brand'], () => import('../routes/SysSet/BrandList')),
     },
     '/set/table': {
-      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/Brand/TableList')),
+      component: dynamicWrapper(app, ['brand'], () => import('../routes/SysSet/Brand/BrandTable')),
     },
     '/set/card': {
-      component: dynamicWrapper(app, ['brandManage'], () => import('../routes/SysSet/CardList')),
+      component: dynamicWrapper(app, ['brand'], () => import('../routes/SysSet/CardList')),
     },
     '/set/bigArea': {
-      component: dynamicWrapper(app, ['regionManage'], () => import('../routes/SysSet/Region/RegionTableList')),
+      component: dynamicWrapper(app, ['region'], () => import('../routes/SysSet/Region/RegionTable')),
     },
     '/set/district': {
-      component: dynamicWrapper(app, ['districtManage'], () => import('../routes/SysSet/District/DistrictTableList')),
+      component: dynamicWrapper(app, ['district'], () => import('../routes/SysSet/District/DistrictTable')),
     },
     '/set/shop': {
-      component: dynamicWrapper(app, ['shopManage'], () => import('../routes/SysSet/Shop/ShopTableList')),
+      component: dynamicWrapper(app, ['shop'], () => import('../routes/SysSet/Shop/ShopTable')),
     },
   };
   // Get name from ./menu.js or just set it in the router data.
