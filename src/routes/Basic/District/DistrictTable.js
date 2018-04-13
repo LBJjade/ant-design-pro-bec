@@ -415,7 +415,7 @@ export default class TableList extends PureComponent {
       pageSize: this.state.pagination.pageSize,
       total: data === undefined ? 0 : data.count,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
-      // current: this.state.pagination.current,
+      current: this.state.pagination.current,
       // onChange: this.handlePageChange,
     };
 
