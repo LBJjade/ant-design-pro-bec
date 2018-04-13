@@ -31,10 +31,10 @@ export default {
     },
     *storeBrand({ payload }, { call, put }) {
       const response = yield call(postBrand, payload);
-      yield put({
-        type: 'appendBrands',
-        payload: { results: [Object.assign(payload, response)] },
-      });
+      // yield put({
+      //   type: 'appendBrands',
+      //   payload: { results: [Object.assign(payload, response)] },
+      // });
       Message.success('新增成功');
     },
     *coverBrand({ payload }, { call, put }) {
