@@ -80,8 +80,8 @@ export default class CreateForm extends PureComponent {
       validateDistrictNo: this.props.validateDistrictNo,
       districtNo: this.props.districtNo,
       districtName: this.props.districtName,
-      pointerbrand: this.props.pointerbrand === undefined ? "" : this.props.pointerbrand.brandName,
-      pointerregion: this.props.pointerregion === undefined ? "" : this.props.pointerregion.regionName,
+      pointerbrand: this.props.pointerbrand === undefined ? "" : this.props.pointerbrand.objectId,
+      pointerregion: this.props.pointerregion === undefined ? "" : this.props.pointerregion.objectId,
     };
   };
 
@@ -90,8 +90,8 @@ export default class CreateForm extends PureComponent {
     this.setState({
       districtNo: nextProps.districtNo,
       districtName: nextProps.districtName,
-      pointerbrand: nextProps.pointerbrand === undefined ? "" : nextProps.pointerbrand.brandName,
-      pointerregion: nextProps.pointerregion === undefined ? "" : nextProps.pointerregion.regionName,
+      pointerbrand: nextProps.pointerbrand === undefined ? "" : nextProps.pointerbrand.objectId,
+      pointerregion: nextProps.pointerregion === undefined ? "" : nextProps.pointerregion.objectId,
       modalVisible: nextProps.modalVisible,
       title: nextProps.title,
     });
@@ -190,6 +190,7 @@ export default class CreateForm extends PureComponent {
             <Select
               placeholder="请选择"
               style={{ width: '100%' }}
+              // value={pointerregion}
             >
               {option2.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.regionName}</SelectOption>)}
             </Select>

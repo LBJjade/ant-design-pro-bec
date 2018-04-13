@@ -81,7 +81,7 @@ export default class CreateForm extends PureComponent {
       validateRegionNo: this.props.validateRegionNo,
       regionNo: this.props.regionNo,
       regionName: this.props.regionName,
-      pointerbrand: this.props.pointerbrand === undefined ? "" : this.props.pointerbrand.brandName,
+      pointerbrand: this.props.pointerbrand === undefined ? "" : this.props.pointerbrand.objectId,
     };
   };
 
@@ -90,7 +90,7 @@ export default class CreateForm extends PureComponent {
     this.setState({
       regionNo: nextProps.regionNo,
       regionName: nextProps.regionName,
-      pointerbrand: nextProps.pointerbrand === undefined ? "" : nextProps.pointerbrand.brandName,
+      pointerbrand: nextProps.pointerbrand === undefined ? "" : nextProps.pointerbrand.objectId,
       modalVisible: nextProps.modalVisible,
       title: nextProps.title,
     });

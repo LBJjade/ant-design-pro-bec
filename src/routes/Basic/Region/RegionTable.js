@@ -267,6 +267,9 @@ export default class TableList extends PureComponent {
       type: 'region/storeRegion',
       payload: { fields, pointerBrand},
     }).then(() => {
+      this.setState({
+        modalVisible: false,
+      });
         const params = {
           skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
           limit: this.state.pagination.pageSize,
@@ -275,9 +278,6 @@ export default class TableList extends PureComponent {
         dispatch({
           type: 'region/fetchRegion',
           payload: params,
-        });
-        this.setState({
-          modalVisible: false,
         });
       }
     );
@@ -297,6 +297,9 @@ export default class TableList extends PureComponent {
       type: 'region/coverRegion',
       payload: { fields, pointerBrand, ojId },
     }).then(() => {
+      this.setState({
+        modalVisible: false,
+      });
       const params = {
         skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
         limit: this.state.pagination.pageSize,
@@ -305,9 +308,6 @@ export default class TableList extends PureComponent {
       dispatch({
         type: 'region/fetchRegion',
         payload: params,
-      });
-      this.setState({
-        modalVisible: false,
       });
     });
   };
