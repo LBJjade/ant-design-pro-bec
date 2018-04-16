@@ -13,12 +13,12 @@ const SelectOption = Select.Option;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-@connect(({ resourceManage, loading }) => ({
-  resourceManage,
-  loading: loading.models.resourceManage,
-  resources: resourceManage.resources,
-  resourceNames: resourceManage.resourceNames,
-  requestError: resourceManage.requestError,
+@connect(({ actionManage, loading }) => ({
+  actionManage,
+  loading: loading.models.actionManage,
+  actions: actionManage.actions,
+  actionNames: actionManage.actionNames,
+  requestError: actionManage.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -35,8 +35,8 @@ export default class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
     editId: {},
-    resourceName: '',
-    resourceBrief: '',
+    action: '',
+    name: '',
     imgUrl: {},
     source: {},
     title: '',
@@ -45,7 +45,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'resourceManage/fetchResource',
+      type: 'actionManage/fetchAction',
       payload: {
         skip: 0,
         limit: 5,
@@ -82,7 +82,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'resourceManage/fetchResource',
+      type: 'actionManage/fetchAction',
       payload: params,
     });
     this.setState({
@@ -100,7 +100,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'resourceManage/fetchResource',
+      type: 'actionManage/fetchAction',
       payload: {
         skip: 0,
         limit: 5,
@@ -124,7 +124,7 @@ export default class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'resourceManage/remove',
+          type: 'actionManage/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -147,13 +147,13 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {resourceManage: { data }, dispatch } = this.props;
+    const {actionManage: { data }, dispatch } = this.props;
     dispatch({
-      type: 'resourceManage/removeResource',
+      type: 'actionManage/removeAction',
       payload: row,
     }).then(() => {
       dispatch({
-        type: 'resourceManage/fetchResource',
+        type: 'actionManage/fetchAction',
         payload: {
           skip: 0,
           limit: 5,
@@ -172,7 +172,7 @@ export default class TableList extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {resourceManage: { data }, dispatch, form } = this.props;
+    const {actionManage: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -187,7 +187,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'resourceManage/requireQuery',
+        type: 'actionManage/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
 
@@ -203,7 +203,7 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'resourceManage/batchRemoveDelete',
+      type: 'actionManage/batchRemoveDelete',
       payload: row,
     }).then(message.success('删除成功'));
     this.setState({
@@ -217,18 +217,18 @@ export default class TableList extends PureComponent {
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
-      resourceName: "",
-      resourceBrief: "",
+      action: "",
+      name: "",
       editId: "",
       title: "新增",
     });
   };
 
-  handleEditModalVisible = (flag, id, resourceName, resourceBrief) => {
+  handleEditModalVisible = (flag, id, actionName, actionBrief) => {
     this.setState({
       modalVisible: flag,
-      resourceName: resourceName,
-      resourceBrief: resourceBrief,
+      action: actionName,
+      name: actionBrief,
       editId: id,
       title: "编辑",
     });
@@ -237,11 +237,11 @@ export default class TableList extends PureComponent {
   handleAdd = (fields) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'resourceManage/storeResource',
+      type: 'actionManage/storeAction',
       payload: fields,
     }).then(() => {
         dispatch({
-          type: 'resourceManage/fetchResource',
+          type: 'actionManage/fetchAction',
           payload: {
             skip: 0,
             limit: 5,
@@ -263,11 +263,11 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
     dispatch({
-      type: 'resourceManage/coverResource',
+      type: 'actionManage/coverAction',
       payload: { fields, ojId },
     }).then(() => {
       dispatch({
-        type: 'resourceManage/fetchResource',
+        type: 'actionManage/fetchAction',
         payload: {
           skip: 0,
           limit: 5,
@@ -284,19 +284,19 @@ export default class TableList extends PureComponent {
     });
   };
 
-  // validateResource = (rule, value, callback) => {
+  // validateAction = (rule, value, callback) => {
   //   if (value === undefined || value === "") {
   //       callback();
   //   } else {
   //     this.props.dispatch({
-  //       type: 'resourceManage/exisResources',
-  //       payload: { where: {resourceBrief: value} },
+  //       type: 'actionManage/exisActions',
+  //       payload: { where: {actionBrief: value} },
   //     }).then(() => {
-  //       if (this.props.resources.results === undefined) {
+  //       if (this.props.actions.results === undefined) {
   //         callback();
   //         return;
   //       }
-  //       if (this.props.resources.results.length > 0) {
+  //       if (this.props.actions.results.length > 0) {
   //         callback([new Error(rule.message)]);
   //       } else {
   //         callback();
@@ -305,20 +305,20 @@ export default class TableList extends PureComponent {
   //   }
   // }
 
-  validateResourceNo = (rule, value, callback) => {
-    const {resourceManage: { resourceNames } } = this.props;
+  validateActionNo = (rule, value, callback) => {
+    const {actionManage: { actionNames } } = this.props;
     if (value === undefined || value === "") {
       callback();
     } else {
       this.props.dispatch({
-        type: 'resourceManage/exisResourceNos',
-        payload: { where: {resourceName: value} },
+        type: 'actionManage/exisActionNos',
+        payload: { where: {actionName: value} },
       }).then(() => {
-        if (this.props.resourceNames.results === undefined) {
+        if (this.props.actionNames.results === undefined) {
           callback();
           return;
         }
-        if (this.props.resourceNames.results.length > 0) {
+        if (this.props.actionNames.results.length > 0) {
           callback([new Error(rule.message)]);
         } else {
           callback();
@@ -329,9 +329,9 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { resourceManage: { data }, list, loading } = this.props;
+    const { actionManage: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, title, resourceName, resourceBrief } = this.state;
+    const { selectedRows, modalVisible, title, action, name } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -342,21 +342,20 @@ export default class TableList extends PureComponent {
 
     const columns = [
       {
-        title: '浏览次数',
-        dataIndex: 'viewTimes',
+        title: '角色ID',
+        dataIndex: 'groupId',
       },
       {
-        title: '资源简介',
-        dataIndex: 'resourceName',
+        title: '权限Id',
+        dataIndex: 'actionId',
       },
       {
-        title: '资源简介',
-        dataIndex: 'resourceBrief',
-        width: '30%',
+        title: '权限',
+        dataIndex: 'action',
       },
       {
-        title: '状态',
-        dataIndex: 'status',
+        title: '权限说明',
+        dataIndex: 'name',
       },
       {
         title: '更新时间',
@@ -375,7 +374,7 @@ export default class TableList extends PureComponent {
         render: (val, record) => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.resourceName, record.resourceBrief)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.action, record.name)}>编辑</a>
           </span>),
         // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
@@ -406,7 +405,7 @@ export default class TableList extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="数字资源管理">
+      <PageHeaderLayout title="用户权限管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
@@ -414,19 +413,19 @@ export default class TableList extends PureComponent {
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                   <Col md={8} sm={24}>
                     <FormItem label="编号">
-                      {getFieldDecorator('resourceName')(
+                      {getFieldDecorator('actionName')(
                         <Input placeholder="请输入" />
                       )}
                     </FormItem>
                   </Col>
                   <Col md={8} sm={24}>
-                    <FormItem label="数字资源名称">
-                      {getFieldDecorator('resourceBrief')(
+                    <FormItem label="用户权限名称">
+                      {getFieldDecorator('actionBrief')(
                         <Select
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.resourceBrief}>{d.resourceBrief}</SelectOption>) :
+                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.actionBrief}>{d.actionBrief}</SelectOption>) :
                           <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
@@ -477,8 +476,8 @@ export default class TableList extends PureComponent {
           handleModalVisible={this.handleAddModalVisible}
           title={title}
           modalVisible={modalVisible}
-          resourceName={resourceName}
-          resourceBrief={resourceBrief}
+          actionName={action}
+          actionBrief={name}
         />
       </PageHeaderLayout>
     );
