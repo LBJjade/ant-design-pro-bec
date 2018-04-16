@@ -6,7 +6,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './Setting.less';
 
 
-@connect(({ account, loading }) => ({
+@connect(({account}) => ({
   account,
   loading: account.loading,
   currentUser: account.currentUser,
@@ -68,7 +68,7 @@ export default class Setting extends Component {
         });
       }
     });
-  }
+  };
 
   handleValidate = (rule, value, callback) => {
     if (rule.fieldname !== undefined) {
@@ -127,13 +127,13 @@ export default class Setting extends Component {
         loading: false,
       }));
     }
-  }
+  };
 
   getBase64 = (img, callback) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result));
     reader.readAsDataURL(img);
-  }
+  };
 
   beforeUpload = (file) => {
     const isJPG = file.type === 'image/jpeg';
@@ -145,7 +145,7 @@ export default class Setting extends Component {
       message.error('Image must smaller than 2MB!');
     }
     return isJPG && isLt2M;
-  }
+  };
 
   render() {
     const { form, loading, currentUser } = this.props;
@@ -192,6 +192,25 @@ export default class Setting extends Component {
     );
     const imageUrl = this.state.imageUrl;
 
+    const props = {
+      name: 'file',
+      action: 'https://parse-server-instances.herokuapp.com/parse/files/doodle.png',
+      headers: {
+        'Content-Type': 'image/jpeg',
+        'X-Parse-Application-Id': 'bec',
+      },
+      onChange(info) {
+        if (info.file.status !== 'uploading') {
+          console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    };
+
     return (
       <PageHeaderLayout
         content={pageHeaderContent}
@@ -199,16 +218,10 @@ export default class Setting extends Component {
           <Row gutter={24}>
             <Col xl={8} lg={24} md={24} sm={24} xs={24}>
               <Card>
-                <Upload
-                  name="avatar"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  action="//jsonplaceholder.typicode.com/posts/"
-                  beforeUpload={this.beforeUpload}
-                  onChange={this.changeAvatar}
-                >
-                  {imageUrl ? <img src={imageUrl} alt="" /> : uploadButton}
+                <Upload {...props}>
+                  <Button>
+                    <Icon type="upload" /> Click to Upload
+                  </Button>
                 </Upload>
               </Card>
             </Col>
@@ -218,7 +231,7 @@ export default class Setting extends Component {
                 <Form.Item { ...formItemLayout } label='注册邮箱：'>
                   <Icon type="mail" style={{ margin:10 }} />{ currentUser.email || '' }
                 </Form.Item>
-                <Divider></Divider>
+                <Divider />
                 <Form.Item { ...formItemLayout } label='昵称：'>
                   { getFieldDecorator('nickname', {
                     initialValue: currentUser.nickname || '',
