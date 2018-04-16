@@ -114,30 +114,30 @@ export default class TableList extends PureComponent {
     });
   };
 
-  handleMenuClick = (e) => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
-        dispatch({
-          type: 'region/remove',
-          payload: {
-            no: selectedRows.map(row => row.no).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
-  };
+  // handleMenuClick = (e) => {
+  //   const { dispatch } = this.props;
+  //   const { selectedRows } = this.state;
+  //
+  //   if (!selectedRows) return;
+  //
+  //   switch (e.key) {
+  //     case 'remove':
+  //       dispatch({
+  //         type: 'region/remove',
+  //         payload: {
+  //           no: selectedRows.map(row => row.no).join(','),
+  //         },
+  //         callback: () => {
+  //           this.setState({
+  //             selectedRows: [],
+  //           });
+  //         },
+  //       });
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
 
   handleSelectRows = (rows) => {
     this.setState({
@@ -322,12 +322,12 @@ export default class TableList extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const { selectedRows, modalVisible, title, regionNo, regionName } = this.state;
 
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
-      </Menu>
-    );
+    // const menu = (
+    //   <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
+    //     <Menu.Item key="remove">删除</Menu.Item>
+    //     <Menu.Item key="approval">批量审批</Menu.Item>
+    //   </Menu>
+    // );
 
     const columns = [
       {

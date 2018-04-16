@@ -114,30 +114,30 @@ export default class TableList extends PureComponent {
     });
   };
 
-  handleMenuClick = (e) => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
-        dispatch({
-          type: 'brand/remove',
-          payload: {
-            no: selectedRows.map(row => row.no).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
-  };
+  // handleMenuClick = (e) => {
+  //   const { dispatch } = this.props;
+  //   const { selectedRows } = this.state;
+  //
+  //   if (!selectedRows) return;
+  //
+  //   switch (e.key) {
+  //     case 'remove':
+  //       dispatch({
+  //         type: 'brand/remove',
+  //         payload: {
+  //           no: selectedRows.map(row => row.no).join(','),
+  //         },
+  //         callback: () => {
+  //           this.setState({
+  //             selectedRows: [],
+  //           });
+  //         },
+  //       });
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
 
   handleSelectRows = (rows) => {
     this.setState({
