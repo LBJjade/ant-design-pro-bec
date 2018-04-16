@@ -8,14 +8,14 @@ import Ellipsis from '../../components/Ellipsis';
 
 import styles from './CardList.less';
 
-@connect(({ role, loading }) => ({
-  role,
-  loading: loading.models.role,
+@connect(({ group, loading }) => ({
+  group,
+  loading: loading.models.group,
 }))
 export default class CardList extends PureComponent {
   componentDidMount() {
     this.props.dispatch({
-      type: 'role/fetch',
+      type: 'group/fetch',
       payload: {
         count: 8,
       },
@@ -23,7 +23,7 @@ export default class CardList extends PureComponent {
   }
 
   render() {
-    const { role: { data }, loading } = this.props;
+    const { group: { data }, loading } = this.props;
 
     const content = (
       <div className={styles.pageHeaderContent}>
@@ -65,11 +65,11 @@ export default class CardList extends PureComponent {
             dataSource={['', ...data.results]}
             renderItem={item => (item ? (
 // eslint-disable-next-line react/jsx-indent
-                <List.Item key={item.roleId}>
+                <List.Item key={item.groupId}>
                   <Card hoverable className={styles.card} actions={[<a>编辑</a>, <a>删除</a>]}>
                     <Card.Meta
                       avatar={<img alt="" className={styles.cardAvatar} src={item.avatar} />}
-                      title={<a href="#">{item.roleName}</a>}
+                      title={<a href="#">{item.groupName}</a>}
                       description={(
                         <Ellipsis className={styles.item} lines={3}>{item.moduleName}</Ellipsis>
                       )}

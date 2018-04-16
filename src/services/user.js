@@ -38,3 +38,22 @@ export async function getRole() {
     method: 'GET',
   });
 }
+
+export async function queryGroup() {
+  return request('/api/group');
+}
+
+export async function queryCurrentGroup() {
+  return request('/api/currentUser');
+}
+
+export async function getUserListGroup(params) {
+  return request(`/api/group?${stringify(params)}`);
+}
+
+
+export async function getGroup() {
+  return request('/api/classes/group', {
+    method: 'GET',
+  });
+}

@@ -159,7 +159,7 @@ const menuData = [{
   }, {
     name: '角色权限',
     icon: 'team',
-    path: 'roleuser',
+    path: 'usertable',
   }],
 }, {
   name: '分类管理',
