@@ -1,6 +1,6 @@
 /* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, uploadLogo, getBrand } from '../services/sysSet';
+import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, uploadLogo, getBrand } from '../services/basic';
 
 export default {
   namespace: 'region',
@@ -59,13 +59,6 @@ export default {
       }else{
         Message.error('删除失败');
       }
-    },
-    *batchRemoveDelete({ payload }, { call, put }) {
-      const response = yield call(regionBatchDelete, payload);
-      yield put({
-        type: 'changeRegions',
-        payload: response,
-      });
     },
     *requireQuery({ payload }, { call, put }) {
       const response = yield call(regionRequireQuery, payload);

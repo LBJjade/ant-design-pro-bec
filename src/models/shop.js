@@ -1,6 +1,6 @@
 /* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getShop, postShop, putShop, shopBatchDelete, deleteShop, shopRequireQuery, uploadLogo, getBrand, getRegion, getDistrict } from '../services/sysSet';
+import { getShop, postShop, putShop, shopBatchDelete, deleteShop, shopRequireQuery, uploadLogo, getBrand, getRegion, getDistrict } from '../services/basic';
 
 export default {
   namespace: 'shop',

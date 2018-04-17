@@ -215,7 +215,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['analysis'], () => import('../routes/Analysis/AnalysisSetting')),
     },
     '/basic/city': {
-      component: dynamicWrapper(app, ['city'], () => import('../routes/Basic/City')),
+      component: dynamicWrapper(app, ['city'], () => import('../routes/Basic/City/City')),
     },
     '/basic/region': {
       component: dynamicWrapper(app, ['region'], () => import('../routes/Basic/Region/Region')),
@@ -224,13 +224,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['district'], () => import('../routes/Basic/District/District')),
     },
     '/basic/shop': {
-      component: dynamicWrapper(app, ['shop'], () => import('../routes/Basic/Shop/ShopTable')),
+      component: dynamicWrapper(app, ['shop'], () => import('../routes/Basic/Shop/Shop')),
     },
     '/basic/brand': {
       component: dynamicWrapper(app, ['brand'], () => import('../routes/Basic/Brand/Brand')),
-    },
-    '/basic/card': {
-      component: dynamicWrapper(app, ['brand'], () => import('../routes/Basic/CardList')),
     },
   };
   // Get name from ./menu.js or just set it in the router data.

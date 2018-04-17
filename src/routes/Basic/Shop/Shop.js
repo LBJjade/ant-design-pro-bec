@@ -1,14 +1,13 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
+import { Row, Col, Card, Form, Input, Popconfirm, Select, Button, message, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import CreateForm from './creatForm';
 
-import styles from '../../../static/js/table.less';
+import styles from './Shop.less';
 
-const FormItem = Form.Item;
-const SelectOption = Select.Option;
+const { Item } = Form;
+const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 @connect(({ shop, loading }) => ({
@@ -19,7 +18,7 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
   requestError: shop.requestError,
 }))
 @Form.create()
-export default class TableList extends PureComponent {
+export default class Shop extends PureComponent {
   state = {
     pagination: {
       pageSize: 5,
@@ -60,12 +59,6 @@ export default class TableList extends PureComponent {
     });
     dispatch({
       type: 'shop/getDistricts',
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      refrush: true,
     });
   }
 
@@ -328,20 +321,12 @@ export default class TableList extends PureComponent {
         }
       });
     }
-  }
-
+  };
 
   render() {
     const { shop: { data, brands, regions, districts }, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, title, shopNo, shopName, address, contactTel } = this.state;
-
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
-      </Menu>
-    );
+    const { modalVisible, title, shopNo, shopName, address, contactTel } = this.state;
 
     const columns = [
       {
@@ -391,20 +376,6 @@ export default class TableList extends PureComponent {
       },
     ];
 
-    const rowSelection = {
-      onChange: (selectedRowKeys, Rows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', Rows);
-        this.setState({
-          selectedRows: selectedRowKeys,
-        });
-        // noinspection JSAnnotator
-      },
-      getCheckboxProps: record => ({
-        disabled: record.name === 'Disabled User', // Column configuration not to be checked
-        name: record.name,
-      }),
-    };
-
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -423,24 +394,24 @@ export default class TableList extends PureComponent {
               <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                   <Col md={8} sm={24}>
-                    <FormItem label="编号">
+                    <Item label="编号">
                       {getFieldDecorator('shopNo')(
                         <Input placeholder="请输入" />
                       )}
-                    </FormItem>
+                    </Item>
                   </Col>
                   <Col md={8} sm={24}>
-                    <FormItem label="门店名称">
+                    <Item label="门店名称">
                       {getFieldDecorator('shopName')(
                         <Select
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.shopName}>{d.shopName}</SelectOption>) :
-                          <SelectOption key="1" > 暂无</SelectOption> }
+                          { data.results.length > 0 ? data.results.map(d => <Option key={d.objectId} value={d.shopName}>{d.shopName}</Option>) :
+                          <Option key="1" > 暂无</Option> }
                         </Select>
                       )}
-                    </FormItem>
+                    </Item>
                   </Col>
                   <Col md={8} sm={24}>
                     <span className={styles.submitButtons}>
@@ -455,15 +426,8 @@ export default class TableList extends PureComponent {
               <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
                 新增
               </Button>
-              {
-                selectedRows.length > 0 && (
-                  <span>
-                    <Button icon="delete" type="primary" onClick={() => this.handelbatchDelete(selectedRows)}>删除</Button>
-                  </span>
-                )
-              }
             </div>
-            <div className={styles.standardList}>
+            <div>
               <Card>
                 <div>
                   <Table
@@ -473,7 +437,6 @@ export default class TableList extends PureComponent {
                     pagination={paginationProps}
                     dataSource={data === undefined ? '' : data.results}
                     onChange={this.handleStandardTableChange}
-                    // rowSelection={rowSelection}
                     onSelectRow={this.handleSelectRows}
                   />
                 </div>
