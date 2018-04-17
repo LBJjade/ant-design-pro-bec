@@ -1,6 +1,6 @@
 /* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getDistrict, postDistrict, putDistrict, districtBatchDelete, deleteDistrict, districtRequireQuery, uploadLogo, getBrand, getRegion } from '../services/sysSet';
+import { getDistrict, postDistrict, putDistrict, districtBatchDelete, deleteDistrict, districtRequireQuery, uploadLogo, getBrand, getRegion } from '../services/basic';
 
 export default {
   namespace: 'district',

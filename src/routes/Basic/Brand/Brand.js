@@ -1,14 +1,12 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
+import { Row, Col, Card, Form, Input, Popconfirm, Select, Button, message, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import CreateForm from './creatForm';
 
-import styles from '../../../static/js/table.less';
+import styles from './Brand.less';
 
-const FormItem = Form.Item;
-const SelectOption = Select.Option;
+const { Item } = Form;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
@@ -50,12 +48,6 @@ export default class Brand extends PureComponent {
         limit: 5,
         count: true,
       },
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      refrush: true,
     });
   }
 
@@ -111,37 +103,6 @@ export default class Brand extends PureComponent {
         current: 1,
         pageSize: 5,
       },
-    });
-  };
-
-  handleMenuClick = (e) => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
-        dispatch({
-          type: 'brand/remove',
-          payload: {
-            no: selectedRows.map(row => row.no).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
-  handleSelectRows = (rows) => {
-    this.setState({
-      selectedRows: rows,
     });
   };
 
@@ -211,21 +172,6 @@ export default class Brand extends PureComponent {
       });
     });
   };
-  // handelDelete = (row) => {
-  //   console.log(row);
-  // };
-  // handelbatchDelete = (row) => {
-  //   this.props.dispatch({
-  //     type: 'brand/batchRemoveDelete',
-  //     payload: row,
-  //   }).then(message.success('删除成功'));
-  //   this.setState({
-  //     pagination: {
-  //       current: 1,
-  //       pageSize: 5,
-  //     },
-  //   });
-  // };
 
   handleAddModalVisible = (flag) => {
     this.setState({
@@ -249,7 +195,6 @@ export default class Brand extends PureComponent {
 
   handleAdd = (fields) => {
     const { dispatch } = this.props;
-    const { pagination: {current} } = this.state;
     dispatch({
       type: 'brand/storeBrand',
       payload: fields,
@@ -272,7 +217,6 @@ export default class Brand extends PureComponent {
 
   handleEdit = (fields) => {
     const { dispatch } = this.props;
-    const { pagination: {current} } = this.state;
     const ojId = this.state.editId;
     dispatch({
       type: 'brand/coverBrand',
@@ -316,20 +260,13 @@ export default class Brand extends PureComponent {
         }
       });
     }
-  }
+  };
 
 
   render() {
-    const { brand: { data }, list, loading } = this.props;
+    const { brand: { data }, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, title, brandNo, brandName } = this.state;
-
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
-      </Menu>
-    );
+    const { modalVisible, title, brandNo, brandName } = this.state;
 
     const columns = [
       {
@@ -351,20 +288,6 @@ export default class Brand extends PureComponent {
       },
     ];
 
-    const rowSelection = {
-      onChange: (selectedRowKeys, Rows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', Rows);
-        this.setState({
-          selectedRows: selectedRowKeys,
-        });
-        // noinspection JSAnnotator
-      },
-      getCheckboxProps: record => ({
-        disabled: record.name === 'Disabled User', // Column configuration not to be checked
-        name: record.name,
-      }),
-    };
-
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -383,24 +306,24 @@ export default class Brand extends PureComponent {
               <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                   <Col md={8} sm={24}>
-                    <FormItem label="编号">
+                    <Item label="编号">
                       {getFieldDecorator('brandNo')(
                         <Input placeholder="请输入" />
                       )}
-                    </FormItem>
+                    </Item>
                   </Col>
                   <Col md={8} sm={24}>
-                    <FormItem label="品牌名称">
+                    <Item label="品牌名称">
                       {getFieldDecorator('brandName')(
                         <Select
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data !== undefined ? data.results.map(d => <SelectOption key={d.objectId} value={d.brandName}>{d.brandName}</SelectOption>) :
-                          <SelectOption key="1" > 暂无</SelectOption> }
+                          { data !== undefined ? data.results.map(d => <Option key={d.objectId} value={d.brandName}>{d.brandName}</Option>) :
+                          <Option key="1" > 暂无</Option> }
                         </Select>
                       )}
-                    </FormItem>
+                    </Item>
                   </Col>
                   <Col md={8} sm={24}>
                     <span className={styles.submitButtons}>
@@ -415,15 +338,8 @@ export default class Brand extends PureComponent {
               <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
                 新增
               </Button>
-              {
-                selectedRows.length > 0 && (
-                  <span>
-                    <Button icon="delete" type="primary" onClick={() => this.handelbatchDelete(selectedRows)}>删除</Button>
-                  </span>
-                )
-              }
             </div>
-            <div className={styles.standardList}>
+            <div>
               <Card>
                 <div>
                   <Table
