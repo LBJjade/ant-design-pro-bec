@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+import { message } from 'antd';
 import {
   getIntention,
   getAnalysisField,
@@ -6,8 +6,6 @@ import {
   postAnalysisRule,
   putAnalysisRule,
   deleteAnalysisRule } from '../services/analysis';
-import { Message } from 'antd';
-
 
 export default {
   namespace: 'analysis',
@@ -26,66 +24,66 @@ export default {
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
-      const response = call(getIntention);
-      yield put({ type: 'changeIntention', payload: response, });
-      yield put({ type: 'changeLoading', payload: false});
-    },
+    // *fetch(_, { call, put }) {
+    //   yield put({ type: 'changeLoading', payload: true });
+    //   const response = call(getIntention);
+    //   yield put({ type: 'changeIntention', payload: response });
+    //   yield put({ type: 'changeLoading', payload: false });
+    // },
     *fetchIntention({ payload }, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
+      yield put({ type: 'changeLoading', payload: true });
       const response = yield call(getIntention, payload);
       if (response.error === undefined) {
-        yield put({ type: 'changeIntention', payload: response, });
+        yield put({ type: 'changeIntention', payload: response });
       } else {
-        Message.error(`获取数据失败！${response.error}`);
+        message.error(`获取数据失败！${response.error}`);
       }
-      yield put({ type: 'changeLoading', payload: false});
+      yield put({ type: 'changeLoading', payload: false });
     },
     *fetchAnalysisField({ payload }, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
+      yield put({ type: 'changeLoading', payload: true });
       const resField = yield call(getAnalysisField, payload);
-      yield put({ type: 'changeAnalysisField', payload: resField, });
-      yield put({ type: 'changeLoading', payload: false});
+      yield put({ type: 'changeAnalysisField', payload: resField });
+      yield put({ type: 'changeLoading', payload: false });
     },
     *fetchAnalysisRule({ payload }, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
+      yield put({ type: 'changeLoading', payload: true });
       const resRule = yield call(getAnalysisRule, payload);
-      yield put({ type: 'changeAnalysisRule', payload: resRule, });
-      yield put({ type: 'changeLoading', payload: false});
+      yield put({ type: 'changeAnalysisRule', payload: resRule });
+      yield put({ type: 'changeLoading', payload: false });
     },
     *storeAnalysisRule({ payload }, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
+      yield put({ type: 'changeLoading', payload: true });
       const res = yield call(postAnalysisRule, payload);
       if (res.error === undefined) {
-        yield put({ type: 'appendAnalysisRule', payload: { results: [Object.assign(payload, res)], }, });
-        Message.success('保存成功！', 3);
+        yield put({ type: 'appendAnalysisRule', payload: { results: [Object.assign(payload, res)] } });
+        message.success('保存成功！', 3);
       } else {
-        Message.error(`保存失败！${res.error}`, 5);
+        message.error(`保存失败！${res.error}`, 5);
       }
-      yield put({ type: 'changeLoading', payload: false});
+      yield put({ type: 'changeLoading', payload: false });
     },
     *coverAnalysisRule({ payload }, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
+      yield put({ type: 'changeLoading', payload: true });
       const res = yield call(putAnalysisRule, payload);
       if (res.error === undefined) {
-        yield put({ type: 'resetAnalysisRule', payload: payload, });
-        Message.success('保存成功！', 3);
+        yield put({ type: 'resetAnalysisRule', payload: { ...payload } });
+        message.success('保存成功！', 3);
       } else {
-        Message.error(`保存失败！${res.error}`, 5);
+        message.error(`保存失败！${res.error}`, 5);
       }
-      yield put({ type: 'changeLoading', payload: false});
+      yield put({ type: 'changeLoading', payload: false });
     },
     *removeAnalysisRule({ payload }, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
+      yield put({ type: 'changeLoading', payload: true });
       const res = yield call(deleteAnalysisRule, payload);
       if (res.error === undefined) {
-        yield put({ type: 'clearAnalysisRule', payload: payload, });
-        Message.success('删除成功！', 3);
+        yield put({ type: 'clearAnalysisRule', payload: { ...payload } });
+        message.success('删除成功！', 3);
       } else {
-        Message.error(`删除失败！${res.error}`, 5);
+        message.error(`删除失败！${res.error}`, 5);
       }
-      yield put({ type: 'changeLoading', payload: false});
+      yield put({ type: 'changeLoading', payload: false });
     },
   },
 
@@ -126,7 +124,7 @@ export default {
       return {
         ...state,
         analysisRule: {
-          results: state.analysisRule.results.map(item => {
+          results: state.analysisRule.results.map((item) => {
             if (item.objectId === action.payload.objectId) {
               return action.payload;
             } else {
@@ -140,7 +138,8 @@ export default {
       return {
         ...state,
         analysisRule: {
-          results: state.analysisRule.results.filter(item => item.objectId !== action.payload.objectId),
+          results:
+            state.analysisRule.results.filter(item => item.objectId !== action.payload.objectId),
         },
       };
     },
