@@ -16,13 +16,15 @@ const menuData = [{
   }, {
     name: '工作台',
     path: 'workplace',
-    // hideInBreadcrumb: true,
-    // hideInMenu: true,
+    hideInBreadcrumb: true,
+    hideInMenu: true,
   }],
 }, {
   name: '客户分析',
   icon: 'area-chart',
   path: 'analysis',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   children: [{
     name: '分析规则管理',
     path: 'analysissetting',
@@ -31,6 +33,8 @@ const menuData = [{
   name: '表单页',
   icon: 'form',
   path: 'form',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   children: [{
     name: '基础表单',
     path: 'basic-form',
@@ -46,6 +50,8 @@ const menuData = [{
   name: '列表页',
   icon: 'table',
   path: 'list',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   children: [{
     name: '查询表格',
     path: 'table-list',
@@ -73,6 +79,8 @@ const menuData = [{
   name: '详情页',
   icon: 'profile',
   path: 'profile',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   children: [{
     name: '基础详情页',
     path: 'basic',
@@ -85,6 +93,8 @@ const menuData = [{
   name: '结果页',
   icon: 'check-circle-o',
   path: 'result',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   children: [{
     name: '成功',
     path: 'success',
@@ -96,6 +106,8 @@ const menuData = [{
   name: '异常页',
   icon: 'warning',
   path: 'exception',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   children: [{
     name: '403',
     path: '403',
@@ -115,6 +127,8 @@ const menuData = [{
   icon: 'user',
   path: 'user',
   authority: 'guest',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   children: [{
     name: '登录',
     path: 'login',
@@ -129,7 +143,6 @@ const menuData = [{
   name: '个人中心',
   icon: 'user',
   path: 'personal',
-  // hideInMenu: true,
   children: [{
     name: '个人设置',
     path: 'setting',
@@ -139,11 +152,15 @@ const menuData = [{
   name: '使用文档',
   icon: 'book',
   path: 'http://pro.ant.design/docs/getting-started',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   target: '_blank',
 }, {
   name: '人力资源',
   icon: 'team',
   path: 'humanresources',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   authority: ['admin'],
   children: [{
     name: '人事档案',
@@ -177,6 +194,8 @@ const menuData = [{
   name: '基础数据',
   icon: 'user',
   path: 'basic',
+  hideInBreadcrumb: true,
+  hideInMenu: true,
   authority: ['admin', 'guest'],
   children: [{
     name: '城市管理',
