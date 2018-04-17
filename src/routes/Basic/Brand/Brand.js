@@ -25,17 +25,11 @@ export default class Brand extends PureComponent {
       current: 1,
       total: 0,
     },
-    data: {},
     modalVisible: false,
-    modalEditVisible: false,
-    expandForm: false,
-    selectedRows: [],
     formValues: {},
     editId: {},
     brandNo: '',
     brandName: '',
-    imgUrl: {},
-    source: {},
     title: '',
   };
 
@@ -107,15 +101,16 @@ export default class Brand extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {brand: { data }, dispatch } = this.props;
-    const { pagination: {current} } = this.state;
+    const { brand: { data }, dispatch } = this.props;
+    const { pagination: { current } } = this.state;
     dispatch({
       type: 'brand/removeBrand',
       payload: row,
     }).then(() => {
-      if(data.results.length > 1) {
+      if (data.results.length > 1) {
         const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+            ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -123,9 +118,10 @@ export default class Brand extends PureComponent {
           type: 'brand/fetchBrand',
           payload: params,
         });
-      }else{
+      } else {
         const params = {
-          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 2) * this.state.pagination.pageSize) : 0,
+          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize) > 0 ?
+            ((this.state.pagination.current - 2) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -146,7 +142,7 @@ export default class Brand extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {brand: { data }, dispatch, form } = this.props;
+    const { brand: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -176,20 +172,20 @@ export default class Brand extends PureComponent {
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
-      brandNo: "",
-      brandName: "",
-      editId: "",
-      title: "新增",
+      brandNo: '',
+      brandName: '',
+      editId: '',
+      title: '新增',
     });
   };
 
-  handleEditModalVisible = (flag, id, brandNo, brandName) => {
+  handleEditModalVisible = (flag, id, no, name) => {
     this.setState({
       modalVisible: flag,
-      brandNo: brandNo,
-      brandName: brandName,
+      brandNo: no,
+      brandName: name,
       editId: id,
-      title: "编辑",
+      title: '编辑',
     });
   };
 
@@ -199,18 +195,19 @@ export default class Brand extends PureComponent {
       type: 'brand/storeBrand',
       payload: fields,
     }).then(() => {
-        this.setState({
-          modalVisible: false,
-        });
-        const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
-          limit: this.state.pagination.pageSize,
-          count: true,
-        };
-        dispatch({
-          type: 'brand/fetchBrand',
-          payload: params,
-        });
+      this.setState({
+        modalVisible: false,
+      });
+      const params = {
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+          ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+        limit: this.state.pagination.pageSize,
+        count: true,
+      };
+      dispatch({
+        type: 'brand/fetchBrand',
+        payload: params,
+      });
     }
     );
   };
@@ -226,7 +223,8 @@ export default class Brand extends PureComponent {
         modalVisible: false,
       });
       const params = {
-        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+          ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
         limit: this.state.pagination.pageSize,
         count: true,
       };
@@ -239,15 +237,15 @@ export default class Brand extends PureComponent {
 
   validateBrandNo = (rule, value, callback) => {
     const { brandNo } = this.state;
-    if(value === brandNo) {
+    if (value === brandNo) {
       callback();
     }
-    if (value === undefined || value === "") {
+    if (value === undefined || value === '') {
       callback();
     } else {
       this.props.dispatch({
         type: 'brand/exisBrandNos',
-        payload: { where: {brandNo: value} },
+        payload: { where: { brandNo: value } },
       }).then(() => {
         if (this.props.brandNos.results === undefined) {
           callback();
@@ -318,9 +316,14 @@ export default class Brand extends PureComponent {
                         <Select
                           placeholder="请选择"
                           style={{ width: '100%' }}
-                        >
-                          { data !== undefined ? data.results.map(d => <Option key={d.objectId} value={d.brandName}>{d.brandName}</Option>) :
-                          <Option key="1" > 暂无</Option> }
+                        >{
+                          data !== undefined ?
+                            data.results.map(d => (
+                              <Option key={d.objectId} value={d.brandName}>
+                                {d.brandName}
+                              </Option>
+)) :
+                            <Option key="1" > 暂无</Option> }
                         </Select>
                       )}
                     </Item>

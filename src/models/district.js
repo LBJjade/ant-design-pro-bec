@@ -1,4 +1,3 @@
-/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
 import { getDistrict, postDistrict, putDistrict, districtBatchDelete, deleteDistrict, districtRequireQuery, uploadLogo, getBrand, getRegion } from '../services/basic';
 
@@ -40,23 +39,23 @@ export default {
       });
       Message.success('新增成功');
     },
-    *coverDistrict({ payload }, { call, put }) {
+    *coverDistrict({ payload }, { call }) {
       const response = yield call(putDistrict, payload);
-      if(response !== undefined) {
-        if(JSON.parse(response).error === undefined) {
+      if (response !== undefined) {
+        if (JSON.parse(response).error === undefined) {
           Message.success('编辑成功');
-        }else{
+        } else {
           Message.error('编辑失败');
         }
-      }else{
+      } else {
         Message.success('编辑成功');
       }
     },
-    *removeDistrict({ payload }, { call, put }) {
+    *removeDistrict({ payload }, { call }) {
       const response = yield call(deleteDistrict, payload);
-      if(JSON.parse(response).error === undefined) {
+      if (JSON.parse(response).error === undefined) {
         Message.success('删除成功');
-      }else{
+      } else {
         Message.error('删除失败');
       }
     },
@@ -124,21 +123,6 @@ export default {
         data: {
           results: state.data.results.concat(action.payload.results),
           count: state.data.count + 1,
-        },
-      };
-    },
-    resetDistricts(state, action) {
-      return {
-        ...state,
-        data: {
-          results: state.data.results.map(item => {
-            if (item.objectId === action.payload.ojId) {
-              return action.payload;
-            } else {
-              return item;
-            }
-          }),
-          count: state.data.count,
         },
       };
     },

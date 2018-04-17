@@ -1,7 +1,6 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-dupe-keys,quote-props,react/jsx-no-duplicate-props */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Popconfirm, Select, Button, Menu, message, Table } from 'antd';
+import { Row, Col, Card, Form, Input, Popconfirm, Select, Button, message, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import CreateForm from './creatForm';
 
@@ -26,18 +25,12 @@ export default class District extends PureComponent {
       current: 1,
       total: 0,
     },
-    data: {},
     modalVisible: false,
-    modalEditVisible: false,
-    expandForm: false,
-    selectedRows: [],
     formValues: {},
     editId: {},
     districtNo: '',
     districtName: '',
     pointerbrand: '',
-    imgUrl: {},
-    source: {},
     title: '',
   };
 
@@ -114,47 +107,17 @@ export default class District extends PureComponent {
     });
   };
 
-  handleMenuClick = (e) => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
-        dispatch({
-          type: 'district/remove',
-          payload: {
-            no: selectedRows.map(row => row.no).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
-  handleSelectRows = (rows) => {
-    this.setState({
-      selectedRows: rows,
-    });
-  };
-
   handelDelete = (row) => {
-    const {district: { data }, dispatch } = this.props;
-    const { pagination: {current} } = this.state;
+    const { district: { data }, dispatch } = this.props;
+    const { pagination: { current } } = this.state;
     dispatch({
       type: 'district/removeDistrict',
       payload: row,
     }).then(() => {
-      if(data.results.length > 1) {
+      if (data.results.length > 1) {
         const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+            ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -162,9 +125,10 @@ export default class District extends PureComponent {
           type: 'district/fetchDistrict',
           payload: params,
         });
-      }else{
+      } else {
         const params = {
-          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 2) * this.state.pagination.pageSize) : 0,
+          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize) > 0 ?
+            ((this.state.pagination.current - 2) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -185,7 +149,7 @@ export default class District extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {district: { data }, dispatch, form } = this.props;
+    const { district: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -211,79 +175,65 @@ export default class District extends PureComponent {
       });
     });
   };
-  // handelDelete = (row) => {
-  //   console.log(row);
-  // };
-  // handelbatchDelete = (row) => {
-  //   this.props.dispatch({
-  //     type: 'district/batchRemoveDelete',
-  //     payload: row,
-  //   }).then(message.success('删除成功'));
-  //   this.setState({
-  //     pagination: {
-  //       current: 1,
-  //       pageSize: 5,
-  //     },
-  //   });
-  // };
 
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
-      districtNo: "",
-      districtName: "",
-      editId: "",
-      pointerbrand: "",
-      pointerregion: "",
-      title: "新增",
+      districtNo: '',
+      districtName: '',
+      editId: '',
+      pointerbrand: '',
+      pointerregion: '',
+      title: '新增',
     });
   };
 
-  handleEditModalVisible = (flag, id, districtNo, districtName, pointerbrand, pointerregion) => {
+  handleEditModalVisible = (flag, id, no, name, pointerbrand, pointerregion) => {
     this.setState({
       modalVisible: flag,
-      districtNo: districtNo,
-      districtName: districtName,
-      pointerbrand: pointerbrand,
-      pointerregion: pointerregion,
+      districtNo: no,
+      districtName: name,
+      pointerbrand: { ...pointerbrand },
+      pointerregion: { ...pointerregion },
       editId: id,
-      title: "编辑",
+      title: '编辑',
     });
   };
 
   handleAdd = (fields) => {
     const { dispatch } = this.props;
     const pointerBrand = {
-      pointerBrand:{
-        "__type": "Pointer",
-        "className": "Brand",
-        "objectId": fields.brandName,
+      pointerBrand: {
+        __type: 'Pointer',
+        className: 'Brand',
+        objectId: fields.brandName,
       },
     };
     const pointerRegion = {
-      pointerRegion:{
-        "__type": "Pointer",
-        "className": "Region",
-        "objectId": fields.regionName,
+      pointerRegion: {
+        __type: 'Pointer',
+        className: 'Region',
+        objectId: fields.regionName,
       },
     };
     dispatch({
       type: 'district/storeDistrict',
-      payload: { fields, pointerBrand, pointerRegion},
+      payload: { fields, pointerBrand, pointerRegion },
     }).then(() => {
       this.setState({
         modalVisible: false,
       });
-        const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
-          limit: this.state.pagination.pageSize,
-          count: true,
-        };
-        dispatch({
-          type: 'district/fetchDistrict',
-          payload: params,
-        });
-      }
+      const params = {
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+          ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+        limit: this.state.pagination.pageSize,
+        count: true,
+      };
+      dispatch({
+        type: 'district/fetchDistrict',
+        payload: params,
+      });
+    }
     );
   };
 
@@ -291,28 +241,29 @@ export default class District extends PureComponent {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
     const pointerBrand = {
-      pointerBrand:{
-        "__type": "Pointer",
-        "className": "Brand",
-        "objectId": fields.brandName,
+      pointerBrand: {
+        __type: 'Pointer',
+        className: 'Brand',
+        objectId: fields.brandName,
       },
     };
     const pointerRegion = {
-      pointerRegion:{
-        "__type": "Pointer",
-        "className": "Region",
-        "objectId": fields.regionName,
+      pointerRegion: {
+        __type: 'Pointer',
+        className: 'Region',
+        objectId: fields.regionName,
       },
     };
     dispatch({
       type: 'district/coverDistrict',
-      payload: { fields, pointerBrand, pointerRegion, ojId},
+      payload: { fields, pointerBrand, pointerRegion, ojId },
     }).then(() => {
       this.setState({
         modalVisible: false,
       });
       const params = {
-        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+          ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
         limit: this.state.pagination.pageSize,
         count: true,
       };
@@ -325,15 +276,15 @@ export default class District extends PureComponent {
 
   validateDistrictNo = (rule, value, callback) => {
     const { districtNo } = this.state;
-    if(value === districtNo) {
+    if (value === districtNo) {
       callback();
     }
-    if (value === undefined || value === "") {
+    if (value === undefined || value === '') {
       callback();
     } else {
       this.props.dispatch({
         type: 'district/exisDistrictNos',
-        payload: { where: {districtNo: value} },
+        payload: { where: { districtNo: value } },
       }).then(() => {
         if (this.props.districtNos.results === undefined) {
           callback();
@@ -352,7 +303,8 @@ export default class District extends PureComponent {
   render() {
     const { district: { data, brands, regions }, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { modalVisible, title, districtNo, districtName, pointerbrand, pointerregion } = this.state;
+    const { modalVisible, title, districtNo, districtName, pointerbrand, pointerregion } =
+      this.state;
 
     const columns = [
       {
@@ -413,8 +365,13 @@ export default class District extends PureComponent {
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data !== undefined ? data.results.map(d => <Option key={d.objectId} value={d.districtName}>{d.districtName}</Option>) :
-                          <Option key="1" > 暂无</Option> }
+                          { data !== undefined ?
+                            data.results.map(d => (
+                              <Option key={d.objectId} value={d.districtName}>
+                                {d.districtName}
+                              </Option>
+)) :
+                            <Option key="1" > 暂无</Option> }
                         </Select>
                       )}
                     </Item>

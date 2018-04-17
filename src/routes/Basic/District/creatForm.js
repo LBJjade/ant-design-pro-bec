@@ -1,70 +1,7 @@
-/* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes,react/no-unescaped-entities,no-extra-semi */
 import React, { PureComponent } from 'react';
-import { Input, Modal, Form, Upload, Icon, Select } from 'antd';
-import { stringify } from 'qs';
+import { Input, Modal, Form, Select } from 'antd';
 
 const FormItem = Form.Item;
-const { Option } = Select;
-const SelectOption = Select.Option;
-
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-
-function beforeUpload(file) {
-  const isJPG = file.type === 'image/jpeg';
-  if (!isJPG) {
-    message.error('You can only upload JPG file!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
-  }
-  return isJPG && isLt2M;
-}
-
-class Avatar extends React.Component {
-  state = {
-    loading: false,
-  };
-  handleChange = (info) => {
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl => this.setState({
-        imageUrl,
-        loading: false,
-      }));
-    }
-  }
-  render() {
-    const uploadButton = (
-      <div>
-        <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    );
-    const imageUrl = this.state.imageUrl;
-    return (
-      <Upload
-        name="avatar"
-        listType="picture-card"
-        className="avatar-uploader"
-        showUploadList={true}
-        action="http://localhost:80/upload/webUploader/img"
-        beforeUpload={beforeUpload}
-        onChange={this.handleChange}
-      >
-        {imageUrl ? <img src={imageUrl} alt="" /> : uploadButton}
-      </Upload>
-    );
-  }
-}
 
 @Form.create()
 export default class CreateForm extends PureComponent {
@@ -80,22 +17,22 @@ export default class CreateForm extends PureComponent {
       validateDistrictNo: this.props.validateDistrictNo,
       districtNo: this.props.districtNo,
       districtName: this.props.districtName,
-      pointerbrand: this.props.pointerbrand === undefined ? "" : this.props.pointerbrand.objectId,
-      pointerregion: this.props.pointerregion === undefined ? "" : this.props.pointerregion.objectId,
+      pointerbrand: this.props.pointerbrand === undefined ? '' : this.props.pointerbrand.objectId,
+      pointerregion: this.props.pointerregion === undefined ? '' : this.props.pointerregion.objectId,
     };
-  };
+  }
 
   componentWillReceiveProps(nextProps) {
     // console.log(nextProps);
     this.setState({
       districtNo: nextProps.districtNo,
       districtName: nextProps.districtName,
-      pointerbrand: nextProps.pointerbrand === undefined ? "" : nextProps.pointerbrand.objectId,
-      pointerregion: nextProps.pointerregion === undefined ? "" : nextProps.pointerregion.objectId,
+      pointerbrand: nextProps.pointerbrand === undefined ? '' : nextProps.pointerbrand.objectId,
+      pointerregion: nextProps.pointerregion === undefined ? '' : nextProps.pointerregion.objectId,
       modalVisible: nextProps.modalVisible,
       title: nextProps.title,
     });
-  };
+  }
 
   onclose = () => {
     const { handleModalVisible } = this.state;
@@ -104,10 +41,10 @@ export default class CreateForm extends PureComponent {
   };
 
   okHandle = () => {
-    const { form, title, handleEdit, districtNo, handleAdd } = this.state;
+    const { form, handleEdit, districtNo, handleAdd } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      if (districtNo !== "") {
+      if (districtNo !== '') {
         handleEdit(fieldsValue);
         this.props.form.resetFields();
       } else {
@@ -121,7 +58,8 @@ export default class CreateForm extends PureComponent {
   render() {
     const { getFieldDecorator } = this.props.form;
     const { option, option2 } = this.props;
-    const { districtNo, districtName, title, modalVisible, validateDistrictNo, pointerbrand, pointerregion } = this.state;
+    const { districtNo, districtName,
+      title, modalVisible, validateDistrictNo, pointerbrand, pointerregion } = this.state;
 
 
     return (
@@ -174,7 +112,12 @@ export default class CreateForm extends PureComponent {
               placeholder="请选择"
               style={{ width: '100%' }}
             >
-              {option.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.brandName}</SelectOption>)}
+              { option.map(d => (
+                <Select.Option key={d.objectId} value={d.objectId} >
+                  {d.brandName}
+                </Select.Option>
+))
+              }
             </Select>
           )}
         </FormItem>
@@ -192,11 +135,15 @@ export default class CreateForm extends PureComponent {
               style={{ width: '100%' }}
               // value={pointerregion}
             >
-              {option2.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.regionName}</SelectOption>)}
+              { option2.map(d => (
+                <Select.Option key={d.objectId} value={d.objectId} >
+                  {d.regionName}
+                </Select.Option>
+)) }
             </Select>
           )}
         </FormItem>
       </Modal>
     );
- }
+  }
 }

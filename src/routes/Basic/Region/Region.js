@@ -1,4 +1,3 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-console,quote-props */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Popconfirm, Select, Button, message, Table } from 'antd';
@@ -8,7 +7,6 @@ import CreateForm from './creatForm';
 import styles from './Region.less';
 
 const { Item } = Form;
-const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 @connect(({ region, loading }) => ({
@@ -26,19 +24,12 @@ export default class Region extends PureComponent {
       current: 1,
       total: 0,
     },
-    data: {},
     modalVisible: false,
-    modalEditVisible: false,
-    expandForm: false,
-    selectedRows: [],
     formValues: {},
     editId: {},
     regionNo: '',
     regionName: '',
     pointerbrand: '',
-    brands: '',
-    imgUrl: {},
-    source: {},
     title: '',
   };
 
@@ -111,48 +102,17 @@ export default class Region extends PureComponent {
       },
     });
   };
-
-  handleMenuClick = (e) => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
-        dispatch({
-          type: 'region/remove',
-          payload: {
-            no: selectedRows.map(row => row.no).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
-  handleSelectRows = (rows) => {
-    this.setState({
-      selectedRows: rows,
-    });
-  };
-
   handelDelete = (row) => {
-    const {region: { data }, dispatch } = this.props;
-    const { pagination: {current} } = this.state;
+    const { region: { data }, dispatch } = this.props;
+    const { pagination: { current } } = this.state;
     dispatch({
       type: 'region/removeRegion',
       payload: row,
     }).then(() => {
-      if(data.results.length > 1) {
+      if (data.results.length > 1) {
         const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+            ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -160,9 +120,10 @@ export default class Region extends PureComponent {
           type: 'region/fetchRegion',
           payload: params,
         });
-      }else{
+      } else {
         const params = {
-          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 2) * this.state.pagination.pageSize) : 0,
+          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize) > 0 ?
+            ((this.state.pagination.current - 2) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -183,7 +144,7 @@ export default class Region extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {region: { data }, dispatch, form } = this.props;
+    const { region: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -213,51 +174,52 @@ export default class Region extends PureComponent {
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
-      regionNo: "",
-      regionName: "",
-      editId: "",
-      title: "新增",
-      pointerbrand: "",
+      regionNo: '',
+      regionName: '',
+      editId: '',
+      title: '新增',
+      pointerbrand: '',
     });
   };
 
-  handleEditModalVisible = (flag, id, regionNo, regionName, pointerbrand) => {
+  handleEditModalVisible = (flag, id, no, name, pointerbrand) => {
     this.setState({
       modalVisible: flag,
-      regionNo: regionNo,
-      regionName: regionName,
+      regionNo: no,
+      regionName: name,
       editId: id,
-      title: "编辑",
-      pointerbrand: pointerbrand,
+      title: '编辑',
+      pointerbrand: { ...pointerbrand },
     });
   };
 
   handleAdd = (fields) => {
     const { dispatch } = this.props;
     const pointerBrand = {
-      pointerBrand:{
-        "__type": "Pointer",
-        "className": "Brand",
-        "objectId": fields.brandName,
+      pointerBrand: {
+        __type: 'Pointer',
+        className: 'Brand',
+        objectId: fields.brandName,
       },
     };
     dispatch({
       type: 'region/storeRegion',
-      payload: { fields, pointerBrand},
+      payload: { fields, pointerBrand },
     }).then(() => {
       this.setState({
         modalVisible: false,
       });
-        const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
-          limit: this.state.pagination.pageSize,
-          count: true,
-        };
-        dispatch({
-          type: 'region/fetchRegion',
-          payload: params,
-        });
-      }
+      const params = {
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+          ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+        limit: this.state.pagination.pageSize,
+        count: true,
+      };
+      dispatch({
+        type: 'region/fetchRegion',
+        payload: params,
+      });
+    }
     );
   };
 
@@ -265,10 +227,10 @@ export default class Region extends PureComponent {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
     const pointerBrand = {
-      pointerBrand:{
-        "__type": "Pointer",
-        "className": "Brand",
-        "objectId": fields.brandName,
+      pointerBrand: {
+        __type: 'Pointer',
+        className: 'Brand',
+        objectId: fields.brandName,
       },
     };
     dispatch({
@@ -279,7 +241,8 @@ export default class Region extends PureComponent {
         modalVisible: false,
       });
       const params = {
-        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ?
+          ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
         limit: this.state.pagination.pageSize,
         count: true,
       };
@@ -292,15 +255,15 @@ export default class Region extends PureComponent {
 
   validateRegionNo = (rule, value, callback) => {
     const { regionNo } = this.state;
-    if(value === regionNo) {
+    if (value === regionNo) {
       callback();
     }
-    if (value === undefined || value === "") {
+    if (value === undefined || value === '') {
       callback();
     } else {
       this.props.dispatch({
         type: 'region/exisRegionNos',
-        payload: { where: {regionNo: value} },
+        payload: { where: { regionNo: value } },
       }).then(() => {
         if (this.props.regionNos.results === undefined) {
           callback();
@@ -375,8 +338,13 @@ export default class Region extends PureComponent {
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data !== undefined ? data.results.map(d => <Option key={d.objectId} value={d.regionName}>{d.regionName}</Option>) :
-                          <Option key="1" > 暂无</Option> }
+                          { data !== undefined ?
+                            data.results.map(d => (
+                              <Select.Option key={d.objectId} value={d.regionName}>
+                                {d.regionName}
+                              </Select.Option>
+)) :
+                            <Select.Option key="1" > 暂无</Select.Option> }
                         </Select>
                       )}
                     </Item>

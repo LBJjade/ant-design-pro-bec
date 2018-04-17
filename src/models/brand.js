@@ -1,4 +1,3 @@
-/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
 import { getBrand, postBrand, putBrand, brandBatchDelete, deleteBrand, brandRequireQuery, uploadLogo } from '../services/basic';
 
@@ -16,9 +15,6 @@ export default {
     },
     brands: [],
     brandNos: [],
-    newdata: {
-      results: [],
-    },
   },
 
   effects: {
@@ -29,31 +25,27 @@ export default {
         payload: response,
       });
     },
-    *storeBrand({ payload }, { call, put }) {
-      const response = yield call(postBrand, payload);
-      // yield put({
-      //   type: 'appendBrands',
-      //   payload: { results: [Object.assign(payload, response)] },
-      // });
+    *storeBrand({ payload }, { call }) {
+      yield call(postBrand, payload);
       Message.success('新增成功');
     },
-    *coverBrand({ payload }, { call, put }) {
+    *coverBrand({ payload }, { call }) {
       const response = yield call(putBrand, payload);
-      if(response !== undefined) {
-        if(JSON.parse(response).error === undefined) {
+      if (response !== undefined) {
+        if (JSON.parse(response).error === undefined) {
           Message.success('编辑成功');
-        }else{
+        } else {
           Message.error('编辑失败');
         }
-      }else{
+      } else {
         Message.success('编辑成功');
       }
     },
-    *removeBrand({ payload }, { call, put }) {
+    *removeBrand({ payload }, { call }) {
       const response = yield call(deleteBrand, payload);
-      if(JSON.parse(response).error === undefined) {
+      if (JSON.parse(response).error === undefined) {
         Message.success('删除成功');
-      }else{
+      } else {
         Message.error('删除失败');
       }
     },
@@ -114,7 +106,7 @@ export default {
       return {
         ...state,
         data: {
-          results: state.data.results.map(item => {
+          results: state.data.results.map((item) => {
             if (item.objectId === action.payload.ojId) {
               return action.payload;
             } else {

@@ -1,6 +1,5 @@
-/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, uploadLogo, getBrand } from '../services/basic';
+import { getRegion, postRegion, putRegion, deleteRegion, regionRequireQuery, uploadLogo, getBrand } from '../services/basic';
 
 export default {
   namespace: 'region',
@@ -40,23 +39,23 @@ export default {
       });
       Message.success('新增成功');
     },
-    *coverRegion({ payload }, { call, put }) {
+    *coverRegion({ payload }, { call }) {
       const response = yield call(putRegion, payload);
-      if(response !== undefined) {
-        if(JSON.parse(response).error === undefined) {
+      if (response !== undefined) {
+        if (JSON.parse(response).error === undefined) {
           Message.success('编辑成功');
-        }else{
+        } else {
           Message.error('编辑失败');
         }
-      }else{
+      } else {
         Message.success('编辑成功');
       }
     },
-    *removeRegion({ payload }, { call, put }) {
+    *removeRegion({ payload }, { call }) {
       const response = yield call(deleteRegion, payload);
-      if(JSON.parse(response).error === undefined) {
+      if (JSON.parse(response).error === undefined) {
         Message.success('删除成功');
-      }else{
+      } else {
         Message.error('删除失败');
       }
     },
@@ -117,7 +116,7 @@ export default {
       return {
         ...state,
         data: {
-          results: state.data.results.map(item => {
+          results: state.data.results.map((item) => {
             if (item.objectId === action.payload.ojId) {
               return action.payload;
             } else {
