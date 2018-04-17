@@ -1,4 +1,4 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-dupe-keys,quote-props,react/jsx-no-duplicate-props */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -9,17 +9,18 @@ import styles from '../../../static/js/table.less';
 
 const FormItem = Form.Item;
 const SelectOption = Select.Option;
+const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-@connect(({ district, loading }) => ({
-  district,
-  loading: loading.models.district,
-  districts: district.districts,
-  districtNos: district.districtNos,
-  requestError: district.requestError,
+@connect(({ brand, loading }) => ({
+  brand,
+  loading: loading.models.brand,
+  brands: brand.brands,
+  brandNos: brand.brandNos,
+  requestError: brand.requestError,
 }))
 @Form.create()
-export default class TableList extends PureComponent {
+export default class Brand extends PureComponent {
   state = {
     pagination: {
       pageSize: 5,
@@ -33,9 +34,8 @@ export default class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
     editId: {},
-    districtNo: '',
-    districtName: '',
-    pointerbrand: '',
+    brandNo: '',
+    brandName: '',
     imgUrl: {},
     source: {},
     title: '',
@@ -44,18 +44,12 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'district/fetchDistrict',
+      type: 'brand/fetchBrand',
       payload: {
         skip: 0,
         limit: 5,
         count: true,
       },
-    });
-    dispatch({
-      type: 'district/getBrands',
-    });
-    dispatch({
-      type: 'district/getRegions',
     });
   }
 
@@ -87,7 +81,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'district/fetchDistrict',
+      type: 'brand/fetchBrand',
       payload: params,
     });
     this.setState({
@@ -105,7 +99,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'district/fetchDistrict',
+      type: 'brand/fetchBrand',
       payload: {
         skip: 0,
         limit: 5,
@@ -129,7 +123,7 @@ export default class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'district/remove',
+          type: 'brand/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -152,10 +146,10 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    const {district: { data }, dispatch } = this.props;
+    const {brand: { data }, dispatch } = this.props;
     const { pagination: {current} } = this.state;
     dispatch({
-      type: 'district/removeDistrict',
+      type: 'brand/removeBrand',
       payload: row,
     }).then(() => {
       if(data.results.length > 1) {
@@ -165,7 +159,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'district/fetchDistrict',
+          type: 'brand/fetchBrand',
           payload: params,
         });
       }else{
@@ -175,7 +169,7 @@ export default class TableList extends PureComponent {
           count: true,
         };
         dispatch({
-          type: 'district/fetchDistrict',
+          type: 'brand/fetchBrand',
           payload: params,
         });
         this.setState({
@@ -191,7 +185,7 @@ export default class TableList extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
 
-    const {district: { data }, dispatch, form } = this.props;
+    const {brand: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -206,7 +200,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'district/requireQuery',
+        type: 'brand/requireQuery',
         payload: { where: values },
       }).then(message.success('查询成功'));
 
@@ -222,7 +216,7 @@ export default class TableList extends PureComponent {
   // };
   // handelbatchDelete = (row) => {
   //   this.props.dispatch({
-  //     type: 'district/batchRemoveDelete',
+  //     type: 'brand/batchRemoveDelete',
   //     payload: row,
   //   }).then(message.success('删除成功'));
   //   this.setState({
@@ -236,22 +230,18 @@ export default class TableList extends PureComponent {
   handleAddModalVisible = (flag) => {
     this.setState({
       modalVisible: !!flag,
-      districtNo: "",
-      districtName: "",
+      brandNo: "",
+      brandName: "",
       editId: "",
-      pointerbrand: "",
-      pointerregion: "",
       title: "新增",
     });
   };
 
-  handleEditModalVisible = (flag, id, districtNo, districtName, pointerbrand, pointerregion) => {
+  handleEditModalVisible = (flag, id, brandNo, brandName) => {
     this.setState({
       modalVisible: flag,
-      districtNo: districtNo,
-      districtName: districtName,
-      pointerbrand: pointerbrand,
-      pointerregion: pointerregion,
+      brandNo: brandNo,
+      brandName: brandName,
       editId: id,
       title: "编辑",
     });
@@ -259,60 +249,34 @@ export default class TableList extends PureComponent {
 
   handleAdd = (fields) => {
     const { dispatch } = this.props;
-    const pointerBrand = {
-      pointerBrand:{
-        "__type": "Pointer",
-        "className": "Brand",
-        "objectId": fields.brandName,
-      },
-    };
-    const pointerRegion = {
-      pointerRegion:{
-        "__type": "Pointer",
-        "className": "Region",
-        "objectId": fields.regionName,
-      },
-    };
+    const { pagination: {current} } = this.state;
     dispatch({
-      type: 'district/storeDistrict',
-      payload: { fields, pointerBrand, pointerRegion},
+      type: 'brand/storeBrand',
+      payload: fields,
     }).then(() => {
-      this.setState({
-        modalVisible: false,
-      });
+        this.setState({
+          modalVisible: false,
+        });
         const params = {
           skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
         dispatch({
-          type: 'district/fetchDistrict',
+          type: 'brand/fetchBrand',
           payload: params,
         });
-      }
+    }
     );
   };
 
   handleEdit = (fields) => {
     const { dispatch } = this.props;
+    const { pagination: {current} } = this.state;
     const ojId = this.state.editId;
-    const pointerBrand = {
-      pointerBrand:{
-        "__type": "Pointer",
-        "className": "Brand",
-        "objectId": fields.brandName,
-      },
-    };
-    const pointerRegion = {
-      pointerRegion:{
-        "__type": "Pointer",
-        "className": "Region",
-        "objectId": fields.regionName,
-      },
-    };
     dispatch({
-      type: 'district/coverDistrict',
-      payload: { fields, pointerBrand, pointerRegion, ojId},
+      type: 'brand/coverBrand',
+      payload: { fields, ojId },
     }).then(() => {
       this.setState({
         modalVisible: false,
@@ -323,29 +287,29 @@ export default class TableList extends PureComponent {
         count: true,
       };
       dispatch({
-        type: 'district/fetchDistrict',
+        type: 'brand/fetchBrand',
         payload: params,
       });
     });
   };
 
-  validateDistrictNo = (rule, value, callback) => {
-    const { districtNo } = this.state;
-    if(value === districtNo) {
+  validateBrandNo = (rule, value, callback) => {
+    const { brandNo } = this.state;
+    if(value === brandNo) {
       callback();
     }
     if (value === undefined || value === "") {
       callback();
     } else {
       this.props.dispatch({
-        type: 'district/exisDistrictNos',
-        payload: { where: {districtNo: value} },
+        type: 'brand/exisBrandNos',
+        payload: { where: {brandNo: value} },
       }).then(() => {
-        if (this.props.districtNos.results === undefined) {
+        if (this.props.brandNos.results === undefined) {
           callback();
           return;
         }
-        if (this.props.districtNos.results.length > 0) {
+        if (this.props.brandNos.results.length > 0) {
           callback([new Error(rule.message)]);
         } else {
           callback();
@@ -356,9 +320,9 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { district: { data, brands, regions }, loading } = this.props;
+    const { brand: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, title, districtNo, districtName, pointerbrand, pointerregion } = this.state;
+    const { selectedRows, modalVisible, title, brandNo, brandName } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -370,26 +334,18 @@ export default class TableList extends PureComponent {
     const columns = [
       {
         title: '编号',
-        dataIndex: 'districtNo',
+        dataIndex: 'brandNo',
       },
       {
-        title: '小区名称',
-        dataIndex: 'districtName',
-      },
-      {
-        title: '关联品牌',
-        dataIndex: 'pointerBrand.brandName',
-      },
-      {
-        title: '关联大区',
-        dataIndex: 'pointerRegion.regionName',
+        title: '品牌名称',
+        dataIndex: 'brandName',
       },
       {
         title: '操作',
         dataIndex: 'objectId',
         render: (val, record) => (
           <span>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.districtNo, record.districtName, record.pointerBrand, record.pointerRegion)}>编辑  </a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.brandNo, record.brandName)}>编辑  </a>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
           </span>),
       },
@@ -420,7 +376,7 @@ export default class TableList extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="小区管理">
+      <PageHeaderLayout title="品牌管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
@@ -428,19 +384,19 @@ export default class TableList extends PureComponent {
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                   <Col md={8} sm={24}>
                     <FormItem label="编号">
-                      {getFieldDecorator('districtNo')(
+                      {getFieldDecorator('brandNo')(
                         <Input placeholder="请输入" />
                       )}
                     </FormItem>
                   </Col>
                   <Col md={8} sm={24}>
-                    <FormItem label="小区名称">
-                      {getFieldDecorator('districtName')(
+                    <FormItem label="品牌名称">
+                      {getFieldDecorator('brandName')(
                         <Select
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data !== undefined ? data.results.map(d => <SelectOption key={d.objectId} value={d.districtName}>{d.districtName}</SelectOption>) :
+                          { data !== undefined ? data.results.map(d => <SelectOption key={d.objectId} value={d.brandName}>{d.brandName}</SelectOption>) :
                           <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
@@ -490,14 +446,10 @@ export default class TableList extends PureComponent {
           handleEdit={this.handleEdit}
           handleModalVisible={this.handleAddModalVisible}
           title={title}
-          validateDistrictNo={this.validateDistrictNo}
+          validateBrandNo={this.validateBrandNo}
           modalVisible={modalVisible}
-          districtNo={districtNo}
-          districtName={districtName}
-          option={brands.results}
-          option2={regions.results}
-          pointerbrand={pointerbrand}
-          pointerregion={pointerregion}
+          brandNo={brandNo}
+          brandName={brandName}
         />
       </PageHeaderLayout>
     );

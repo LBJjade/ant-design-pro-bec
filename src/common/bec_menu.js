@@ -180,27 +180,23 @@ const menuData = [{
   authority: ['admin', 'guest'],
   children: [{
     name: '城市管理',
-    icon: 'user',
+    icon: 'environment-o',
     path: 'city',
   }, {
     name: '品牌管理',
-    icon: 'global',
-    path: 'table',
-  }, {
-    name: '品牌卡片',
-    icon: 'global',
-    path: 'card',
+    icon: 'trademark',
+    path: 'brand',
   }, {
     name: '大区管理',
-    icon: 'api',
-    path: 'bigArea',
+    icon: 'global',
+    path: 'region',
   }, {
-    name: '小区管理',
-    icon: 'safety',
+    name: '区域管理',
+    icon: 'appstore-o',
     path: 'district',
   }, {
     name: '门店管理',
-    icon: 'star',
+    icon: 'shop',
     path: 'shop',
   }],
 }];

@@ -150,11 +150,11 @@ export default class CreateForm extends PureComponent {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="小区名称"
+          label="区域名称"
         >
           {
               getFieldDecorator('districtName', {
-                rules: [{ required: true, message: '请输入小区名称...' }],
+                rules: [{ required: true, message: '请输入区域名称...' }],
                 initialValue: districtName,
               })(
                 <Input placeholder="请输入" />

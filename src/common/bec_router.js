@@ -217,17 +217,17 @@ export const getRouterData = (app) => {
     '/basic/city': {
       component: dynamicWrapper(app, ['city'], () => import('../routes/Basic/City')),
     },
-    '/basic/bigArea': {
-      component: dynamicWrapper(app, ['region'], () => import('../routes/Basic/Region/RegionTable')),
+    '/basic/region': {
+      component: dynamicWrapper(app, ['region'], () => import('../routes/Basic/Region/Region')),
     },
     '/basic/district': {
-      component: dynamicWrapper(app, ['district'], () => import('../routes/Basic/District/DistrictTable')),
+      component: dynamicWrapper(app, ['district'], () => import('../routes/Basic/District/District')),
     },
     '/basic/shop': {
       component: dynamicWrapper(app, ['shop'], () => import('../routes/Basic/Shop/ShopTable')),
     },
-    '/basic/table': {
-      component: dynamicWrapper(app, ['brand'], () => import('../routes/Basic/Brand/BrandTable')),
+    '/basic/brand': {
+      component: dynamicWrapper(app, ['brand'], () => import('../routes/Basic/Brand/Brand')),
     },
     '/basic/card': {
       component: dynamicWrapper(app, ['brand'], () => import('../routes/Basic/CardList')),
