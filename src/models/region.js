@@ -1,6 +1,6 @@
 /* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, uploadLogo } from '../services/sysSet';
+import { getRegion, postRegion, putRegion, regionBatchDelete, deleteRegion, regionRequireQuery, uploadLogo, getBrand } from '../services/sysSet';
 
 export default {
   namespace: 'region',
@@ -12,6 +12,9 @@ export default {
       state: [],
     },
     list: {
+      results: [],
+    },
+    brands: {
       results: [],
     },
     regions: [],
@@ -92,6 +95,13 @@ export default {
         payload: response,
       });
     },
+    *getBrands({ payload }, { call, put }) {
+      const response = yield call(getBrand, payload);
+      yield put({
+        type: 'hadBrands',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -144,6 +154,12 @@ export default {
       return {
         ...state,
         regionNos: action.payload,
+      };
+    },
+    hadBrands(state, action) {
+      return {
+        ...state,
+        brands: action.payload,
       };
     },
   },
