@@ -80,6 +80,8 @@ export default class CreateForm extends PureComponent {
       validateDistrictNo: this.props.validateDistrictNo,
       districtNo: this.props.districtNo,
       districtName: this.props.districtName,
+      pointerbrand: this.props.pointerbrand === undefined ? "" : this.props.pointerbrand.objectId,
+      pointerregion: this.props.pointerregion === undefined ? "" : this.props.pointerregion.objectId,
     };
   };
 
@@ -88,6 +90,8 @@ export default class CreateForm extends PureComponent {
     this.setState({
       districtNo: nextProps.districtNo,
       districtName: nextProps.districtName,
+      pointerbrand: nextProps.pointerbrand === undefined ? "" : nextProps.pointerbrand.objectId,
+      pointerregion: nextProps.pointerregion === undefined ? "" : nextProps.pointerregion.objectId,
       modalVisible: nextProps.modalVisible,
       title: nextProps.title,
     });
@@ -117,7 +121,7 @@ export default class CreateForm extends PureComponent {
   render() {
     const { getFieldDecorator } = this.props.form;
     const { option, option2 } = this.props;
-    const { districtNo, districtName, title, modalVisible, validateDistrictNo } = this.state;
+    const { districtNo, districtName, title, modalVisible, validateDistrictNo, pointerbrand, pointerregion } = this.state;
 
 
     return (
@@ -164,12 +168,13 @@ export default class CreateForm extends PureComponent {
         >
           {getFieldDecorator('brandName', {
             rules: [{ required: true, message: '请选择关联品牌...' }],
+            initialValue: pointerbrand,
           })(
             <Select
               placeholder="请选择"
               style={{ width: '100%' }}
             >
-              {option.map(d => <SelectOption key={d.objectId} value={d.brandName} >{d.brandName}</SelectOption>)}
+              {option.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.brandName}</SelectOption>)}
             </Select>
           )}
         </FormItem>
@@ -180,12 +185,14 @@ export default class CreateForm extends PureComponent {
         >
           {getFieldDecorator('regionName', {
             rules: [{ required: true, message: '请选择关联大区...' }],
+            initialValue: pointerregion,
           })(
             <Select
               placeholder="请选择"
               style={{ width: '100%' }}
+              // value={pointerregion}
             >
-              {option2.map(d => <SelectOption key={d.objectId} value={d.regionName} >{d.regionName}</SelectOption>)}
+              {option2.map(d => <SelectOption key={d.objectId} value={d.objectId} >{d.regionName}</SelectOption>)}
             </Select>
           )}
         </FormItem>

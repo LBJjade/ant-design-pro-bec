@@ -1,4 +1,4 @@
-/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-dupe-keys */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing,no-dupe-keys,quote-props,react/jsx-no-duplicate-props */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
@@ -35,6 +35,7 @@ export default class TableList extends PureComponent {
     editId: {},
     districtNo: '',
     districtName: '',
+    pointerbrand: '',
     imgUrl: {},
     source: {},
     title: '',
@@ -159,7 +160,7 @@ export default class TableList extends PureComponent {
     }).then(() => {
       if(data.results.length > 1) {
         const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -169,7 +170,7 @@ export default class TableList extends PureComponent {
         });
       }else{
         const params = {
-          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize),
+          skip: ((this.state.pagination.current - 2) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 2) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
@@ -179,7 +180,7 @@ export default class TableList extends PureComponent {
         });
         this.setState({
           pagination: {
-            current: current - 1,
+            current: (current - 1) > 0 ? (current - 1) : 1,
             pageSize: 5,
           },
         });
@@ -211,7 +212,7 @@ export default class TableList extends PureComponent {
 
       this.setState({
         pagination: {
-          pageSize: data.results.length,
+          pageSize: data === undefined ? 0 : data.results.length,
         },
       });
     });
@@ -219,18 +220,18 @@ export default class TableList extends PureComponent {
   // handelDelete = (row) => {
   //   console.log(row);
   // };
-  handelbatchDelete = (row) => {
-    this.props.dispatch({
-      type: 'district/batchRemoveDelete',
-      payload: row,
-    }).then(message.success('删除成功'));
-    this.setState({
-      pagination: {
-        current: 1,
-        pageSize: 5,
-      },
-    });
-  };
+  // handelbatchDelete = (row) => {
+  //   this.props.dispatch({
+  //     type: 'district/batchRemoveDelete',
+  //     payload: row,
+  //   }).then(message.success('删除成功'));
+  //   this.setState({
+  //     pagination: {
+  //       current: 1,
+  //       pageSize: 5,
+  //     },
+  //   });
+  // };
 
   handleAddModalVisible = (flag) => {
     this.setState({
@@ -238,15 +239,19 @@ export default class TableList extends PureComponent {
       districtNo: "",
       districtName: "",
       editId: "",
+      pointerbrand: "",
+      pointerregion: "",
       title: "新增",
     });
   };
 
-  handleEditModalVisible = (flag, id, districtNo, districtName) => {
+  handleEditModalVisible = (flag, id, districtNo, districtName, pointerbrand, pointerregion) => {
     this.setState({
       modalVisible: flag,
       districtNo: districtNo,
       districtName: districtName,
+      pointerbrand: pointerbrand,
+      pointerregion: pointerregion,
       editId: id,
       title: "编辑",
     });
@@ -254,21 +259,35 @@ export default class TableList extends PureComponent {
 
   handleAdd = (fields) => {
     const { dispatch } = this.props;
+    const pointerBrand = {
+      pointerBrand:{
+        "__type": "Pointer",
+        "className": "Brand",
+        "objectId": fields.brandName,
+      },
+    };
+    const pointerRegion = {
+      pointerRegion:{
+        "__type": "Pointer",
+        "className": "Region",
+        "objectId": fields.regionName,
+      },
+    };
     dispatch({
       type: 'district/storeDistrict',
-      payload: fields,
+      payload: { fields, pointerBrand, pointerRegion},
     }).then(() => {
+      this.setState({
+        modalVisible: false,
+      });
         const params = {
-          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+          skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
           limit: this.state.pagination.pageSize,
           count: true,
         };
         dispatch({
           type: 'district/fetchDistrict',
           payload: params,
-        });
-        this.setState({
-          modalVisible: false,
         });
       }
     );
@@ -277,21 +296,35 @@ export default class TableList extends PureComponent {
   handleEdit = (fields) => {
     const { dispatch } = this.props;
     const ojId = this.state.editId;
+    const pointerBrand = {
+      pointerBrand:{
+        "__type": "Pointer",
+        "className": "Brand",
+        "objectId": fields.brandName,
+      },
+    };
+    const pointerRegion = {
+      pointerRegion:{
+        "__type": "Pointer",
+        "className": "Region",
+        "objectId": fields.regionName,
+      },
+    };
     dispatch({
       type: 'district/coverDistrict',
-      payload: { fields, ojId },
+      payload: { fields, pointerBrand, pointerRegion, ojId},
     }).then(() => {
+      this.setState({
+        modalVisible: false,
+      });
       const params = {
-        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize),
+        skip: ((this.state.pagination.current - 1) * this.state.pagination.pageSize) > 0 ? ((this.state.pagination.current - 1) * this.state.pagination.pageSize) : 0,
         limit: this.state.pagination.pageSize,
         count: true,
       };
       dispatch({
         type: 'district/fetchDistrict',
         payload: params,
-      });
-      this.setState({
-        modalVisible: false,
       });
     });
   };
@@ -325,7 +358,7 @@ export default class TableList extends PureComponent {
   render() {
     const { district: { data, brands, regions }, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, title, districtNo, districtName } = this.state;
+    const { selectedRows, modalVisible, title, districtNo, districtName, pointerbrand, pointerregion } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -356,7 +389,7 @@ export default class TableList extends PureComponent {
         dataIndex: 'objectId',
         render: (val, record) => (
           <span>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.districtNo, record.districtName)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.districtNo, record.districtName, record.pointerBrand, record.pointerRegion)}>编辑  </a>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
           </span>),
       },
@@ -380,9 +413,9 @@ export default class TableList extends PureComponent {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
-      total: data.count,
+      total: data === undefined ? 0 : data.count,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
-      // current: this.state.pagination.current,
+      current: this.state.pagination.current,
       // onChange: this.handlePageChange,
     };
 
@@ -407,7 +440,7 @@ export default class TableList extends PureComponent {
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.districtName}>{d.districtName}</SelectOption>) :
+                          { data !== undefined ? data.results.map(d => <SelectOption key={d.objectId} value={d.districtName}>{d.districtName}</SelectOption>) :
                           <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
@@ -442,7 +475,7 @@ export default class TableList extends PureComponent {
                     columns={columns}
                     loading={loading}
                     pagination={paginationProps}
-                    dataSource={data.results}
+                    dataSource={data === undefined ? '' : data.results}
                     onChange={this.handleStandardTableChange}
                     // rowSelection={rowSelection}
                     onSelectRow={this.handleSelectRows}
@@ -463,6 +496,8 @@ export default class TableList extends PureComponent {
           districtName={districtName}
           option={brands.results}
           option2={regions.results}
+          pointerbrand={pointerbrand}
+          pointerregion={pointerregion}
         />
       </PageHeaderLayout>
     );
