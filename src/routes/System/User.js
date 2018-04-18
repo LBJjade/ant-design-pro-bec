@@ -124,20 +124,26 @@ export default class UserList extends PureComponent {
     };
 
 
-    const ListContent = ({ data: { createdAt, loginTime } }) => (
+    const ListContent = ({ data: { createdAt, loginTime, loginIp } }) => (
       <div className={styles.listContent}>
-        <div className={styles.listContentItem} style={{ marginRight: -20 }}>
-          <span>登陆时间</span>
-          <p><Icon type="clock-circle-o" /> { loginTime === undefined ? '' : moment(loginTime).format('YYYY-MM-DD hh:mm') }</p>
-        </div>
-        <div className={styles.listContentItem} style={{ marginRight: -20 }}>
-          <span>注册时间</span>
-          <p><Icon type="clock-circle-o" /> {moment(createdAt).format('YYYY-MM-DD hh:mm')}</p>
-        </div>
-        <div className={styles.listContentItem} style={{ marginRight: -20 }}>
-          <span>最后登录IP</span>
-          <p><Icon type="environment-o" /> 128.129.130.131</p>
-        </div>
+        {loginTime === undefined ? '' : (
+          <div className={styles.listContentItem} style={{ marginRight: -30, width: 140 }}>
+            <span>登陆时间</span>
+            <p><Icon type="clock-circle-o" /> { loginTime === undefined ? '' : moment(loginTime).format('YYYY-MM-DD hh:mm') }</p>
+          </div>
+        )}
+        {loginIp === undefined ? '' : (
+          <div className={styles.listContentItem} style={{ marginRight: -30, width: 140 }}>
+            <span>最后登录IP</span>
+            <p><Icon type="environment-o" /> {loginIp} </p>
+          </div>
+        )}
+        {createdAt === undefined ? '' : (
+          <div className={styles.listContentItem} style={{ marginRight: -30, width: 140 }}>
+            <span>注册时间</span>
+            <p><Icon type="clock-circle-o" /> {moment(createdAt).format('YYYY-MM-DD hh:mm')}</p>
+          </div>
+        )}
       </div>
     );
 

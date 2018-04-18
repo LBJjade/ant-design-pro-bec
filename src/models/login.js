@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
 import { Message } from 'antd';
-import { getLogin, changeLogin } from '../services/account';
+import { getLogin, changeLogin, getIP } from '../services/account';
 import { setAuthority } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
 
@@ -25,7 +25,8 @@ export default {
             localStorage.token = response.sessionToken;
             localStorage.currentUserId = response.objectId;
             reloadAuthorized();
-            yield call(changeLogin, localStorage.currentUserId);
+            const ip = yield call(getIP, localStorage.currentUserId);
+            yield call(changeLogin, localStorage.currentUserId, ip);
             yield put(routerRedux.push('/'));
           } else {
             Message.error('登录失败！帐号未验证！', 5);
