@@ -11,7 +11,7 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetchUser({ payload }, { call, put }) {
       const response = yield call(getUsers, payload);
       yield put({
         type: 'changeUsers',

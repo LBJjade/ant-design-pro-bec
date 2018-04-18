@@ -30,7 +30,7 @@ export default class UserList extends PureComponent {
       count: true,
     };
     dispatch({
-      type: 'usermodel/fetch',
+      type: 'usermodel/fetchUser',
       payload: parsedata,
     });
   }
@@ -43,7 +43,7 @@ export default class UserList extends PureComponent {
       count: true,
     };
     dispatch({
-      type: 'usermodel/fetch',
+      type: 'usermodel/fetchUser',
       payload: parsedata,
     });
     this.setState({
@@ -53,6 +53,39 @@ export default class UserList extends PureComponent {
       },
     });
   }
+
+  // handleListChange = (pagination, filtersArg, sorter) => {
+  //   const { dispatch } = this.props;
+  //   const { formValues } = this.state;
+  //
+  //   const filters = Object.keys(filtersArg).reduce((obj, key) => {
+  //     const newObj = { ...obj };
+  //     newObj[key] = getValue(filtersArg[key]);
+  //     return newObj;
+  //   }, {});
+  //
+  //   const params = {
+  //     skip: ((pagination.current - 1) * pagination.pageSize),
+  //     limit: pagination.pageSize,
+  //     count: true,
+  //     ...formValues,
+  //     ...filters,
+  //   };
+  //   if (sorter.field) {
+  //     params.sorter = `${sorter.field}_${sorter.order}`;
+  //   }
+  //
+  //   dispatch({
+  //     type: 'usermodel/fetchUser',
+  //     payload: params,
+  //   });
+  //   this.setState({
+  //     pagination: {
+  //       current: pagination.current,
+  //       pageSize: pagination.pageSize,
+  //     },
+  //   });
+  // };
 
   render() {
     const { usermodel: { data }, loading } = this.props;
@@ -84,17 +117,24 @@ export default class UserList extends PureComponent {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
-      total: data.count,
+      total: data === undefined ? 0 : data.count,
+      showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
+      current: this.state.pagination.current,
       onChange: this.handlePageChange,
     };
 
-    const ListContent = ({ data: { createdAt } }) => (
+
+    const ListContent = ({ data: { createdAt, loginTime } }) => (
       <div className={styles.listContent}>
-        <div className={styles.listContentItem}>
+        <div className={styles.listContentItem} style={{ marginRight: -20 }}>
+          <span>登陆时间</span>
+          <p><Icon type="clock-circle-o" /> { loginTime === undefined ? '' : moment(loginTime).format('YYYY-MM-DD hh:mm') }</p>
+        </div>
+        <div className={styles.listContentItem} style={{ marginRight: -20 }}>
           <span>注册时间</span>
           <p><Icon type="clock-circle-o" /> {moment(createdAt).format('YYYY-MM-DD hh:mm')}</p>
         </div>
-        <div className={styles.listContentItem}>
+        <div className={styles.listContentItem} style={{ marginRight: -20 }}>
           <span>最后登录IP</span>
           <p><Icon type="environment-o" /> 128.129.130.131</p>
         </div>
@@ -150,6 +190,7 @@ export default class UserList extends PureComponent {
               loading={loading}
               pagination={paginationProps}
               dataSource={data.results}
+              // onChange={this.handleListChange}
               renderItem={item => (
                 <List.Item
                   actions={[<a>认证</a>, <MoreBtn />]}
