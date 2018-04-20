@@ -240,7 +240,7 @@ export default class CardList extends PureComponent {
 
     return (
       <PageHeaderLayout
-        title="卡片列表"
+        title="角色卡片"
         content={content}
         extraContent={extraContent}
       >
