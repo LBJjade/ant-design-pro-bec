@@ -309,15 +309,6 @@ export default class TableList extends PureComponent {
         title: '评论ID',
         dataIndex: 'commentId',
       },
-      {
-        title: '操作',
-        dataIndex: 'objectId',
-        render: (val, record) => (
-          <span>
-            <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-          </span>),
-        // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
-      },
     ];
 
     const rowSelection = {

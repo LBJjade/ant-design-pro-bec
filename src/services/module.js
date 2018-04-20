@@ -40,6 +40,13 @@ export async function moduleDelete(params) {
   });
 }
 
+export async function moduleRequireQuery(params) {
+  let url = requestParams2Url(params);
+  return request(`/api/classes/module${url}`, {
+    method: 'GET',
+  });
+}
+
 //resource
 export async function getSource() {
   return request('/api/classes/moduleResource', {
@@ -113,7 +120,7 @@ export async function deleteResource(params) {
   });
 }
 
-export async function ResourceRequireQuery(params) {
+export async function resourceRequireQuery(params) {
   let url = requestParams2Url(params);
   return request(`/api/classes/moduleResource${url}`, {
     method: 'GET',

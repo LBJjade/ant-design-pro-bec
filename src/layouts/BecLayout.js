@@ -14,7 +14,7 @@ import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/bec_menu';
-import logo from '../assets/logo.svg';
+import logo from '../../public/favicon.png';
 
 const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute } = Authorized;

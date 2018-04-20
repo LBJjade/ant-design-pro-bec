@@ -12,31 +12,26 @@ const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 const CreateAddForm = Form.create()((props) => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalVisible, form, handleAdd, handleModalVisible, moduleName } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       handleAdd(fieldsValue);
     });
   };
+
+  const onclose = () => {
+    handleModalVisible(false);
+    form.resetFields();
+  };
+
   return (
     <Modal
       title="新增"
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={() => onclose()}
     >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="序号"
-      >
-        {form.getFieldDecorator('orderNumber', {
-          rules: [{ required: true, message: '请输入序号...' }],
-        })(
-          <InputNumber placeholder="请输入" />
-        )}
-      </FormItem>
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
@@ -44,6 +39,7 @@ const CreateAddForm = Form.create()((props) => {
       >
         {form.getFieldDecorator('moduleName', {
           rules: [{ required: true, message: '请输入模块名称...' }],
+          initialValue: moduleName,
         })(
           <Input placeholder="请输入" />
         )}
@@ -53,31 +49,26 @@ const CreateAddForm = Form.create()((props) => {
 });
 
 const CreateEditForm = Form.create()((props) => {
-  const { modalEditVisible, form, handleEdit, handleModalVisible } = props;
+  const { modalEditVisible, form, handleEdit, handleModalVisible, moduleName } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       handleEdit(fieldsValue);
     });
   };
+
+  onclose = () => {
+    handleModalVisible(false);
+    form.resetFields();
+  };
+
   return (
     <Modal
       title="编辑"
       visible={modalEditVisible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={() => onclose()}
     >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="序号"
-      >
-        {form.getFieldDecorator('orderNumber', {
-          rules: [{ required: true, message: '请输入序号...' }],
-        })(
-          <InputNumber placeholder="请输入" />
-        )}
-      </FormItem>
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
@@ -85,6 +76,7 @@ const CreateEditForm = Form.create()((props) => {
       >
         {form.getFieldDecorator('moduleName', {
           rules: [{ required: true, message: '请输入模块名称...' }],
+          initialValue: moduleName,
         })(
           <Input placeholder="请输入" />
         )}
@@ -111,6 +103,7 @@ export default class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
     editId: {},
+    moduleName: '',
   };
 
   componentDidMount() {
@@ -221,7 +214,7 @@ export default class TableList extends PureComponent {
 
       dispatch({
         type: 'moduleManage/requireQuery',
-        payload: values,
+        payload: { where: values },
       });
     });
   };
@@ -254,14 +247,16 @@ export default class TableList extends PureComponent {
 
   handleAddModalVisible = (flag) => {
     this.setState({
-      modalVisible: !!flag,
+      modalVisible: flag,
+      moduleName: '',
     });
   };
 
-  handleEditModalVisible = (flag, data) => {
+  handleEditModalVisible = (flag, data, name) => {
     this.setState({
-      modalEditVisible: !!flag,
+      modalEditVisible: flag,
       editId: data,
+      moduleName: name,
     });
   };
 
@@ -292,22 +287,19 @@ export default class TableList extends PureComponent {
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
+    const { moduleManage: { data }, loading } = this.props;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="序号">
-              {getFieldDecorator('orderNumber')(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
             <FormItem label="板块名称">
               {getFieldDecorator('moduleName')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                <Select
+                  placeholder="请选择"
+                  style={{ width: '100%' }}
+                >
+                  { data.results.length > 0 ? data.results.map(d => <Select.Option key={d.objectId} value={d.moduleName}>{d.moduleName}</Select.Option>) :
+                  <Select.Option key="1" > 暂无</Select.Option> }
                 </Select>
               )}
             </FormItem>
@@ -316,9 +308,6 @@ export default class TableList extends PureComponent {
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
-              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a>
             </span>
           </Col>
         </Row>
@@ -421,7 +410,7 @@ export default class TableList extends PureComponent {
       {
         title: '操作',
         dataIndex: 'objectId',
-        render: val => <span><a onClick={() => this.handelDelete(val)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true, val)}>编辑</a></span>,
+        render: (val, record) => <span><a onClick={() => this.handelDelete(val)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true, val, record.moduleName)}>编辑</a></span>,
       },
     ];
 
@@ -442,11 +431,13 @@ export default class TableList extends PureComponent {
     const parentAddMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleAddModalVisible,
+      moduleName: this.state.moduleName,
     };
 
     const parentEditMethods = {
       handleEdit: this.handleEdit,
       handleModalVisible: this.handleEditModalVisible,
+      moduleName: this.state.moduleName,
     };
 
     const paginationProps = {

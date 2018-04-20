@@ -19,6 +19,7 @@ export default class CreateForm extends PureComponent {
       form: this.props.form,
       resourceName: this.props.resourceName,
       resourceBrief: this.props.resourceBrief,
+      qrCodeUrl: this.props.qrCodeUrl,
     };
   };
 
@@ -28,6 +29,7 @@ export default class CreateForm extends PureComponent {
       resourceName: nextProps.resourceName,
       resourceBrief: nextProps.resourceBrief,
       modalVisible: nextProps.modalVisible,
+      qrCodeUrl: nextProps.qrCodeUrl,
       title: nextProps.title,
     });
   };
@@ -55,7 +57,7 @@ export default class CreateForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { resourceName, resourceBrief, title, modalVisible } = this.state;
+    const { resourceName, resourceBrief, qrCodeUrl, title, modalVisible } = this.state;
 
 
     return (
@@ -72,6 +74,7 @@ export default class CreateForm extends PureComponent {
         >
           {getFieldDecorator('resourceName', {
             rules: [{ required: true, message: '请输入资源名称...' }],
+            initialValue: resourceName,
           })(
             <Input placeholder="请输入" />
           )}
@@ -83,6 +86,7 @@ export default class CreateForm extends PureComponent {
         >
           {getFieldDecorator('resourceBrief', {
             rules: [{ required: true, message: '请输入资源简介...' }],
+            initialValue: resourceBrief,
           })(
             <TextArea rows={4} placeholder="请输入" />
           )}
@@ -94,6 +98,7 @@ export default class CreateForm extends PureComponent {
         >
           {getFieldDecorator('qrCodeUrl', {
             rules: [{ required: true, message: '请输入资源路径...' }],
+            initialValue: qrCodeUrl,
           })(
             <Input placeholder="请输入" />
           )}

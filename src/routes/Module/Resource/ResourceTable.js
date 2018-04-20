@@ -37,6 +37,7 @@ export default class TableList extends PureComponent {
     editId: {},
     resourceName: '',
     resourceBrief: '',
+    qrCodeUrl: '',
     imgUrl: {},
     source: {},
     title: '',
@@ -219,16 +220,18 @@ export default class TableList extends PureComponent {
       modalVisible: !!flag,
       resourceName: "",
       resourceBrief: "",
+      qrCodeUrl: "",
       editId: "",
       title: "新增",
     });
   };
 
-  handleEditModalVisible = (flag, id, resourceName, resourceBrief) => {
+  handleEditModalVisible = (flag, id, resourceName, resourceBrief, url) => {
     this.setState({
       modalVisible: flag,
       resourceName: resourceName,
       resourceBrief: resourceBrief,
+      qrCodeUrl: url,
       editId: id,
       title: "编辑",
     });
@@ -331,7 +334,7 @@ export default class TableList extends PureComponent {
   render() {
     const { resourceManage: { data }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { selectedRows, modalVisible, title, resourceName, resourceBrief } = this.state;
+    const { selectedRows, modalVisible, title, resourceName, qrCodeUrl, resourceBrief } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -346,7 +349,7 @@ export default class TableList extends PureComponent {
         dataIndex: 'viewTimes',
       },
       {
-        title: '资源简介',
+        title: '资源名称',
         dataIndex: 'resourceName',
       },
       {
@@ -375,7 +378,7 @@ export default class TableList extends PureComponent {
         render: (val, record) => (
           <span>
             <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.resourceName, record.resourceBrief)}>编辑</a>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.resourceName, record.resourceBrief, record.qrCodeUrl)}>编辑</a>
           </span>),
         // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
@@ -413,20 +416,13 @@ export default class TableList extends PureComponent {
               <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                   <Col md={8} sm={24}>
-                    <FormItem label="编号">
-                      {getFieldDecorator('resourceName')(
-                        <Input placeholder="请输入" />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col md={8} sm={24}>
                     <FormItem label="数字资源名称">
-                      {getFieldDecorator('resourceBrief')(
+                      {getFieldDecorator('resourceName')(
                         <Select
                           placeholder="请选择"
                           style={{ width: '100%' }}
                         >
-                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.resourceBrief}>{d.resourceBrief}</SelectOption>) :
+                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.resourceName}>{d.resourceName}</SelectOption>) :
                           <SelectOption key="1" > 暂无</SelectOption> }
                         </Select>
                       )}
@@ -479,6 +475,7 @@ export default class TableList extends PureComponent {
           modalVisible={modalVisible}
           resourceName={resourceName}
           resourceBrief={resourceBrief}
+          qrCodeUrl={qrCodeUrl}
         />
       </PageHeaderLayout>
     );
