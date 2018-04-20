@@ -18,6 +18,7 @@ export default class CreateForm extends PureComponent {
       form: this.props.form,
       resourceName: this.props.resourceName,
       resourceBrief: this.props.resourceBrief,
+      moduleId: this.props.moduleId,
       module: this.props.module,
       qrCodeUrl: this.props.qrCodeUrl,
     };
@@ -31,6 +32,7 @@ export default class CreateForm extends PureComponent {
       module: nextProps.module,
       modalVisible: nextProps.modalVisible,
       qrCodeUrl: nextProps.qrCodeUrl,
+      moduleId: nextProps.moduleId,
       title: nextProps.title,
     });
   };
@@ -58,7 +60,7 @@ export default class CreateForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { resourceName, resourceBrief, qrCodeUrl, title, modalVisible, module } = this.state;
+    const { resourceName, resourceBrief, qrCodeUrl, moduleId, title, modalVisible, module } = this.state;
 
 
     return (
@@ -85,15 +87,15 @@ export default class CreateForm extends PureComponent {
           wrapperCol={{ span: 15 }}
           label="板块名称"
         >
-          {getFieldDecorator('moduleName', {
+          {getFieldDecorator('moduleId', {
             rules: [{ required: true, message: '请输入板块名称...' }],
-            initialValue: resourceName,
+            initialValue: moduleId,
           })(
             <Select
               placeholder="请选择"
               style={{ width: '100%' }}
             >
-              { module.results.length > 0 ? module.results.map(d => <Select.Option key={d.objectId} value={d.moduleName}>{d.moduleName}</Select.Option>) :
+              { module.results.length > 0 ? module.results.map(d => <Select.Option key={d.objectId} value={d.objectId}>{d.moduleName}</Select.Option>) :
               <Select.Option key="1" > 暂无</Select.Option> }
             </Select>
           )}
