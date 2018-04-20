@@ -195,18 +195,8 @@ const menuData = [{
   path: 'moduleDashboard',
   authority: ['admin'],
   children: [{
-    name: '工作台',
-    path: 'workspace',
-  }, {
     name: '分析页',
     path: 'analysis',
-  }, {
-    name: '监控页',
-    path: 'monitor',
-  }, {
-    name: '工作台',
-    path: 'workplace',
-    // hideInMenu: true,
   }],
 }];
 

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 import pathToRegexp from 'path-to-regexp';
@@ -229,21 +230,21 @@ export const getRouterData = (app) => {
     '/comment/resource': {
       component: dynamicWrapper(app, ['praiseManage'], () => import('../routes/comment/PraiseTable')),
     },
-    '/moduleDashboard/workspace': {
-      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workspace')),
-    },
+    // '/moduleDashboard/workspace': {
+    //   component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workspace')),
+    // },
     '/moduleDashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/ModuleDashBoard/Analysis')),
     },
-    '/moduleDashboard/monitor': {
-      component: dynamicWrapper(app, ['monitor'], () => import('../routes/ModuleDashBoard/Monitor')),
-    },
-    '/moduleDashboard/workplace': {
-      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workplace')),
-      // hideInBreadcrumb: true,
-      // name: '工作台',
-      // authority: 'admin',
-    },
+    // '/moduleDashboard/monitor': {
+    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/ModuleDashBoard/Monitor')),
+    // },
+    // '/moduleDashboard/workplace': {
+    //   component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/ModuleDashBoard/Workplace')),
+    //   // hideInBreadcrumb: true,
+    //   // name: '工作台',
+    //   // authority: 'admin',
+    // },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());
