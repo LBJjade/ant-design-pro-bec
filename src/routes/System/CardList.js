@@ -1,18 +1,159 @@
-/* eslint-disable eol-last */
+/* eslint-disable eol-last,no-unused-vars,no-undef,react/no-unused-state,prefer-destructuring,react/no-multi-comp,max-len */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Button, Icon, List } from 'antd';
+import { Card, Button, Icon, List, Form, Modal, Input, Tree } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import Ellipsis from '../../components/Ellipsis';
 
 import styles from './CardList.less';
 
+const TreeNode = Tree.TreeNode;
+
+const treeData = [{
+  title: '系统管理',
+  key: 'systerm',
+  children: [{
+    title: '用户管理',
+    key: 'user',
+  }, {
+    title: '角色管理',
+    key: 'group',
+  }, {
+    title: '角色权限',
+    key: 'groupAction',
+  }],
+}, {
+  title: '分类管理',
+  key: 'classify',
+  children: [
+    { title: '板块管理', key: 'modelManage' },
+    { title: '数字资源管理', key: 'moduleResource' },
+  ],
+}, {
+  title: '评论点赞管理',
+  key: 'commentPraise',
+  children: [
+    { title: '评论管理', key: 'comment' },
+    { title: '点赞管理', key: 'praise' },
+  ],
+}];
+
+class Demo extends React.Component {
+  state = {
+    expandedKeys: ['0-0-0', '0-0-1'],
+    autoExpandParent: true,
+    checkedKeys: ['0-0-0'],
+    selectedKeys: [],
+  }
+  onExpand = (expandedKeys) => {
+    console.log('onExpand', arguments);
+    this.setState({
+      expandedKeys,
+      autoExpandParent: false,
+    });
+  }
+  onCheck = (checkedKeys) => {
+    console.log('onCheck', checkedKeys);
+    this.setState({ checkedKeys });
+  }
+  onSelect = (selectedKeys, info) => {
+    console.log('onSelect', info);
+    this.setState({ selectedKeys });
+  }
+  renderTreeNodes = (data) => {
+    return data.map((item) => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.title} key={item.key} dataRef={item}>
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode {...item} />;
+    });
+  }
+  render() {
+    return (
+      <Tree
+        checkable
+        onExpand={this.onExpand}
+        expandedKeys={this.state.expandedKeys}
+        autoExpandParent={this.state.autoExpandParent}
+        onCheck={this.onCheck}
+        checkedKeys={this.state.checkedKeys}
+        onSelect={this.onSelect}
+        selectedKeys={this.state.selectedKeys}
+      >
+        {this.renderTreeNodes(treeData)}
+      </Tree>
+    );
+  }
+}
+
+
+const CreateForm = Form.create()((props) => {
+  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      handleAdd(fieldsValue);
+    });
+  };
+  return (
+    <Modal
+      title="新建角色"
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => handleModalVisible()}
+    >
+      <Form.Item
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="角色名称"
+      >
+        {form.getFieldDecorator('groupName', {
+          rules: [{ required: true, message: '角色名称不能为空...' }],
+        })(
+          <Input placeholder="请输入" />
+        )}
+      </Form.Item>
+
+      <Form.Item
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="角色简介"
+      >
+        {form.getFieldDecorator('groupInfo', {
+          rules: [{ required: true, message: '角色简介不能为空...' }],
+        })(
+          <Input placeholder="请输入" />
+        )}
+      </Form.Item>
+
+      <Form.Item
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="角色权限"
+      >
+        {form.getFieldDecorator('groupInfo', {
+          rules: [{ required: true, message: '角色简介不能为空...' }],
+        })(
+          <Demo />
+        )}
+      </Form.Item>
+    </Modal>
+  );
+});
+
 @connect(({ group, loading }) => ({
   group,
   loading: loading.models.group,
 }))
 export default class CardList extends PureComponent {
+  state = {
+    modalVisible: false,
+  };
   componentDidMount() {
     this.props.dispatch({
       type: 'group/fetch',
@@ -22,8 +163,29 @@ export default class CardList extends PureComponent {
     });
   }
 
+  handleModalVisible = (flag) => {
+    this.setState({
+      modalVisible: !!flag,
+    });
+  };
+
+  handleAdd = (fields) => {
+    this.props.dispatch({
+      type: 'rule/add',
+      payload: {
+        description: fields.desc,
+      },
+    });
+
+    message.success('添加成功');
+    this.setState({
+      modalVisible: false,
+    });
+  }
+
   render() {
     const { group: { data }, loading } = this.props;
+    const { modalVisible } = this.state;
 
     const content = (
       <div className={styles.pageHeaderContent}>
@@ -77,7 +239,7 @@ export default class CardList extends PureComponent {
                   </Card>
                 </List.Item>
               ) : (
-                <List.Item>
+                <List.Item onClick={() => this.handleModalVisible(true)}>
                   <Button type="dashed" className={styles.newButton}>
                     <Icon type="plus" /> 新增角色
                   </Button>
@@ -86,6 +248,11 @@ export default class CardList extends PureComponent {
             )}
           />
         </div>
+        <CreateForm
+          handleAdd={this.handleAdd}
+          handleModalVisible={this.handleModalVisible}
+          modalVisible={modalVisible}
+        />
       </PageHeaderLayout>
     );
   }
