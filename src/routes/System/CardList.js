@@ -1,7 +1,7 @@
 /* eslint-disable eol-last,no-unused-vars,no-undef,react/no-unused-state,prefer-destructuring,react/no-multi-comp,max-len */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Button, Icon, List, Form, Modal, Input, Tree } from 'antd';
+import { Card, Button, Icon, List, Form, Modal, Input, Tree, Popconfirm } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import Ellipsis from '../../components/Ellipsis';
@@ -28,7 +28,7 @@ const treeData = [{
   key: 'classify',
   children: [
     { title: '板块管理', key: 'modelManage' },
-    { title: '数字资源管理', key: 'moduleResource' },
+    { title: '数字资源管理', key: 'moduleGroup' },
   ],
 }, {
   title: '评论点赞管理',
@@ -93,19 +93,24 @@ class Demo extends React.Component {
 
 
 const CreateForm = Form.create()((props) => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalVisible, form, handleAdd, handleModalVisible, groupName, groupInfo } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       handleAdd(fieldsValue);
     });
   };
+
+  onclose = () => {
+    handleModalVisible(false);
+    form.resetFields();
+  };
   return (
     <Modal
       title="新建角色"
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={() => onclose()}
     >
       <Form.Item
         labelCol={{ span: 5 }}
@@ -114,6 +119,7 @@ const CreateForm = Form.create()((props) => {
       >
         {form.getFieldDecorator('groupName', {
           rules: [{ required: true, message: '角色名称不能为空...' }],
+          initialValue: groupName,
         })(
           <Input placeholder="请输入" />
         )}
@@ -126,6 +132,7 @@ const CreateForm = Form.create()((props) => {
       >
         {form.getFieldDecorator('groupInfo', {
           rules: [{ required: true, message: '角色简介不能为空...' }],
+          initialValue: groupInfo,
         })(
           <Input placeholder="请输入" />
         )}
@@ -153,6 +160,8 @@ const CreateForm = Form.create()((props) => {
 export default class CardList extends PureComponent {
   state = {
     modalVisible: false,
+    groupName: '',
+    groupInfo: '',
   };
   componentDidMount() {
     this.props.dispatch({
@@ -165,27 +174,43 @@ export default class CardList extends PureComponent {
 
   handleModalVisible = (flag) => {
     this.setState({
+      groupName: '',
+      groupInfo: '',
+      modalVisible: !!flag,
+    });
+  };
+  handleEditModalVisible = (flag, Name, Info) => {
+    this.setState({
+      groupName: Name,
+      groupInfo: Info,
       modalVisible: !!flag,
     });
   };
 
   handleAdd = (fields) => {
     this.props.dispatch({
-      type: 'rule/add',
+      type: 'group/storeGroup',
       payload: {
         description: fields.desc,
       },
     });
-
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
   }
+
+  handelDelete = (row) => {
+    const { group: { data }, dispatch } = this.props;
+    dispatch({
+      type: 'group/removeGroup',
+      payload: row,
+    }).then(() => {
+      dispatch({
+        type: 'group/fetch',
+      });
+    });
+  };
 
   render() {
     const { group: { data }, loading } = this.props;
-    const { modalVisible } = this.state;
+    const { modalVisible, groupName, groupInfo } = this.state;
 
     const content = (
       <div className={styles.pageHeaderContent}>
@@ -228,7 +253,7 @@ export default class CardList extends PureComponent {
             renderItem={item => (item ? (
 // eslint-disable-next-line react/jsx-indent
                 <List.Item key={item.groupId}>
-                  <Card hoverable className={styles.card} actions={[<a>编辑</a>, <a>删除</a>]}>
+                  <Card hoverable className={styles.card} actions={[<a onClick={() => this.handleEditModalVisible(true, item.groupName, item.groupInfo)}>编辑</a>, <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(item.objectId)}><a href="#">删除</a></Popconfirm>]}>
                     <Card.Meta
                       avatar={<img alt="" className={styles.cardAvatar} src={item.avatar} />}
                       title={<a href="#">{item.groupName}</a>}
@@ -252,6 +277,8 @@ export default class CardList extends PureComponent {
           handleAdd={this.handleAdd}
           handleModalVisible={this.handleModalVisible}
           modalVisible={modalVisible}
+          groupName={groupName}
+          groupInfo={groupInfo}
         />
       </PageHeaderLayout>
     );

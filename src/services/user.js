@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { stringify } from 'qs';
 import request from '../utils/request';
 
@@ -57,3 +58,25 @@ export async function getGroup() {
     method: 'GET',
   });
 }
+
+export async function postGroup(params) {
+  return request('/api/classes/group', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function putGroup(params) {
+  const editid = params.ojId;
+  const data = params.fields;
+  request(`/api/classes/group/${editid}`, {
+    method: 'PUT',
+    body: data,
+  });
+}
+export async function deleteGroup(params) {
+  return request(`/api/classes/group/${params}`, {
+    method: 'DELETE',
+  });
+}
+
