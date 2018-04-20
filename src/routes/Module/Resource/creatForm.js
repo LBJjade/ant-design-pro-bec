@@ -1,7 +1,6 @@
 /* eslint-disable indent,no-unused-vars,no-undef,no-trailing-spaces,react/no-multi-comp,react/jsx-boolean-value,max-len,prefer-destructuring,padded-blocks,react/no-unused-state,quotes,react/no-unescaped-entities,no-extra-semi */
 import React, { PureComponent } from 'react';
-import { Input, Modal, Form, Upload, Icon } from 'antd';
-import { stringify } from 'qs';
+import { Input, Modal, Form, Select } from 'antd';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -19,6 +18,7 @@ export default class CreateForm extends PureComponent {
       form: this.props.form,
       resourceName: this.props.resourceName,
       resourceBrief: this.props.resourceBrief,
+      module: this.props.module,
       qrCodeUrl: this.props.qrCodeUrl,
     };
   };
@@ -28,6 +28,7 @@ export default class CreateForm extends PureComponent {
     this.setState({
       resourceName: nextProps.resourceName,
       resourceBrief: nextProps.resourceBrief,
+      module: nextProps.module,
       modalVisible: nextProps.modalVisible,
       qrCodeUrl: nextProps.qrCodeUrl,
       title: nextProps.title,
@@ -57,7 +58,7 @@ export default class CreateForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { resourceName, resourceBrief, qrCodeUrl, title, modalVisible } = this.state;
+    const { resourceName, resourceBrief, qrCodeUrl, title, modalVisible, module } = this.state;
 
 
     return (
@@ -77,6 +78,24 @@ export default class CreateForm extends PureComponent {
             initialValue: resourceName,
           })(
             <Input placeholder="请输入" />
+          )}
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="板块名称"
+        >
+          {getFieldDecorator('moduleName', {
+            rules: [{ required: true, message: '请输入板块名称...' }],
+            initialValue: resourceName,
+          })(
+            <Select
+              placeholder="请选择"
+              style={{ width: '100%' }}
+            >
+              { module.results.length > 0 ? module.results.map(d => <Select.Option key={d.objectId} value={d.moduleName}>{d.moduleName}</Select.Option>) :
+              <Select.Option key="1" > 暂无</Select.Option> }
+            </Select>
           )}
         </FormItem>
         <FormItem

@@ -53,6 +53,9 @@ export default class TableList extends PureComponent {
         count: true,
       },
     });
+    dispatch({
+      type: 'resourceManage/fetchModule',
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -332,7 +335,7 @@ export default class TableList extends PureComponent {
 
 
   render() {
-    const { resourceManage: { data }, list, loading } = this.props;
+    const { resourceManage: { data, module }, list, loading } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { selectedRows, modalVisible, title, resourceName, qrCodeUrl, resourceBrief } = this.state;
 
@@ -476,6 +479,7 @@ export default class TableList extends PureComponent {
           resourceName={resourceName}
           resourceBrief={resourceBrief}
           qrCodeUrl={qrCodeUrl}
+          module={module}
         />
       </PageHeaderLayout>
     );

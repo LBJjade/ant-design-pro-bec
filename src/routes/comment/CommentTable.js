@@ -168,10 +168,20 @@ export default class TableList extends PureComponent {
   };
 
   handelDelete = (row) => {
-    this.props.dispatch({
+    const { dispatch } = this.props;
+    dispatch({
       type: 'commentManage/removeComment',
       payload: row,
-    }).then(message.success('删除成功'));
+    }).then(() => {
+      dispatch({
+        type: 'commentManage/fetchComment',
+        payload: {
+          skip: 0,
+          limit: 5,
+          count: true,
+        },
+      });
+    });
     this.setState({
       pagination: {
         current: 1,
@@ -287,6 +297,25 @@ export default class TableList extends PureComponent {
     }
   }
 
+  // handlePageChange = (page, pagesize) => {
+  //   const { dispatch } = this.props;
+  //   const parsedata = {
+  //     limit: pagesize,
+  //     skip: (page - 1) * pagesize,
+  //     count: true,
+  //   };
+  //   dispatch({
+  //     type: 'moduleManage/fetch',
+  //     payload: parsedata,
+  //   });
+  //   this.setState({
+  //     pagination: {
+  //       current: page,
+  //       pageSize: pagesize,
+  //     },
+  //   });
+  // }
+
 
   render() {
     const { commentManage: { data }, list, loading } = this.props;
@@ -362,6 +391,7 @@ export default class TableList extends PureComponent {
       pageSize: this.state.pagination.pageSize,
       total: data.count ? data.count : 1,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
+      current: this.state.pagination.current,
       // onChange: this.handlePageChange,
     };
 

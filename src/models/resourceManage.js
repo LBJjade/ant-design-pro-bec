@@ -1,6 +1,6 @@
 /* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
 import { Message } from 'antd';
-import { getResource, postResource, putResource, resourceBatchDelete, deleteResource, resourceRequireQuery, uploadLogo } from '../services/module';
+import { getResource, postResource, putResource, resourceBatchDelete, deleteResource, resourceRequireQuery, uploadLogo, getModule } from '../services/module';
 
 export default {
   namespace: 'resourceManage',
@@ -17,6 +17,9 @@ export default {
     resources: [],
     resourceNos: [],
     newdata: {
+      results: [],
+    },
+    module: {
       results: [],
     },
   },
@@ -68,6 +71,13 @@ export default {
       const response = yield call(resourceRequireQuery, payload);
       yield put({
         type: 'changeResources',
+        payload: response,
+      });
+    },
+    *fetchModule({ payload }, { call, put }) {
+      const response = yield call(getModule, payload);
+      yield put({
+        type: 'getModules',
         payload: response,
       });
     },
@@ -144,6 +154,12 @@ export default {
       return {
         ...state,
         resourceNos: action.payload,
+      };
+    },
+    getModules(state, action) {
+      return {
+        ...state,
+        module: action.payload,
       };
     },
   },
