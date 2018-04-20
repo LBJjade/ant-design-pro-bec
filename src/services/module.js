@@ -4,8 +4,8 @@ import request, { requestParams2Url } from '../utils/request';
 
 
 //module
-export async function getModule() {
-  return request('/api/classes/module', {
+export async function getModule(params) {
+  return request(`/api/classes/module?${stringify(params)}`, {
     method: 'GET',
   });
 }
@@ -17,24 +17,17 @@ export async function postModule(params) {
   });
 }
 
-export async function moduleBatchDelete(params) {
-  for(let i = 0; i < params.length; i++) {
-    request(`/api/classes/module/${params[i]}`, {
-      method: 'DELETE',
-    });
-  }
-}
-
-export async function moduleEdit(params) {
-  let editid = params.eidtId;
+export async function putModule(params) {
+  let editid = params.ojId;
   let data = params.fields;
-  return request(`/api/classes/module/${editid}`, {
+  request(`/api/classes/module/${editid}`, {
     method: 'PUT',
     body: data,
   });
 }
 
-export async function moduleDelete(params) {
+
+export async function deleteModule(params) {
   return request('/api/classes/module/' + params, {
     method: 'DELETE',
   });
@@ -106,13 +99,6 @@ export async function putResource(params) {
   });
 }
 
-export async function ResourceBatchDelete(params) {
-  for(let i = 0; i < params.length; i++) {
-    request(`/api/classes/moduleResource/${params[i]}`, {
-      method: 'DELETE',
-    });
-  }
-}
 
 export async function deleteResource(params) {
   return request('/api/classes/moduleResource/' + params, {

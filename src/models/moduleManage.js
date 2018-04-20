@@ -1,5 +1,6 @@
-/* eslint-disable keyword-spacing */
-import { getModule, postModule, moduleEdit, moduleBatchDelete, moduleDelete, moduleRequireQuery } from '../services/module';
+/* eslint-disable keyword-spacing,no-undef,no-unused-vars,no-unreachable,arrow-parens,object-shorthand,max-len */
+import { Message } from 'antd';
+import { getModule, postModule, putModule, moduleBatchDelete, deleteModule, moduleRequireQuery, uploadLogo } from '../services/module';
 
 export default {
   namespace: 'moduleManage',
@@ -8,42 +9,58 @@ export default {
     data: {
       results: [],
       count: 0,
+      state: [],
+    },
+    list: {
+      results: [],
+    },
+    modules: [],
+    moduleNos: [],
+    newdata: {
+      results: [],
     },
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetchModule({ payload }, { call, put }) {
       const response = yield call(getModule, payload);
       yield put({
         type: 'changeModules',
         payload: response,
       });
     },
-    *add({ payload }, { call, put }) {
+    *storeModule({ payload }, { call, put }) {
       const response = yield call(postModule, payload);
       yield put({
-        type: 'addModules',
-        payload: response,
+        type: 'appendModules',
+        payload: { results: [Object.assign(payload, response)] },
       });
+      Message.success('新增成功');
     },
-    *edit({ payload }, { call, put }) {
-      const response = yield call(moduleEdit, payload);
-      yield put({
-        type: 'editModules',
-        payload: response,
-      });
+    *coverModule({ payload }, { call, put }) {
+      const response = yield call(putModule, payload);
+      if(response !== undefined) {
+        if(JSON.parse(response).error === undefined) {
+          Message.success('编辑成功');
+        }else{
+          Message.error('编辑失败');
+        }
+      }else{
+        Message.success('编辑成功');
+      }
     },
-    *delete({ payload }, { call, put }) {
-      const response = yield call(moduleDelete, payload);
-      yield put({
-        type: 'deleteModules',
-        payload: response,
-      });
+    *removeModule({ payload }, { call, put }) {
+      const response = yield call(deleteModule, payload);
+      if(JSON.parse(response).error === undefined) {
+        Message.success('删除成功');
+      }else{
+        Message.error('删除失败');
+      }
     },
-    *batchDelete({ payload }, { call, put }) {
+    *batchRemoveDelete({ payload }, { call, put }) {
       const response = yield call(moduleBatchDelete, payload);
       yield put({
-        type: 'deleteModules',
+        type: 'changeModules',
         payload: response,
       });
     },
@@ -51,6 +68,27 @@ export default {
       const response = yield call(moduleRequireQuery, payload);
       yield put({
         type: 'changeModules',
+        payload: response,
+      });
+    },
+    *upload({ payload }, { call, put }) {
+      const response = yield call(uploadLogo, payload);
+      yield put({
+        type: 'changeModules',
+        payload: response,
+      });
+    },
+    *exisModules({ payload }, { call, put }) {
+      const response = yield call(moduleRequireQuery, payload);
+      yield put({
+        type: 'modules',
+        payload: response,
+      });
+    },
+    *exisModuleNos({ payload }, { call, put }) {
+      const response = yield call(moduleRequireQuery, payload);
+      yield put({
+        type: 'moduleNos',
         payload: response,
       });
     },
@@ -63,29 +101,50 @@ export default {
         data: action.payload,
       };
     },
-  },
-  addModules(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  editModules(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  deleteModules(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
-  },
-  queryResult(state, action) {
-    return {
-      ...state,
-      data: action.payload,
-    };
+    appendModules(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.concat(action.payload.results),
+          count: state.data.count + 1,
+        },
+      };
+    },
+    resetModules(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.map(item => {
+            if (item.objectId === action.payload.ojId) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+          count: state.data.count,
+        },
+      };
+    },
+    clearModules(state, action) {
+      return {
+        ...state,
+        data: {
+          results: state.data.results.filter(item => item.objectId !== action.payload),
+          count: state.data.count - 1,
+        },
+      };
+    },
+    modules(state, action) {
+      return {
+        ...state,
+        modules: action.payload,
+      };
+    },
+    moduleNos(state, action) {
+      return {
+        ...state,
+        moduleNos: action.payload,
+      };
+    },
   },
 };

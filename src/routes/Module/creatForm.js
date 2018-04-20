@@ -17,19 +17,15 @@ export default class CreateForm extends PureComponent {
       handleModalVisible: this.props.handleModalVisible,
       title: this.props.title,
       form: this.props.form,
-      resourceName: this.props.resourceName,
-      resourceBrief: this.props.resourceBrief,
-      qrCodeUrl: this.props.qrCodeUrl,
+      moduleName: this.props.moduleName,
     };
   };
 
   componentWillReceiveProps(nextProps) {
     // console.log(nextProps);
     this.setState({
-      resourceName: nextProps.resourceName,
-      resourceBrief: nextProps.resourceBrief,
+      moduleName: nextProps.moduleName,
       modalVisible: nextProps.modalVisible,
-      qrCodeUrl: nextProps.qrCodeUrl,
       title: nextProps.title,
     });
   };
@@ -41,10 +37,10 @@ export default class CreateForm extends PureComponent {
   };
 
   okHandle = () => {
-    const { form, title, handleEdit, resourceName, handleAdd } = this.state;
+    const { form, title, handleEdit, moduleName, handleAdd } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      if (resourceName !== "") {
+      if (moduleName !== "") {
         handleEdit(fieldsValue);
         this.props.form.resetFields();
       } else {
@@ -57,7 +53,7 @@ export default class CreateForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { resourceName, resourceBrief, qrCodeUrl, title, modalVisible } = this.state;
+    const { moduleName, title, modalVisible } = this.state;
 
 
     return (
@@ -70,35 +66,11 @@ export default class CreateForm extends PureComponent {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="资源名称"
+          label="板块名称"
         >
-          {getFieldDecorator('resourceName', {
-            rules: [{ required: true, message: '请输入资源名称...' }],
-            initialValue: resourceName,
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="资源简介"
-        >
-          {getFieldDecorator('resourceBrief', {
-            rules: [{ required: true, message: '请输入资源简介...' }],
-            initialValue: resourceBrief,
-          })(
-            <TextArea rows={4} placeholder="请输入" />
-          )}
-        </FormItem>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="资源路径"
-        >
-          {getFieldDecorator('qrCodeUrl', {
-            rules: [{ required: true, message: '请输入资源路径...' }],
-            initialValue: qrCodeUrl,
+          {getFieldDecorator('moduleName', {
+            rules: [{ required: true, message: '请输入板块名称...' }],
+            initialValue: moduleName,
           })(
             <Input placeholder="请输入" />
           )}

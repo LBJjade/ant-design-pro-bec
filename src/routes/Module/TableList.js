@@ -1,93 +1,24 @@
-/* eslint-disable no-unused-vars,max-len,object-shorthand,no-const-assign,no-trailing-spaces,react/no-unused-state,prefer-const,no-undef */
+/* eslint-disable quotes,object-shorthand,react/jsx-boolean-value,no-unused-vars,react/no-unused-state,max-len,object-curly-spacing,prefer-const,no-param-reassign,no-empty,indent,key-spacing,no-undef,keyword-spacing */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Card, Form, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
+import { Row, Col, Card, Form, Upload, a, Input, InputNumber, Popconfirm, Select, Icon, Button, Dropdown, Menu, DatePicker, Modal, message, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import CreateForm from './creatForm';
 
-import styles from './TableList.less';
+import styles from '../../static/js/table.less';
 
 const FormItem = Form.Item;
+const SelectOption = Select.Option;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-
-const CreateAddForm = Form.create()((props) => {
-  const { modalVisible, form, handleAdd, handleModalVisible, moduleName } = props;
-  const okHandle = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      handleAdd(fieldsValue);
-    });
-  };
-
-  const onclose = () => {
-    handleModalVisible(false);
-    form.resetFields();
-  };
-
-  return (
-    <Modal
-      title="新增"
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => onclose()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="模块名称"
-      >
-        {form.getFieldDecorator('moduleName', {
-          rules: [{ required: true, message: '请输入模块名称...' }],
-          initialValue: moduleName,
-        })(
-          <Input placeholder="请输入" />
-        )}
-      </FormItem>
-    </Modal>
-  );
-});
-
-const CreateEditForm = Form.create()((props) => {
-  const { modalEditVisible, form, handleEdit, handleModalVisible, moduleName } = props;
-  const okHandle = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      handleEdit(fieldsValue);
-    });
-  };
-
-  onclose = () => {
-    handleModalVisible(false);
-    form.resetFields();
-  };
-
-  return (
-    <Modal
-      title="编辑"
-      visible={modalEditVisible}
-      onOk={okHandle}
-      onCancel={() => onclose()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="模块名称"
-      >
-        {form.getFieldDecorator('moduleName', {
-          rules: [{ required: true, message: '请输入模块名称...' }],
-          initialValue: moduleName,
-        })(
-          <Input placeholder="请输入" />
-        )}
-      </FormItem>
-    </Modal>
-  );
-});
 
 @connect(({ moduleManage, loading }) => ({
   moduleManage,
   loading: loading.models.moduleManage,
+  modules: moduleManage.modules,
+  moduleNames: moduleManage.moduleNames,
+  requestError: moduleManage.requestError,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -97,6 +28,7 @@ export default class TableList extends PureComponent {
       current: 1,
       total: 0,
     },
+    data: {},
     modalVisible: false,
     modalEditVisible: false,
     expandForm: false,
@@ -104,12 +36,26 @@ export default class TableList extends PureComponent {
     formValues: {},
     editId: {},
     moduleName: '',
+    imgUrl: {},
+    source: {},
+    title: '',
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'moduleManage/fetch',
+      type: 'moduleManage/fetchModule',
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      refrush: true,
     });
   }
 
@@ -124,7 +70,7 @@ export default class TableList extends PureComponent {
     }, {});
 
     const params = {
-      skip: ((pagination.current - 1) * pagination.pageSize) + 1,
+      skip: ((pagination.current - 1) * pagination.pageSize),
       limit: pagination.pageSize,
       count: true,
       ...formValues,
@@ -135,7 +81,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'moduleManage/fetch',
+      type: 'moduleManage/fetchModule',
       payload: params,
     });
     this.setState({
@@ -153,14 +99,18 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'moduleManage/fetch',
-      payload: {},
+      type: 'moduleManage/fetchModule',
+      payload: {
+        skip: 0,
+        limit: 5,
+        count: true,
+      },
     });
-  };
-
-  toggleForm = () => {
     this.setState({
-      expandForm: !this.state.expandForm,
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
     });
   };
 
@@ -195,10 +145,33 @@ export default class TableList extends PureComponent {
     });
   };
 
+  handelDelete = (row) => {
+    const {moduleManage: { data }, dispatch } = this.props;
+    dispatch({
+      type: 'moduleManage/removeModule',
+      payload: row,
+    }).then(() => {
+      dispatch({
+        type: 'moduleManage/fetchModule',
+        payload: {
+          skip: 0,
+          limit: 5,
+          count: true,
+        },
+      });
+    });
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
+      },
+    });
+  };
+
   handleSearch = (e) => {
     e.preventDefault();
 
-    const { dispatch, form } = this.props;
+    const {moduleManage: { data }, dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -215,14 +188,13 @@ export default class TableList extends PureComponent {
       dispatch({
         type: 'moduleManage/requireQuery',
         payload: { where: values },
-      });
-    });
-  };
+      }).then(message.success('查询成功'));
 
-  handelDelete = (row) => {
-    this.props.dispatch({
-      type: 'moduleManage/delete',
-      payload: row,
+      this.setState({
+        pagination: {
+          pageSize: data.results.length,
+        },
+      });
     });
   };
   // handelDelete = (row) => {
@@ -230,150 +202,137 @@ export default class TableList extends PureComponent {
   // };
   handelbatchDelete = (row) => {
     this.props.dispatch({
-      type: 'moduleManage/batchDelete',
+      type: 'moduleManage/batchRemoveDelete',
       payload: row,
-    });
-  };
-
-  handelEdit = (rows, data) => {
-    this.props.dispatch({
-      type: 'moduleManage/edit',
-      payload: {
-        row: rows,
-        data: data,
+    }).then(message.success('删除成功'));
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 5,
       },
     });
   };
 
   handleAddModalVisible = (flag) => {
     this.setState({
-      modalVisible: flag,
-      moduleName: '',
+      modalVisible: !!flag,
+      moduleName: "",
+      moduleBrief: "",
+      qrCodeUrl: "",
+      editId: "",
+      title: "新增",
     });
   };
 
-  handleEditModalVisible = (flag, data, name) => {
+  handleEditModalVisible = (flag, id, moduleName, moduleBrief, url) => {
     this.setState({
-      modalEditVisible: flag,
-      editId: data,
-      moduleName: name,
+      modalVisible: flag,
+      moduleName: moduleName,
+      moduleBrief: moduleBrief,
+      qrCodeUrl: url,
+      editId: id,
+      title: "编辑",
     });
   };
 
   handleAdd = (fields) => {
-    this.props.dispatch({
-      type: 'moduleManage/add',
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'moduleManage/storeModule',
       payload: fields,
-    });
-
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
+    }).then(() => {
+        dispatch({
+          type: 'moduleManage/fetchModule',
+          payload: {
+            skip: 0,
+            limit: 5,
+            count: true,
+          },
+        });
+        this.setState({
+          pagination: {
+            current: 1,
+            pageSize: 5,
+          },
+          modalVisible: false,
+        });
+      }
+    );
   };
 
   handleEdit = (fields) => {
-    let eidtId = this.state.editId;
-    this.props.dispatch({
-      type: 'moduleManage/edit',
-      payload: { fields, eidtId },
-    });
-
-    message.success('编辑成功');
-    this.setState({
-      modalEditVisible: false,
+    const { dispatch } = this.props;
+    const ojId = this.state.editId;
+    dispatch({
+      type: 'moduleManage/coverModule',
+      payload: { fields, ojId },
+    }).then(() => {
+      dispatch({
+        type: 'moduleManage/fetchModule',
+        payload: {
+          skip: 0,
+          limit: 5,
+          count: true,
+        },
+      });
+      this.setState({
+        pagination: {
+          current: 1,
+          pageSize: 5,
+        },
+        modalVisible: false,
+      });
     });
   };
 
-  renderSimpleForm() {
-    const { getFieldDecorator } = this.props.form;
-    const { moduleManage: { data }, loading } = this.props;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="板块名称">
-              {getFieldDecorator('moduleName')(
-                <Select
-                  placeholder="请选择"
-                  style={{ width: '100%' }}
-                >
-                  { data.results.length > 0 ? data.results.map(d => <Select.Option key={d.objectId} value={d.moduleName}>{d.moduleName}</Select.Option>) :
-                  <Select.Option key="1" > 暂无</Select.Option> }
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
+  // validateModule = (rule, value, callback) => {
+  //   if (value === undefined || value === "") {
+  //       callback();
+  //   } else {
+  //     this.props.dispatch({
+  //       type: 'moduleManage/exisModules',
+  //       payload: { where: {moduleBrief: value} },
+  //     }).then(() => {
+  //       if (this.props.modules.results === undefined) {
+  //         callback();
+  //         return;
+  //       }
+  //       if (this.props.modules.results.length > 0) {
+  //         callback([new Error(rule.message)]);
+  //       } else {
+  //         callback();
+  //       }
+  //     });
+  //   }
+  // }
+
+  validateModuleNo = (rule, value, callback) => {
+    const {moduleManage: { moduleNames } } = this.props;
+    if (value === undefined || value === "") {
+      callback();
+    } else {
+      this.props.dispatch({
+        type: 'moduleManage/exisModuleNos',
+        payload: { where: {moduleName: value} },
+      }).then(() => {
+        if (this.props.moduleNames.results === undefined) {
+          callback();
+          return;
+        }
+        if (this.props.moduleNames.results.length > 0) {
+          callback([new Error(rule.message)]);
+        } else {
+          callback();
+        }
+      });
+    }
   }
 
-  renderAdvancedForm() {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="序号">
-              {getFieldDecorator('no')(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="板块名称">
-              {getFieldDecorator('moduleName')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="更新日期">
-              {getFieldDecorator('updatedAt')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="创建时间">
-              {getFieldDecorator('createdAt')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入创建时间" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
-              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-              收起 <Icon type="up" />
-              </a>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
-  renderForm() {
-    return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
-  }
 
   render() {
-    const { moduleManage: { data }, loading } = this.props;
-    const { selectedRows, modalVisible, modalEditVisible } = this.state;
+    const { moduleManage: { data }, list, loading } = this.props;
+    const { getFieldDecorator } = this.props.form;
+    const { selectedRows, modalVisible, title, moduleName } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -383,7 +342,6 @@ export default class TableList extends PureComponent {
     );
 
     const columns = [
-
       {
         title: '浏览次数',
         dataIndex: 'viewTimes',
@@ -410,7 +368,12 @@ export default class TableList extends PureComponent {
       {
         title: '操作',
         dataIndex: 'objectId',
-        render: (val, record) => <span><a onClick={() => this.handelDelete(val)}>删除</a>    <a onClick={() => this.handleEditModalVisible(true, val, record.moduleName)}>编辑</a></span>,
+        render: (val, record) => (
+          <span>
+            <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
+            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.moduleName, record.moduleBrief, record.qrCodeUrl)}>编辑</a>
+          </span>),
+        // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
       },
     ];
 
@@ -428,24 +391,13 @@ export default class TableList extends PureComponent {
       }),
     };
 
-    const parentAddMethods = {
-      handleAdd: this.handleAdd,
-      handleModalVisible: this.handleAddModalVisible,
-      moduleName: this.state.moduleName,
-    };
-
-    const parentEditMethods = {
-      handleEdit: this.handleEdit,
-      handleModalVisible: this.handleEditModalVisible,
-      moduleName: this.state.moduleName,
-    };
-
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
       total: data.count,
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
+      current: this.state.pagination.current,
       // onChange: this.handlePageChange,
     };
 
@@ -454,7 +406,29 @@ export default class TableList extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
-              {this.renderForm()}
+              <Form onSubmit={this.handleSearch} layout="inline">
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                  <Col md={8} sm={24}>
+                    <FormItem label="板块名称">
+                      {getFieldDecorator('moduleName')(
+                        <Select
+                          placeholder="请选择"
+                          style={{ width: '100%' }}
+                        >
+                          { data.results.length > 0 ? data.results.map(d => <SelectOption key={d.objectId} value={d.moduleName}>{d.moduleName}</SelectOption>) :
+                          <SelectOption key="1" > 暂无</SelectOption> }
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col md={8} sm={24}>
+                    <span className={styles.submitButtons}>
+                      <Button type="primary" htmlType="submit">查询</Button>
+                      <Button style={{ marginLeft: 8 }} onClick={this.handleFormAdd}>刷新</Button>
+                    </span>
+                  </Col>
+                </Row>
+              </Form>
             </div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
@@ -478,7 +452,7 @@ export default class TableList extends PureComponent {
                     pagination={paginationProps}
                     dataSource={data.results}
                     onChange={this.handleStandardTableChange}
-                    rowSelection={rowSelection}
+                    // rowSelection={rowSelection}
                     onSelectRow={this.handleSelectRows}
                   />
                 </div>
@@ -486,13 +460,13 @@ export default class TableList extends PureComponent {
             </div>
           </div>
         </Card>
-        <CreateAddForm
-          {...parentAddMethods}
+        <CreateForm
+          handleAdd={this.handleAdd}
+          handleEdit={this.handleEdit}
+          handleModalVisible={this.handleAddModalVisible}
+          title={title}
           modalVisible={modalVisible}
-        />
-        <CreateEditForm
-          {...parentEditMethods}
-          modalEditVisible={modalEditVisible}
+          moduleName={moduleName}
         />
       </PageHeaderLayout>
     );
