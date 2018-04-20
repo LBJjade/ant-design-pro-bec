@@ -368,16 +368,6 @@ export default class TableList extends PureComponent {
         sorter: true,
         render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
       },
-      {
-        title: '操作',
-        dataIndex: 'objectId',
-        render: (val, record) => (
-          <span>
-            <Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(`${val}`)}><a href="#">删除</a></Popconfirm>
-            <a onClick={() => this.handleEditModalVisible(true, `${val}`, record.action, record.name)}>编辑</a>
-          </span>),
-        // render: val => <span><Popconfirm title="确定删除?" onConfirm={() => this.handelDelete(val)}><a href="#">删除</a></Popconfirm>     <a onClick={() => this.handleEditModalVisible(true)}>编辑</a></span>,
-      },
     ];
 
     const rowSelection = {
@@ -441,9 +431,6 @@ export default class TableList extends PureComponent {
               </Form>
             </div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleAddModalVisible(true)}>
-                新增
-              </Button>
               {
                 selectedRows.length > 0 && (
                   <span>
