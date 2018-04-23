@@ -1,13 +1,15 @@
+/* eslint-disable new-cap */
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import { Card, Row, Col, Input, Radio, List, Avatar, Menu, Dropdown, Icon } from 'antd';
+import { Card, Row, Col, Input, Radio, List, Avatar, Menu, Dropdown, Icon, message } from 'antd';
 import styles from './UserList.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
+// const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 @connect(({ usermodel, loading }) => ({
   usermodel,
@@ -19,6 +21,7 @@ export default class UserList extends PureComponent {
       pageSize: 3,
       current: 1,
       total: 0,
+      count: {},
     },
   };
 
@@ -29,9 +32,43 @@ export default class UserList extends PureComponent {
       skip: (this.state.pagination.current - 1) * this.state.pagination.pageSize,
       count: true,
     };
+    const now = new Date();
+    now.setMonth(now.getMonth() - 1);
+    const thisMount = now.toISOString();
+    const now1 = new Date();
+    now1.setDate(now.getDate() - 7);
+    const thisweek = now1.toISOString();
     dispatch({
       type: 'usermodel/fetchUser',
       payload: parsedata,
+    });
+    dispatch({
+      type: 'usermodel/fetchUserThisMount',
+      payload: {
+        where: {
+          createdAt: {
+            $gt: {
+              __type: 'Date',
+              iso: thisMount,
+            },
+          },
+        },
+        count: true,
+      },
+    });
+    dispatch({
+      type: 'usermodel/fetchUserThisWeek',
+      payload: {
+        where: {
+          login: {
+            $gt: {
+              __type: 'Date',
+              iso: thisweek,
+            },
+          },
+        },
+        count: true,
+      },
     });
   }
 
@@ -86,9 +123,69 @@ export default class UserList extends PureComponent {
   //     },
   //   });
   // };
+  monthUser = (val) => {
+    const { dispatch, usermodel: { data } } = this.props;
+    if (val === 0) {
+      const parsedata = {
+        limit: 3,
+        skip: 0,
+        count: true,
+      };
+      dispatch({
+        type: 'usermodel/fetchUser',
+        payload: parsedata,
+      }).then(() => {
+        this.setState({
+          pagination: {
+            count: data === undefined ? 0 : data.results.length,
+            pageSize: data === undefined ? 0 : data.results.length,
+            current: 1,
+          },
+        });
+      });
+    } else {
+      const now = new Date();
+      now.setMonth(now.getMonth() - val);
+      const date = now.toISOString();
+      dispatch({
+        type: 'usermodel/fetchUserLastMount',
+        payload: {
+          where: {
+            createdAt: {
+              $gt: {
+                __type: 'Date',
+                iso: date,
+              },
+            },
+          },
+          count: true,
+        },
+      }).then(() => {
+        this.setState({
+          pagination: {
+            count: data === undefined ? 0 : data.results.length,
+            pageSize: data === undefined ? 0 : data.results.length,
+            current: 1,
+          },
+        });
+      });
+    }
+  }
+
+  handleSearch = (value) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'usermodel/requireQuery',
+      payload: {
+        where: {
+          username: value,
+        },
+      },
+    }).then(message.success('查询成功'));
+  };
 
   render() {
-    const { usermodel: { data }, loading } = this.props;
+    const { usermodel: { data, mountlist, weeklist }, loading } = this.props;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -101,20 +198,21 @@ export default class UserList extends PureComponent {
     const extraContent = (
       <div className={styles.extraContent}>
         <RadioGroup defaultValue="all">
-          <RadioButton value="all">全部</RadioButton>
-          <RadioButton value="lastmonth">最近1个月注册</RadioButton>
-          <RadioButton value="last3month">最近3个月注册</RadioButton>
+          <RadioButton value="all" onClick={() => this.monthUser(0)}>全部</RadioButton>
+          <RadioButton value="lastmonth" onClick={() => this.monthUser(1)}>最近1个月注册</RadioButton>
+          <RadioButton value="last3month" onClick={() => this.monthUser(3)}>最近3个月注册</RadioButton>
         </RadioGroup>
         <Search
           className={styles.extraContentSearch}
-          placeholder="请输入"
-          onSearch={() => ({})}
+          placeholder="请输入用户名"
+          enterButton
+          onSearch={value => this.handleSearch(value)}
         />
       </div>
     );
 
     const paginationProps = {
-      showSizeChanger: true,
+      // showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pagination.pageSize,
       total: data === undefined ? 0 : data.count,
@@ -172,13 +270,13 @@ export default class UserList extends PureComponent {
           <Card bordered={false}>
             <Row>
               <Col sm={8} xs={24}>
-                <Info title="所有用户" value={`${data.count}个用户`} bordered />
+                <Info title="所有用户" value={`${data.count === undefined ? (data.results === undefined ? 0 : data.results.length) : data.count}个用户`} bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="活跃用户" value="0个用户" bordered />
+                <Info title="活跃用户（本周有登录的用户）" value={`${weeklist.results === undefined ? 0 : weeklist.results.length}个用户`} bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="本月新增用户" value="0个用户" />
+                <Info title="本月新增用户" value={`${mountlist.results === undefined ? 0 : mountlist.results.length}个用户`} />
               </Col>
             </Row>
           </Card>
@@ -196,6 +294,7 @@ export default class UserList extends PureComponent {
               loading={loading}
               pagination={paginationProps}
               dataSource={data.results}
+              // onChange={this.handleListChange}
               // onChange={this.handleListChange}
               renderItem={item => (
                 <List.Item
