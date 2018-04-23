@@ -30,7 +30,7 @@ export default {
     *fetchUserLastMount({ payload }, { call, put }) {
       const response = yield call(getUserLastMount, payload);
       yield put({
-        type: 'changeUsers',
+        type: 'changeLastMountUsers',
         payload: response,
       });
     },
@@ -67,11 +67,11 @@ export default {
     changeLastMountUsers(state, action) {
       return {
         ...state,
-        data: action.payload,
-        // data: {
-        //   results: action.payload,
-        //   count: action.payload.results.length,
-        // },
+        // data: action.payload,
+        data: {
+          results: action.payload.results,
+          count: action.payload.results.length,
+        },
       };
     },
     changeThisMountUsers(state, action) {
