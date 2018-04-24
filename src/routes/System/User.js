@@ -174,15 +174,14 @@ export default class UserList extends PureComponent {
     }
   }
 
+
   handleSearch = (value) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'usermodel/requireQuery',
       payload: {
         where: {
-          username: {
-            $regex: `(?i)${value}`,
-          },
+          $or: [{ username: { $regex: `(?i)${value}` } }, { mobile: { $regex: `(?i)${value}` } }],
         },
       },
     }).then(() => {
@@ -218,7 +217,7 @@ export default class UserList extends PureComponent {
         </RadioGroup>
         <Search
           className={styles.extraContentSearch}
-          placeholder="请输入用户名"
+          placeholder="请输入用户名或者手机的提示"
           enterButton
           onSearch={value => this.handleSearch(value)}
         />
@@ -288,7 +287,7 @@ export default class UserList extends PureComponent {
                 <Info title="所有用户" value={`${data.count === undefined ? (data.results === undefined ? 0 : data.results.length) : data.count}个用户`} bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="活跃用户（本周有登录的用户）" value={`${weeklist.results === undefined ? 0 : weeklist.results.length}个用户`} bordered />
+                <Info title="活跃用户（本周登录的用户）" value={`${weeklist.results === undefined ? 0 : weeklist.results.length}个用户`} bordered />
               </Col>
               <Col sm={8} xs={24}>
                 <Info title="本月新增用户" value={`${mountlist.results === undefined ? 0 : mountlist.results.length}个用户`} />
