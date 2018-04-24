@@ -180,10 +180,22 @@ export default class UserList extends PureComponent {
       type: 'usermodel/requireQuery',
       payload: {
         where: {
-          username: value,
+          username: {
+            $regex: `(?i)${value}`,
+          },
         },
       },
-    }).then(message.success('查询成功'));
+    }).then(() => {
+      message.success('查询成功');
+      const { usermodel: { data } } = this.props;
+      this.setState({
+        pagination: {
+          count: data === undefined ? 0 : data.results.length,
+          pageSize: data === undefined ? 0 : data.results.length,
+          current: 1,
+        },
+      });
+    });
   };
 
   render() {
@@ -221,6 +233,7 @@ export default class UserList extends PureComponent {
       showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} 总`,
       current: this.state.pagination.current,
       onChange: this.handlePageChange,
+      hideOnSinglePage: true,
     };
 
 
