@@ -124,7 +124,7 @@ export default class UserList extends PureComponent {
   //   });
   // };
   monthUser = (val) => {
-    const { dispatch, usermodel: { data } } = this.props;
+    const { dispatch } = this.props;
     if (val === 0) {
       const parsedata = {
         limit: 3,
@@ -135,6 +135,7 @@ export default class UserList extends PureComponent {
         type: 'usermodel/fetchUser',
         payload: parsedata,
       }).then(() => {
+        const { usermodel: { data } } = this.props;
         this.setState({
           pagination: {
             count: data === undefined ? 0 : data.results.length,
@@ -161,6 +162,7 @@ export default class UserList extends PureComponent {
           count: true,
         },
       }).then(() => {
+        const { usermodel: { data } } = this.props;
         this.setState({
           pagination: {
             count: data === undefined ? 0 : data.results.length,

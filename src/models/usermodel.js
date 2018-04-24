@@ -51,7 +51,7 @@ export default {
     *requireQuery({ payload }, { call, put }) {
       const response = yield call(userRequireQuery, payload);
       yield put({
-        type: 'changeUsers',
+        type: 'changeLastMountUsers',
         payload: response,
       });
     },
