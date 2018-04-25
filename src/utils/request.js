@@ -107,13 +107,20 @@ export function requestParams2Url(params) {
   if (params === undefined) {
     return url;
   }
-  if (params.where !== undefined) {
-    url += url.length > 0 ? '&' : '';
-    url += `where=${JSON.stringify(params.where)}`;
+  if (params.where) {
+    url += `${(url.length > 0 ? '&' : '')}where=${JSON.stringify(params.where)}`;
   }
-  if (params.include !== undefined) {
-    url += url.length > 0 ? '&' : '';
-    url += `include=${params.include}`;
+  if (params.include) {
+    url += `${(url.length > 0 ? '&' : '')}include=${params.include}`;
+  }
+  if (params.count) {
+    url += `${(url.length > 0 ? '&' : '')}count=${params.count}`;
+  }
+  if (params.limit) {
+    url += `${url.length > 0 ? '&' : ''}limit=${params.limit}`;
+  }
+  if (params.skip) {
+    url += `${url.length > 0 ? '&' : ''}skip=${params.skip}`;
   }
   return url.length > 0 ? `?${url}` : url;
 }
