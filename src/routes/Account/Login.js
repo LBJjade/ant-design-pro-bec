@@ -21,16 +21,7 @@ export default class LoginPage extends Component {
   }
 
   handleSubmit = (err, values) => {
-    // const { type } = this.state;
     if (!err) {
-      // this.props.dispatch({
-      //   type: 'login/login',
-      //   payload: {
-      //     ...values,
-      //     emailVerified: true,
-      //     // type,
-      //   },
-      // });
       const emailReg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
       if (emailReg.test(values.username)) {
         this.props.dispatch({
@@ -39,7 +30,6 @@ export default class LoginPage extends Component {
             email: values.username,
             password: values.password,
             emailVerified: true,
-            // type,
           },
         });
       } else {

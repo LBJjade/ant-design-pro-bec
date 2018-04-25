@@ -203,7 +203,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['account'], () => import('../routes/Account/VerifyEmail')),
     },
     '/system/userlist': {
-      component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/UserList')),
+      component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/User')),
     },
     '/system/usertable': {
       component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/UserTable')),

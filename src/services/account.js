@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars,prefer-destructuring */
 import { stringify } from 'qs';
-import request, {requestParams2Url} from '../utils/request';
 import _ from 'lodash';
+import request, { requestParams2Url } from '../utils/request';
+
 
 export async function getUsers(params) {
   return request(`/api/users${requestParams2Url(params)}`, {
@@ -37,6 +39,31 @@ export async function putUser(params) {
 export async function getLogin(params) {
   return request(`/api/login?${stringify(params)}`, {
     method: 'GET',
+  });
+}
+
+export async function changeLogin(id, ip) {
+  const dataTime = new Date().toISOString();
+  // const time = dataTime.prototype.toISOString();
+  const objectId = id;
+  const data = {
+    login: {
+      __type: 'Date',
+      iso: dataTime,
+    },
+    loginTime: dataTime,
+    loginIp: ip.result,
+  };
+  return request(`/api/users/${objectId}`, {
+    method: 'PUT',
+    headers: { 'X-Parse-Session-Token': localStorage.token },
+    body: data,
+  });
+}
+
+export async function getIP() {
+  return request('/api/functions/clientip', {
+    method: 'POST',
   });
 }
 
