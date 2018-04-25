@@ -1,7 +1,8 @@
+import { message } from 'antd';
 import { getUsers, getUserMe, getVerifyEmail, putUser } from '../services/account';
 import { getNotices, putNotice } from '../services/notice';
-import store from "../index";
-import { message} from 'antd';
+import { deleteFile } from '../services/file';
+import store from '../index';
 
 export default {
   namespace: 'account',
@@ -98,15 +99,21 @@ export default {
       });
     },
     *coverUser({ payload }, { call, put }) {
-      yield put({ type: 'changeLoading', payload: true});
+      yield put({ type: 'changeLoading', payload: true });
       const res = yield call(putUser, payload);
       if (res.error === undefined) {
-        yield put({ type: 'resetUser', payload: { ...this.state.currentUser, ...res} });
+        yield put({ type: 'resetUser', payload: { ...payload, ...res } });
         message.success('保存成功！', 3);
       } else {
         message.error(`保存失败！${res.error}`, 5);
       }
-      yield put({ type: 'changeLoading', payload: false});
+      yield put({ type: 'changeLoading', payload: false });
+    },
+    *removeFile({ payload }, { call }) {
+      const res = yield call(deleteFile, payload);
+      if (res.error) {
+        message.error(`删除文件失败！${res.error}`, 10);
+      }
     },
   },
 
@@ -172,10 +179,13 @@ export default {
         existMobile: payload,
       };
     },
-    resetUser(state, { payload }) {
+    resetUser(state, action) {
       return {
         ...state,
-        currentUser: payload,
+        currentUser: {
+          ...state.currentUser,
+          ...action.payload,
+        },
       };
     },
   },
