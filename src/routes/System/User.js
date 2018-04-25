@@ -17,7 +17,7 @@ const { Search } = Input;
 export default class User extends PureComponent {
   state = {
     pagination: {
-      pageSize: 3,
+      pageSize: 10,
       current: 1,
       total: 0,
       count: {},
@@ -103,7 +103,7 @@ export default class User extends PureComponent {
     const { dispatch } = this.props;
     if (val === 0) {
       const parsedata = {
-        limit: 3,
+        limit: 10,
         skip: 0,
         count: true,
       };
