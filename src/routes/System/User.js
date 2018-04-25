@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import { Card, Row, Col, Input, Radio, List, Avatar, Menu, Dropdown, Icon, message } from 'antd';
-import styles from './UserList.less';
+import styles from './User.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const RadioButton = Radio.Button;
@@ -11,11 +11,11 @@ const RadioGroup = Radio.Group;
 const { Search } = Input;
 // const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-@connect(({ usermodel, loading }) => ({
-  usermodel,
-  loading: loading.models.usermodel,
+@connect(({ user, loading }) => ({
+  user,
+  loading: loading.models.user,
 }))
-export default class UserList extends PureComponent {
+export default class User extends PureComponent {
   state = {
     pagination: {
       pageSize: 3,
@@ -39,11 +39,11 @@ export default class UserList extends PureComponent {
     now1.setDate(now.getDate() - 7);
     const thisweek = now1.toISOString();
     dispatch({
-      type: 'usermodel/fetchUser',
+      type: 'user/fetchUser',
       payload: parsedata,
     });
     dispatch({
-      type: 'usermodel/fetchUserThisMount',
+      type: 'user/fetchUserThisMount',
       payload: {
         where: {
           createdAt: {
@@ -57,7 +57,7 @@ export default class UserList extends PureComponent {
       },
     });
     dispatch({
-      type: 'usermodel/fetchUserThisWeek',
+      type: 'user/fetchUserThisWeek',
       payload: {
         where: {
           login: {
@@ -80,7 +80,7 @@ export default class UserList extends PureComponent {
       count: true,
     };
     dispatch({
-      type: 'usermodel/fetchUser',
+      type: 'user/fetchUser',
       payload: parsedata,
     });
     this.setState({
@@ -113,7 +113,7 @@ export default class UserList extends PureComponent {
   //   }
   //
   //   dispatch({
-  //     type: 'usermodel/fetchUser',
+  //     type: 'user/fetchUser',
   //     payload: params,
   //   });
   //   this.setState({
@@ -132,10 +132,10 @@ export default class UserList extends PureComponent {
         count: true,
       };
       dispatch({
-        type: 'usermodel/fetchUser',
+        type: 'user/fetchUser',
         payload: parsedata,
       }).then(() => {
-        const { usermodel: { data } } = this.props;
+        const { user: { data } } = this.props;
         this.setState({
           pagination: {
             count: data === undefined ? 0 : data.results.length,
@@ -149,7 +149,7 @@ export default class UserList extends PureComponent {
       now.setMonth(now.getMonth() - val);
       const date = now.toISOString();
       dispatch({
-        type: 'usermodel/fetchUserLastMount',
+        type: 'user/fetchUserLastMount',
         payload: {
           where: {
             createdAt: {
@@ -162,7 +162,7 @@ export default class UserList extends PureComponent {
           count: true,
         },
       }).then(() => {
-        const { usermodel: { data } } = this.props;
+        const { user: { data } } = this.props;
         this.setState({
           pagination: {
             count: data === undefined ? 0 : data.results.length,
@@ -178,7 +178,7 @@ export default class UserList extends PureComponent {
   handleSearch = (value) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'usermodel/requireQuery',
+      type: 'user/requireQuery',
       payload: {
         where: {
           $or: [{ username: { $regex: `(?i)${value}` } }, { mobile: { $regex: `(?i)${value}` } }],
@@ -186,7 +186,7 @@ export default class UserList extends PureComponent {
       },
     }).then(() => {
       message.success('查询成功');
-      const { usermodel: { data } } = this.props;
+      const { user: { data } } = this.props;
       this.setState({
         pagination: {
           count: data === undefined ? 0 : data.results.length,
@@ -198,7 +198,7 @@ export default class UserList extends PureComponent {
   };
 
   render() {
-    const { usermodel: { data, mountlist, weeklist }, loading } = this.props;
+    const { user: { data, mountlist, weeklist }, loading } = this.props;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>

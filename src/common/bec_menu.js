@@ -179,7 +179,7 @@ const menuData = [{
   }, {
     name: '用户管理',
     icon: 'user',
-    path: 'userlist',
+    path: 'user',
     // path: 'usertable',
   }, {
     name: '角色管理',

@@ -202,11 +202,8 @@ export const getRouterData = (app) => {
     '/apps/bec/verify_email': {
       component: dynamicWrapper(app, ['account'], () => import('../routes/Account/VerifyEmail')),
     },
-    '/system/userlist': {
-      component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/User')),
-    },
-    '/system/usertable': {
-      component: dynamicWrapper(app, ['usermodel'], () => import('../routes/System/UserTable')),
+    '/system/user': {
+      component: dynamicWrapper(app, ['user'], () => import('../routes/System/User')),
     },
     '/humanresources/employee': {
       component: dynamicWrapper(app, [], () => import('../routes/HumanResources/Employee')),

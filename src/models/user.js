@@ -1,50 +1,89 @@
-import { query as queryUsers, queryCurrent } from '../services/user';
+/* eslint-disable no-dupe-keys */
+import { getUsers, getUserLastMount, getUserThisMount, getUserThisWeek, userRequireQuery } from '../services/user';
 
 export default {
   namespace: 'user',
 
   state: {
-    list: [],
-    currentUser: {},
+    data: {
+      results: [],
+      count: 0,
+    },
+    mountlist: {
+      results: [],
+      count: 0,
+    },
+    weeklist: {
+      results: [],
+      count: 0,
+    },
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
+    *fetchUser({ payload }, { call, put }) {
+      const response = yield call(getUsers, payload);
       yield put({
-        type: 'save',
+        type: 'changeUsers',
         payload: response,
       });
     },
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+    *fetchUserLastMount({ payload }, { call, put }) {
+      const response = yield call(getUserLastMount, payload);
       yield put({
-        type: 'saveCurrentUser',
+        type: 'changeLastMountUsers',
+        payload: response,
+      });
+    },
+    *fetchUserThisMount({ payload }, { call, put }) {
+      const response = yield call(getUserThisMount, payload);
+      yield put({
+        type: 'changeThisMountUsers',
+        payload: response,
+      });
+    },
+    *fetchUserThisWeek({ payload }, { call, put }) {
+      const response = yield call(getUserThisWeek, payload);
+      yield put({
+        type: 'changeThisWeekUsers',
+        payload: response,
+      });
+    },
+    *requireQuery({ payload }, { call, put }) {
+      const response = yield call(userRequireQuery, payload);
+      yield put({
+        type: 'changeLastMountUsers',
         payload: response,
       });
     },
   },
 
   reducers: {
-    save(state, action) {
+    changeUsers(state, action) {
       return {
         ...state,
-        list: action.payload,
+        data: action.payload,
       };
     },
-    saveCurrentUser(state, action) {
+    changeLastMountUsers(state, action) {
       return {
         ...state,
-        currentUser: action.payload,
-      };
-    },
-    changeNotifyCount(state, action) {
-      return {
-        ...state,
-        currentUser: {
-          ...state.currentUser,
-          notifyCount: action.payload,
+        // data: action.payload,
+        data: {
+          results: action.payload.results,
+          count: action.payload.results.length,
         },
+      };
+    },
+    changeThisMountUsers(state, action) {
+      return {
+        ...state,
+        mountlist: action.payload,
+      };
+    },
+    changeThisWeekUsers(state, action) {
+      return {
+        ...state,
+        weeklist: action.payload,
       };
     },
   },
