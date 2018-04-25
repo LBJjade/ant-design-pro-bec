@@ -67,7 +67,7 @@ export default class User extends PureComponent {
       type: 'user/fetchUserByLogin',
       payload: {
         where: {
-          login: {
+          loginDatetime: {
             $gt: {
               __type: 'Date',
               iso: thisWeek,
@@ -211,16 +211,16 @@ export default class User extends PureComponent {
     };
 
 
-    const ListContent = ({ data: { createdAt, loginTime, loginIp } }) => (
+    const ListContent = ({ data: { createdAt, loginDatetime, loginIp } }) => (
       <div className={styles.listContent}>
-        {loginTime === undefined ? '' : (
-          <div className={styles.listContentItem} style={{ marginRight: -30, width: 140 }}>
-            <span>登陆时间</span>
-            <p><Icon type="clock-circle-o" /> { loginTime === undefined ? '' : moment(loginTime).format('YYYY-MM-DD hh:mm') }</p>
+        {loginDatetime === undefined ? '' : (
+          <div className={styles.listContentItem} style={{ marginRight: -40, width: 140 }}>
+            <span>最后登录时间</span>
+            <p><Icon type="clock-circle-o" /> { moment(loginDatetime).format('YYYY-MM-DD hh:mm') }</p>
           </div>
         )}
         {loginIp === undefined ? '' : (
-          <div className={styles.listContentItem} style={{ marginRight: -30, width: 140 }}>
+          <div className={styles.listContentItem} style={{ marginRight: -20, width: 140 }}>
             <span>最后登录IP</span>
             <p><Icon type="environment-o" /> {loginIp} </p>
           </div>

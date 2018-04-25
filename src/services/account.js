@@ -17,14 +17,6 @@ export async function postUser(params) {
   });
 }
 
-// export async function putUser(params) {
-//   const { objectid, data } = params;
-//   return request(`/api/users/${objectid}`, {
-//     method: 'PUT',
-//     headers: { 'X-Parse-Session-Token': localStorage.token },
-//     body: data,
-//   });
-// }
 export async function putUser(params) {
   const param = _.clone(params);
   const objectId = param.objectId;
@@ -42,26 +34,7 @@ export async function getLogin(params) {
   });
 }
 
-export async function changeLogin(id, ip) {
-  const dataTime = new Date().toISOString();
-  // const time = dataTime.prototype.toISOString();
-  const objectId = id;
-  const data = {
-    login: {
-      __type: 'Date',
-      iso: dataTime,
-    },
-    loginTime: dataTime,
-    loginIp: ip.result,
-  };
-  return request(`/api/users/${objectId}`, {
-    method: 'PUT',
-    headers: { 'X-Parse-Session-Token': localStorage.token },
-    body: data,
-  });
-}
-
-export async function getIP() {
+export async function getFunctionClientip() {
   return request('/api/functions/clientip', {
     method: 'POST',
   });
