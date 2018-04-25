@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Form, Avatar, Row, Col, Card, Input, Icon, Select, Upload, message, Button, Divider } from 'antd';
+import moment from 'moment';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Setting.less';
 
 
-@connect(({account}) => ({
+@connect(({ account }) => ({
   account,
   loading: account.loading,
   currentUser: account.currentUser,
@@ -16,42 +17,7 @@ import styles from './Setting.less';
 @Form.create()
 export default class Setting extends Component {
   state = {
-    prefix: '86',
-    imageUrl: '',
-    isDirty: false,
-  };
-
-  onChange = (e) => {
-    const { target } = e;
-    if (target !== undefined) {
-      if (target.id === 'nickname') {
-        this.setState({ isDirty: !(this.props.currentUser.nickname === target.value) });
-      }
-      if (target.id === 'mobile') {
-        this.setState({ isDirty: !(this.props.currentUser.mobile === target.value) });
-      }
-    }
-    // this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-    // console.log(e);
-  };
-
-  greeting = () => {
-    const hour = new Date().getHours();
-    const greets = [
-      {greeting: '夜深了', dayPart: 6},
-      {greeting: '早安', dayPart: 10},
-      {greeting: '上午好', dayPart: 12},
-      {greeting: '中午好', dayPart: 14},
-      {greeting: '下午好', dayPart: 18},
-      {greeting: '晚安', dayPart: 24}];
-    const greet = greets.filter(item => item.dayPart >= hour);
-    return greet[0].greeting;
-  };
-
-  changePrefix = (value) => {
-    this.setState({
-      prefix: value,
-    });
+    uploading: false,
   };
 
   handleSubmit = (e) => {
@@ -62,7 +28,6 @@ export default class Setting extends Component {
           type: 'account/coverUser',
           payload: {
             ...values,
-            prefix: this.state.prefix,
             objectId: this.props.currentUser.objectId,
           },
         });
@@ -82,7 +47,7 @@ export default class Setting extends Component {
             payload: {
               where: {
                 objectId: { $ne: this.props.currentUser.objectId },
-                email: { $regex: `^${value}$`, $options: 'i', },
+                email: { $regex: `^${value}$`, $options: 'i' },
               },
             },
           }).then(() => {
@@ -115,63 +80,115 @@ export default class Setting extends Component {
     }
   };
 
-  changeAvatar = (info) => {
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl => this.setState({
-        imageUrl,
-        loading: false,
-      }));
-    }
-  };
-
-  getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  };
-
   beforeUpload = (file) => {
-    const isJPG = file.type === 'image/jpeg';
+    const isJPG = (file.type === 'image/jpeg' || file.type === 'image/png');
     if (!isJPG) {
-      message.error('You can only upload JPG file!');
+      message.error('只能上传图片文件！');
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    // const isLt2M = file.size / 1024 / 1024 < 2;
+    // if (!isLt2M) {
+    //   message.error('Image must smaller than 2MB!');
+    // }
+    const isLt2M = file.size / 1024 / 1024 < 1;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('图片大小必须小于1MB！');
     }
     return isJPG && isLt2M;
   };
 
-  render() {
-    const { form, loading, currentUser } = this.props;
-    const { getFieldDecorator } = form;
+  handleSuccess = (response) => {
+    const { currentUser, dispatch } = this.props;
+    const avatarUrl = response.url;
 
-    const { prefix, isDirty } = this.state;
-
-    let greetingWord = '';
-    let subTitle = '';
-
-
-    // const greetingWord = this.greeting();
-    if (currentUser.username) {
-      greetingWord = `${ this.greeting() }，${currentUser.nickname || currentUser.username || ''}，祝你开心每一天！`;
-      subTitle = '交互专家 | 广州品清科技有限公司';
+    if (currentUser.avatar) {
+      const filename = currentUser.avatar.substr(currentUser.avatar.lastIndexOf('/') + 1);
+      dispatch({
+        type: 'account/removeFile',
+        payload: filename,
+      });
     }
 
-    const pageHeaderContent = (
-      <div className={styles.pageHeaderContent}>
-        <div className={styles.avatar}>
-          <Avatar size="large" src={currentUser.avatar} />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.contentTitle}>{ greetingWord }</div>
-          <div>{ subTitle }</div>
-        </div>
+    if (avatarUrl) {
+      dispatch({
+        type: 'account/coverUser',
+        payload: {
+          avatar: response.url,
+          objectId: currentUser.objectId,
+        },
+      });
+    }
+  };
+
+  customRequest = ({ onSuccess, onError, file }) => {
+    const reader = new FileReader();
+
+    reader.onloadstart = () => {
+      // 这个事件在读取开始时触发
+    };
+
+    // reader.onprogress = (p) => {
+    //   // 这个事件在读取进行中定时触发
+    // };
+
+    reader.onload = () => {
+      // 这个事件在读取成功结束后触发
+    };
+
+    reader.onloadend = () => {
+      // 这个事件在读取结束后，无论成功或者失败都会触发
+      if (reader.error) {
+        onError(reader.error);
+      } else {
+        // 构造 XMLHttpRequest 对象，发送文件 Binary 数据
+        const xhr = new XMLHttpRequest();
+        const newFilename = (name) => {
+          const ext = name.lastIndexOf('.');
+          const newname = moment(new Date()).format('YYMMDD');
+
+          return `${newname}${name.substring(ext)}`;
+        };
+        xhr.open(
+          /* method */ 'POST',
+          /* target url */ `/api/files/${newFilename(file.name)}`
+        );
+        xhr.overrideMimeType('application/octet-stream');
+        xhr.setRequestHeader('X-Parse-Application-Id', 'bec');
+        xhr.responseType = 'json';
+        if (!XMLHttpRequest.prototype.sendAsBinary) {
+          const buffer = (datastr) => {
+            function byteValue(x) {
+              return x.charCodeAt(0) & 0xff;
+            }
+            const ords = Array.prototype.map.call(datastr, byteValue);
+            const ui8a = new Uint8Array(ords);
+            return ui8a.buffer;
+          };
+          xhr.send(buffer(reader.result));
+        } else {
+          xhr.sendAsBinary(reader.result);
+        }
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200 || xhr.status === 201) {
+              onSuccess(xhr.response);
+            }
+          }
+        };
+      }
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
+  render() {
+    const { form, currentUser, loading } = this.props;
+    const { getFieldDecorator } = form;
+    const { avatar } = currentUser;
+
+    const uploadButton = (
+      <div>
+        <Icon type={this.state.uploading ? 'loading' : 'plus'} />
+        <div className="ant-upload-text">Upload</div>
       </div>
     );
 
@@ -184,70 +201,52 @@ export default class Setting extends Component {
       wrapperCol: { span: 24, offset: 6 },
     };
 
-    const uploadButton = (
-      <div>
-        <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    );
-    const imageUrl = this.state.imageUrl;
-
-    const props = {
-      name: 'file',
-      action: 'https://parse-server-instances.herokuapp.com/parse/files/doodle.png',
-      headers: {
-        'Content-Type': 'image/jpeg',
-        'X-Parse-Application-Id': 'bec',
-      },
-      onChange(info) {
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-          message.error(`${info.file.name} file upload failed.`);
-        }
-      },
-    };
-
     return (
       <PageHeaderLayout
-        content={pageHeaderContent}
+        title="个人设置"
+        logo={<Avatar src={avatar} />}
       >
+        <Card title="基础设置">
           <Row gutter={24}>
-            <Col xl={8} lg={24} md={24} sm={24} xs={24}>
-              <Card>
-                <Upload {...props}>
-                  <Button>
-                    <Icon type="upload" /> Click to Upload
-                  </Button>
-                </Upload>
-              </Card>
-            </Col>
-            <Col xl={16} lg={24} md={24} sm={24} xs={24}>
-            <Card title='基础设置'>
-              <Form onSubmit={this.handleSubmit}>
-                <Form.Item { ...formItemLayout } label='注册邮箱：'>
-                  <Icon type="mail" style={{ margin:10 }} />{ currentUser.email || '' }
-                </Form.Item>
-                <Divider />
-                <Form.Item { ...formItemLayout } label='昵称：'>
+            <Form onSubmit={this.handleSubmit}>
+              <Form.Item {...formItemLayout} label="注册邮箱：">
+                <Icon type="mail" style={{ margin: 10 }} />{ currentUser.email || '' }
+              </Form.Item>
+              <Divider />
+              <Col xl={4} lg={24} md={24} sm={24} xs={24}>
+                <Card bordered={false}>
+                  <Upload
+                    name="avatar"
+                    accept="image/*"
+                    listType="picture-card"
+                    showUploadList={false}
+                    className={styles.uploader}
+                    onChange={this.handleChange}
+                    beforeUpload={this.beforeUpload}
+                    customRequest={this.customRequest}
+                    onSuccess={this.handleSuccess}
+                  >
+                    {avatar ? <img src={avatar} alt="" style={{ width: 128, height: 128 }} /> : uploadButton}
+                  </Upload>
+                </Card>
+              </Col>
+              <Col xl={20} lg={24} md={24} sm={24} xs={24}>
+                <Form.Item {...formItemLayout} label="昵称：">
                   { getFieldDecorator('nickname', {
                     initialValue: currentUser.nickname || '',
                     rules: [
                       { fieldname: 'nickname', required: false, min: 3, message: '昵称长度不能小于 3 ' },
                     ],
-                  })(<Input
-                    placeholder={currentUser.nickname || '请输入您的昵称.'}
-                    prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                    onChange={e => this.onChange(e)} />)}
+                  })(
+                    <Input
+                      placeholder={currentUser.nickname || '请输入您的昵称.'}
+                      prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                    />)}
                 </Form.Item>
-                <Form.Item { ...formItemLayout } label='手机号码'>
+                <Form.Item {...formItemLayout} label="手机号码">
                   <Input.Group compact>
                     <Select
-                      value={prefix}
-                      onChange={this.changePrefix}
+                      value="86"
                       style={{ width: '20%' }}
                     >
                       <Select.Option value="86">+86</Select.Option>
@@ -266,18 +265,17 @@ export default class Setting extends Component {
                       <Input
                         style={{ width: '80%' }}
                         placeholder={currentUser.mobile || '请输入您的手机号码.'}
-                        onChange={e => this.onChange(e)}
                       />
                     )}
                   </Input.Group>
                 </Form.Item>
                 <Form.Item {...submitFormLayout} style={{ marginTop: 32 }}>
-                  <Button type="primary" htmlType="submit" loading={loading} disabled={!isDirty}>保存</Button>
+                  <Button type="primary" htmlType="submit" loading={loading}>保存</Button>
                 </Form.Item>
-              </Form>
-            </Card>
-            </Col>
+              </Col>
+            </Form>
           </Row>
+        </Card>
       </PageHeaderLayout>
     );
   }
