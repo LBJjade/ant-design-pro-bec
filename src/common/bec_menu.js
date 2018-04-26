@@ -147,6 +147,10 @@ const menuData = [{
     name: '个人设置',
     path: 'setting',
     // hideInMenu: true,
+  }, {
+    name: '个人信息',
+    path: 'information',
+    // hideInMenu: true,
   }],
 }, {
   name: '使用文档',
