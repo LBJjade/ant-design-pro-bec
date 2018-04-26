@@ -12,7 +12,7 @@ export default {
     },
   },
   alias: {
-    'components': path.resolve(__dirname, 'src/components/'),
+    components: path.resolve(__dirname, 'src/components/'),
   },
   ignoreMomentLocale: true,
   theme: './src/theme.js',
@@ -23,16 +23,16 @@ export default {
   publicPath: '/',
   hash: true,
   proxy: {
-    "/api": {
-      "changeOrigin": true,
-      "target": "https://parse-server-instances.herokuapp.com/",
-      "pathRewrite": { "^/api":"parse" }
+    '/api': {
+      changeOrigin: true,
+      target: 'https://parse-server-instances.herokuapp.com/',
+      pathRewrite: { '^/api': 'parse' },
     },
-    "/mail": {
-      "changeOrigin": true,
-      "target": "https://parse-server-instances.herokuapp.com/",
-      "pathRewrite": { "^/mail":"parse/apps/bec" }
-    }
-  }
+    '/mail': {
+      changeOrigin: true,
+      target: 'https://parse-server-instances.herokuapp.com/',
+      pathRewrite: { '^/mail': 'parse/apps/bec' },
+    },
+  },
 
 };
