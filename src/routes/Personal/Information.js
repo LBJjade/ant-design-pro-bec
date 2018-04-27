@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
+import { Link } from 'dva/router';
 import { List, Card, Avatar, Tabs, Tag, Spin } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -59,7 +60,7 @@ export default class BasicList extends PureComponent {
     });
   }
 
-  mover = (id) => {
+  changeRead = (id) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'information/coverInformation',
@@ -125,12 +126,12 @@ export default class BasicList extends PureComponent {
                   loading={loading}
                   dataSource={notice.results}
                   renderItem={item => (
-                    <div style={{ opacity: item.read === true ? '' : '0.6' }}>
+                    <div style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
                       <List.Item>
                         <List.Item.Meta
                           avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                          title={<a href={item.id}>{item.username}</a>}
-                          description={<span> {item.title} </span>}
+                          title={<Link to={`/personal/detail/${item.objectId}`}>{item.title}</Link>}
+                          description={<span> {item.description} </span>}
                         />
                         <ListContent data={item} />
                       </List.Item>
@@ -145,12 +146,12 @@ export default class BasicList extends PureComponent {
                   loading={loading}
                   dataSource={news.results}
                   renderItem={item => (
-                    <div style={{ opacity: item.read === true ? '' : '0.6' }}>
+                    <div style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
                       <List.Item>
                         <List.Item.Meta
                           avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                          title={<a href={item.id}>{item.username}</a>}
-                          description={<span> {item.title}<br />{item.description} </span>}
+                          title={<Link to={`/personal/detail/${item.objectId}`}>{item.title}</Link>}
+                          description={<span> {item.description} </span>}
                         />
                         <ListContent data={item} />
                       </List.Item>
@@ -165,11 +166,12 @@ export default class BasicList extends PureComponent {
                   loading={loading}
                   dataSource={need.results}
                   renderItem={item => (
-                    <div classID={`${item.objectId}`} style={{ opacity: item.read === true ? '' : '0.6' }} >
+                    <div classID={`${item.objectId}`} style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
                       <List.Item>
                         <List.Item.Meta
                           avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                          description={<span> {item.title}<br />{item.description} </span>}
+                          title={<Link to={`/personal/detail/${item.objectId}`}>{item.title}</Link>}
+                          description={<span>{item.description}</span>}
                         />
                         <Tag color={item.status === undefined ? '' : color[`${item.status}`]}>{item.extra}</Tag>
                         <ListContent data={item} />

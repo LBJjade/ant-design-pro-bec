@@ -150,7 +150,11 @@ const menuData = [{
   }, {
     name: '个人信息',
     path: 'information',
-    // hideInMenu: true,
+    // children: [{
+    //   name: '信息详情页',
+    //   path: 'detail',
+    //   // hideInMenu: true,
+    // }],
   }],
 }, {
   name: '使用文档',

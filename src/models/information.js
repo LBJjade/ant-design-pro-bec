@@ -6,8 +6,6 @@ export default {
   state: {
     data: {
       results: [],
-      count: 0,
-      state: [],
     },
     notice: {
       results: [],
@@ -27,6 +25,13 @@ export default {
   },
 
   effects: {
+    *fetch({ payload }, { call, put }) {
+      const response = yield call(getInformation, payload);
+      yield put({
+        type: 'changedata',
+        payload: response,
+      });
+    },
     *fetchNotice({ payload }, { call, put }) {
       const response = yield call(getInformation, payload);
       yield put({
@@ -54,6 +59,12 @@ export default {
   },
 
   reducers: {
+    changedata(state, action) {
+      return {
+        ...state,
+        data: action.payload,
+      };
+    },
     changeNotice(state, action) {
       return {
         ...state,

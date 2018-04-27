@@ -196,6 +196,9 @@ export const getRouterData = (app) => {
     '/personal/information': {
       component: dynamicWrapper(app, ['information'], () => import('../routes/Personal/Information')),
     },
+    '/personal/detail/:id': {
+      component: dynamicWrapper(app, ['information'], () => import('../routes/Personal/Detail')),
+    },
     '/apps/bec/request_password_reset': {
       component: dynamicWrapper(app, ['forgetpassword'], () => import('../routes/Account/ForgetPassword/ReceivePasswordReset')),
     },

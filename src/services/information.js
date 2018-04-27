@@ -10,7 +10,7 @@ export async function getInformation(params) {
 export async function putInformation(params) {
   const editid = params.ojId;
   const data = params.fields;
-  request(`/api/classes/noticesnotices/${editid}`, {
+  request(`/api/classes/notices/${editid}`, {
     method: 'PUT',
     body: data,
   });
