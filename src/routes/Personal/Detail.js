@@ -58,7 +58,7 @@ export default class BasicProfile extends Component {
       },
       {
         title: '特别说明',
-        dataIndex: 'description',
+        dataIndex: 'extra',
         render: (val, record) => <Tag color={val === undefined ? '' : color[`${record.status}`]} style={{ marginRight: 0 }}>{val === undefined ? '暂无' : (val === undefined ? '暂无' : val)}</Tag>,
       },
       {
