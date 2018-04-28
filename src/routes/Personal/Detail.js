@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Card, Avatar, Form, Tag, Spin } from 'antd';
+import moment from 'moment';
+import { Card, Avatar, Form, Tag, Spin, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 @connect(({ information, loading }) => ({
@@ -39,6 +40,34 @@ export default class BasicProfile extends Component {
   render() {
     const { information: { data: { results } } } = this.props;
     const vaule = results[0];
+    const columns = [
+      {
+        title: '头像',
+        dataIndex: 'avatar',
+        render: val => <Avatar src={val === undefined ? '' : (val === undefined ? 'https://gw.alipayobjects.com/zos/rmsportal/kISTdvpyTAhtGxpovNWd.png' : vaule.avatar)} shape="square" size="large" />,
+      },
+      {
+        title: '信息标题',
+        dataIndex: 'title',
+        render: val => (val === undefined ? '暂无' : (val === undefined ? '暂无' : val)),
+      },
+      {
+        title: '信息详情',
+        dataIndex: 'description',
+        render: val => (val === undefined ? '暂无' : (val === undefined ? '暂无' : val)),
+      },
+      {
+        title: '特别说明',
+        dataIndex: 'description',
+        render: (val, record) => <Tag color={val === undefined ? '' : color[`${record.status}`]} style={{ marginRight: 0 }}>{val === undefined ? '暂无' : (val === undefined ? '暂无' : val)}</Tag>,
+      },
+      {
+        title: '时间',
+        dataIndex: 'createdAt',
+        sorter: true,
+        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      },
+    ];
     const color = {
       todo: '',
       processing: 'blue',
@@ -50,6 +79,13 @@ export default class BasicProfile extends Component {
         {
           this.state.loading ? <div style={{ width: '100%', height: '100%' }}><Spin /></div> : (
             <PageHeaderLayout title="信息详情页">
+              <Table
+                style={{ marginBottom: 24 }}
+                pagination={false}
+                dataSource={results}
+                columns={columns}
+                rowKey="id"
+              />
               <Card bordered={false}>
                 <Form
                   hideRequiredMark
