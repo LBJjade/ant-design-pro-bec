@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { List, Card, Avatar, Tabs, Tag, Spin } from 'antd';
+import { List, Card, Avatar, Tabs, Tag, Spin, message } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -14,15 +14,17 @@ import styles from './Information.less';
 }))
 export default class BasicList extends PureComponent {
   state = {
-    data: [],
     loading: false,
     hasMore: true,
     pagination: {
-      pageSize: 5,
+      pageSize: 3,
       current: 1,
       total: 0,
       count: {},
     },
+    noticeCount: 0,
+    newCount: 0,
+    needCount: 0,
   }
   componentDidMount() {
     const { dispatch } = this.props;
@@ -39,6 +41,10 @@ export default class BasicList extends PureComponent {
         },
         ...parsedata,
       },
+    }).then(() => {
+      this.setState({
+        noticeCount: this.state.noticeCount + 3,
+      });
     });
     dispatch({
       type: 'information/fetchNew',
@@ -48,6 +54,10 @@ export default class BasicList extends PureComponent {
         },
         ...parsedata,
       },
+    }).then(() => {
+      this.setState({
+        newCount: this.state.newCount + 3,
+      });
     });
     dispatch({
       type: 'information/fetchNeed',
@@ -57,6 +67,10 @@ export default class BasicList extends PureComponent {
         },
         ...parsedata,
       },
+    }).then(() => {
+      this.setState({
+        needCount: this.state.needCount + 3,
+      });
     });
   }
 
@@ -74,12 +88,17 @@ export default class BasicList extends PureComponent {
   }
 
   handleInfiniteOnLoad = () => {
-    let values = this.state.data;
+    const { information: { notice } } = this.props;
     this.setState({
       loading: true,
     });
-    if (values.length > 14) {
-      // information.warning('Infinite List loaded all');
+    const parsedata = {
+      limit: this.state.pagination.pageSize,
+      skip: this.state.noticeCount + 1,
+      count: true,
+    };
+    if (this.state.noticeCount === notice.count) {
+      message.warning('已经没有数据了');
       this.setState({
         hasMore: false,
         loading: false,
@@ -87,12 +106,17 @@ export default class BasicList extends PureComponent {
       return;
     }
     this.props.dispatch({
-      type: 'information/fetchMessage',
-      payload: {},
+      type: 'information/fetchNewNotice',
+      payload: {
+        where: {
+          type: '通知',
+        },
+        ...parsedata,
+      },
     }).then(() => {
-      values = values.concat(values.results);
       this.setState({
         loading: false,
+        noticeCount: this.state.noticeCount + 3,
       });
     });
   }
@@ -183,38 +207,36 @@ export default class BasicList extends PureComponent {
             </Tabs>
           </Card>
         </div>
-        <card>
-          <div className="demo-infinite-container">
-            <InfiniteScroll
-              initialLoad={false}
-              pageStart={0}
-              loadMore={this.handleInfiniteOnLoad}
-              hasMore={!this.state.loading && this.state.hasMore}
-              useWindow={false}
+        <div className="demo-infinite-container" style={{ height: '200px', overflow: 'auto', border: '1px solid #e8e8e8' }}>
+          <InfiniteScroll
+            initialLoad={false}
+            pageStart={0}
+            loadMore={this.handleInfiniteOnLoad}
+            hasMore={!this.state.loading && this.state.hasMore}
+            useWindow={false}
+          >
+            <List
+              dataSource={notice.results}
+              renderItem={item => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar src={item.avatar} style={{ color: item.read === true ? '' : 'red' }} shape="square" size="large" />}
+                    title={<a href={item.objectId}>{item.title}</a>}
+                    description={<span style={{ color: item.read === true ? '' : 'red' }}> {item.title}<br />{item.description} </span>}
+                  />
+                  <Tag color={item.status === undefined ? '' : color[`${item.status}`]} style={{ marginRight: 0 }}>{item.extra}</Tag>
+                  <ListContent data={item} />
+                </List.Item>
+                )}
             >
-              <List
-                dataSource={notice.results}
-                renderItem={item => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={<Avatar src={item.avatar} style={{ color: item.read === true ? '' : 'red' }} shape="square" size="large" />}
-                      title={<a href={item.objectId}>{item.title}</a>}
-                      description={<span style={{ color: item.read === true ? '' : 'red' }}> {item.title}<br />{item.description} </span>}
-                    />
-                    <Tag color={item.status === undefined ? '' : color[`${item.status}`]} style={{ marginRight: 0 }}>{item.extra}</Tag>
-                    <ListContent data={item} />
-                  </List.Item>
+              {this.state.loading && this.state.hasMore && (
+              <div className="demo-loading-container">
+                <Spin />
+              </div>
                 )}
-              >
-                {this.state.loading && this.state.hasMore && (
-                  <div className="demo-loading-container">
-                    <Spin />
-                  </div>
-                )}
-              </List>
-            </InfiniteScroll>
-          </div>
-        </card>
+            </List>
+          </InfiniteScroll>
+        </div>
       </PageHeaderLayout>
     );
   }

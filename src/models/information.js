@@ -56,6 +56,13 @@ export default {
     *coverInformation({ payload }, { call }) {
       yield call(putInformation, payload);
     },
+    *fetchNewNotice({ payload }, { call, put }) {
+      const response = yield call(getInformation, payload);
+      yield put({
+        type: 'changeNewNotice',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -69,6 +76,15 @@ export default {
       return {
         ...state,
         notice: action.payload,
+      };
+    },
+    changeNewNotice(state, action) {
+      return {
+        ...state,
+        notice: {
+          results: state.notice.results.concat(action.payload.results),
+          count: action.payload.count,
+        },
       };
     },
     changeMessages(state, action) {
