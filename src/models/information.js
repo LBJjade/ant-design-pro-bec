@@ -63,6 +63,20 @@ export default {
         payload: response,
       });
     },
+    *fetchNewNews({ payload }, { call, put }) {
+      const response = yield call(getInformation, payload);
+      yield put({
+        type: 'changeNewNews',
+        payload: response,
+      });
+    },
+    *fetchNewNeed({ payload }, { call, put }) {
+      const response = yield call(getInformation, payload);
+      yield put({
+        type: 'changeNewNeed',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -78,15 +92,6 @@ export default {
         notice: action.payload,
       };
     },
-    changeNewNotice(state, action) {
-      return {
-        ...state,
-        notice: {
-          results: state.notice.results.concat(action.payload.results),
-          count: action.payload.count,
-        },
-      };
-    },
     changeMessages(state, action) {
       return {
         ...state,
@@ -97,6 +102,33 @@ export default {
       return {
         ...state,
         need: action.payload,
+      };
+    },
+    changeNewNotice(state, action) {
+      return {
+        ...state,
+        notice: {
+          results: state.notice.results.concat(action.payload.results),
+          count: action.payload.count,
+        },
+      };
+    },
+    changeNewNews(state, action) {
+      return {
+        ...state,
+        news: {
+          results: state.news.results.concat(action.payload.results),
+          count: action.payload.count,
+        },
+      };
+    },
+    changeNewNeed(state, action) {
+      return {
+        ...state,
+        need: {
+          results: state.need.results.concat(action.payload.results),
+          count: action.payload.count,
+        },
       };
     },
   },

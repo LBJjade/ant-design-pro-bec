@@ -14,8 +14,12 @@ import styles from './Information.less';
 }))
 export default class BasicList extends PureComponent {
   state = {
-    loading: false,
-    hasMore: true,
+    noticeLoading: false,
+    noticeHasMore: true,
+    newsLoading: false,
+    newsHasMore: true,
+    needLoading: false,
+    needHasMore: true,
     pagination: {
       pageSize: 3,
       current: 1,
@@ -87,10 +91,10 @@ export default class BasicList extends PureComponent {
     });
   }
 
-  handleInfiniteOnLoad = () => {
+  handleInfiniteNoticeOnLoad = () => {
     const { information: { notice } } = this.props;
     this.setState({
-      loading: true,
+      noticeLoading: true,
     });
     const parsedata = {
       limit: this.state.pagination.pageSize,
@@ -100,8 +104,8 @@ export default class BasicList extends PureComponent {
     if (this.state.noticeCount === notice.count) {
       message.warning('已经没有数据了');
       this.setState({
-        hasMore: false,
-        loading: false,
+        noticeHasMore: false,
+        noticeLoading: false,
       });
       return;
     }
@@ -115,14 +119,82 @@ export default class BasicList extends PureComponent {
       },
     }).then(() => {
       this.setState({
-        loading: false,
+        noticeLoading: false,
         noticeCount: this.state.noticeCount + 3,
       });
     });
   }
 
+  handleInfiniteNewsOnLoad = () => {
+    const { information: { news } } = this.props;
+    this.setState({
+      newsLoading: true,
+    });
+    const parsedata = {
+      limit: this.state.pagination.pageSize,
+      skip: this.state.newCount + 1,
+      count: true,
+    };
+    if (this.state.newCount === news.count) {
+      message.warning('已经没有数据了');
+      this.setState({
+        newsHasMore: false,
+        newsLoading: false,
+      });
+      return;
+    }
+    this.props.dispatch({
+      type: 'information/fetchNewNotice',
+      payload: {
+        where: {
+          type: '通知',
+        },
+        ...parsedata,
+      },
+    }).then(() => {
+      this.setState({
+        newsLoading: false,
+        newCount: this.state.newCount + 3,
+      });
+    });
+  }
+
+  handleInfiniteNeedOnLoad = () => {
+    const { information: { need } } = this.props;
+    this.setState({
+      needLoading: true,
+    });
+    const parsedata = {
+      limit: this.state.pagination.pageSize,
+      skip: this.state.needCount + 1,
+      count: true,
+    };
+    if (this.state.needCount === need.count) {
+      message.warning('已经没有数据了');
+      this.setState({
+        needHasMore: false,
+        needLoading: false,
+      });
+      return;
+    }
+    this.props.dispatch({
+      type: 'information/fetchNewNeed',
+      payload: {
+        where: {
+          type: '通知',
+        },
+        ...parsedata,
+      },
+    }).then(() => {
+      this.setState({
+        needLoading: false,
+        needCount: this.state.needCount + 3,
+      });
+    });
+  }
+
   render() {
-    const { information: { notice, news, need }, loading } = this.props;
+    const { information: { notice, news, need } } = this.props;
     const ListContent = ({ data: { createdAt } }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
@@ -144,98 +216,107 @@ export default class BasicList extends PureComponent {
           <Card>
             <Tabs defaultActiveKey="1">
               <Tabs.TabPane tab="通知" key="1">
-                <List
-                  size="large"
-                  rowKey="objectId"
-                  loading={loading}
-                  dataSource={notice.results}
-                  renderItem={item => (
-                    <div style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
-                      <List.Item>
-                        <List.Item.Meta
-                          avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                          title={<Link to={`/personal/detail/${item.objectId}`}>{item.title}</Link>}
-                          description={<span> {item.description} </span>}
-                        />
-                        <ListContent data={item} />
-                      </List.Item>
-                    </div>
-                    )}
-                />
+                <div className="demo-infinite-container" style={{ height: '230px', overflow: 'auto', padding: '20px' }}>
+                  <InfiniteScroll
+                    initialLoad={false}
+                    pageStart={0}
+                    loadMore={this.handleInfiniteNoticeOnLoad}
+                    hasMore={!this.state.noticeLoading && this.state.noticeHasMore}
+                    useWindow={false}
+                  >
+                    <List
+                      dataSource={notice.results}
+                      renderItem={item => (
+                        <div style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
+                          <List.Item>
+                            <List.Item.Meta
+                              avatar={<Avatar src={item.avatar} shape="square" size="large" />}
+                              title={<Link to={`/personal/detail/${item.objectId}`}>{item.title === undefined ? '暂无' : item.title}</Link>}
+                              description={<span> {item.description === undefined ? '暂无' : item.description} </span>}
+                            />
+                            <ListContent data={item} />
+                          </List.Item>
+                        </div>
+                      )}
+                    >
+                      {this.state.noticeLoading && this.state.noticeHasMore && (
+                        <div className="demo-loading-container">
+                          <Spin />
+                        </div>
+                      )}
+                    </List>
+                  </InfiniteScroll>
+                </div>
               </Tabs.TabPane>
               <Tabs.TabPane tab="消息" key="2">
-                <List
-                  size="large"
-                  rowKey="objectId"
-                  loading={loading}
-                  dataSource={news.results}
-                  renderItem={item => (
-                    <div style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
-                      <List.Item>
-                        <List.Item.Meta
-                          avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                          title={<Link to={`/personal/detail/${item.objectId}`}>{item.title}</Link>}
-                          description={<span> {item.description} </span>}
-                        />
-                        <ListContent data={item} />
-                      </List.Item>
-                    </div>
-                    )}
-                />
+                <div className="demo-infinite-container" style={{ height: '230px', overflow: 'auto', padding: '20px' }}>
+                  <InfiniteScroll
+                    initialLoad={false}
+                    pageStart={0}
+                    loadMore={this.handleInfiniteNewsOnLoad}
+                    hasMore={!this.state.newsLoading && this.state.newsHasMore}
+                    useWindow={false}
+                  >
+                    <List
+                      dataSource={news.results}
+                      renderItem={item => (
+                        <div style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
+                          <List.Item>
+                            <List.Item.Meta
+                              avatar={<Avatar src={item.avatar} shape="square" size="large" />}
+                              title={<Link to={`/personal/detail/${item.objectId}`}>{item.title === undefined ? '暂无' : item.title}</Link>}
+                              description={<span>{item.description === undefined ? '暂无' : item.description} </span>}
+                            />
+                            <ListContent data={item} />
+                          </List.Item>
+                        </div>
+                      )}
+                    >
+                      {this.state.newsLoading && this.state.newsHasMore && (
+                        <div className="demo-loading-container">
+                          <Spin />
+                        </div>
+                      )}
+                    </List>
+                  </InfiniteScroll>
+                </div>
               </Tabs.TabPane>
               <Tabs.TabPane tab="待办" key="3">
-                <List
-                  size="large"
-                  rowKey="objectId"
-                  loading={loading}
-                  dataSource={need.results}
-                  renderItem={item => (
-                    <div classID={`${item.objectId}`} style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
-                      <List.Item>
-                        <List.Item.Meta
-                          avatar={<Avatar src={item.avatar} shape="square" size="large" />}
-                          title={<Link to={`/personal/detail/${item.objectId}`}>{item.title}</Link>}
-                          description={<span>{item.description}</span>}
-                        />
-                        <Tag color={item.status === undefined ? '' : color[`${item.status}`]}>{item.extra}</Tag>
-                        <ListContent data={item} />
-                      </List.Item>
-                    </div>
-                    )}
-                />
+                <div className="demo-infinite-container" style={{ height: '230px', overflow: 'auto', padding: '20px' }}>
+                  <InfiniteScroll
+                    initialLoad={false}
+                    pageStart={0}
+                    loadMore={this.handleInfiniteNeedOnLoad}
+                    hasMore={!this.state.needLoading && this.state.needHasMore}
+                    useWindow={false}
+                  >
+                    <List
+                      dataSource={need.results}
+                      renderItem={item => (
+                        <div style={{ opacity: item.read === true ? '0.6' : '', borderBottom: 'thin solid #e8e8e8' }}>
+                          <List.Item>
+                            <List.Item.Meta
+                              avatar={<Avatar src={item.avatar} shape="square" size="large" />}
+                              title={<Link to={`/personal/detail/${item.objectId}`}>{item.title === undefined ? '暂无' : item.title}</Link>}
+                              description={<span>{item.description === undefined ? '暂无' : item.description} </span>}
+                            />
+                            <Tag color={item.status === undefined ? '' : color[`${item.status}`]}>{item.extra}</Tag>
+                            <ListContent data={item} />
+                          </List.Item>
+                        </div>
+                      )}
+                    >
+                      {this.state.needLoading && this.state.needHasMore && (
+                        <div className="demo-loading-container">
+                          <Spin />
+                        </div>
+                      )}
+                    </List>
+                  </InfiniteScroll>
+                </div>
               </Tabs.TabPane>
             </Tabs>
           </Card>
-        </div>
-        <div className="demo-infinite-container" style={{ height: '200px', overflow: 'auto', border: '1px solid #e8e8e8' }}>
-          <InfiniteScroll
-            initialLoad={false}
-            pageStart={0}
-            loadMore={this.handleInfiniteOnLoad}
-            hasMore={!this.state.loading && this.state.hasMore}
-            useWindow={false}
-          >
-            <List
-              dataSource={notice.results}
-              renderItem={item => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar src={item.avatar} style={{ color: item.read === true ? '' : 'red' }} shape="square" size="large" />}
-                    title={<a href={item.objectId}>{item.title}</a>}
-                    description={<span style={{ color: item.read === true ? '' : 'red' }}> {item.title}<br />{item.description} </span>}
-                  />
-                  <Tag color={item.status === undefined ? '' : color[`${item.status}`]} style={{ marginRight: 0 }}>{item.extra}</Tag>
-                  <ListContent data={item} />
-                </List.Item>
-                )}
-            >
-              {this.state.loading && this.state.hasMore && (
-              <div className="demo-loading-container">
-                <Spin />
-              </div>
-                )}
-            </List>
-          </InfiniteScroll>
         </div>
       </PageHeaderLayout>
     );
