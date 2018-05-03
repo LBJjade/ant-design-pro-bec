@@ -21,7 +21,7 @@ export default class BasicList extends PureComponent {
     needLoading: false,
     needHasMore: true,
     pagination: {
-      pageSize: 3,
+      pageSize: 6,
       current: 1,
       total: 0,
       count: {},
@@ -47,7 +47,7 @@ export default class BasicList extends PureComponent {
       },
     }).then(() => {
       this.setState({
-        noticeCount: this.state.noticeCount + 3,
+        noticeCount: this.state.noticeCount + this.state.pagination.pageSize,
       });
     });
     dispatch({
@@ -60,7 +60,7 @@ export default class BasicList extends PureComponent {
       },
     }).then(() => {
       this.setState({
-        newCount: this.state.newCount + 3,
+        newCount: this.state.newCount + this.state.pagination.pageSize,
       });
     });
     dispatch({
@@ -73,7 +73,7 @@ export default class BasicList extends PureComponent {
       },
     }).then(() => {
       this.setState({
-        needCount: this.state.needCount + 3,
+        needCount: this.state.needCount + this.state.pagination.pageSize,
       });
     });
   }
@@ -101,7 +101,7 @@ export default class BasicList extends PureComponent {
       skip: this.state.noticeCount + 1,
       count: true,
     };
-    if (this.state.noticeCount === notice.count) {
+    if (this.state.noticeCount >= notice.count) {
       message.warning('已经没有数据了');
       this.setState({
         noticeHasMore: false,
@@ -120,7 +120,7 @@ export default class BasicList extends PureComponent {
     }).then(() => {
       this.setState({
         noticeLoading: false,
-        noticeCount: this.state.noticeCount + 3,
+        noticeCount: this.state.noticeCount + this.state.pagination.pageSize,
       });
     });
   }
@@ -135,7 +135,7 @@ export default class BasicList extends PureComponent {
       skip: this.state.newCount + 1,
       count: true,
     };
-    if (this.state.newCount === news.count) {
+    if (this.state.newCount >= news.count) {
       message.warning('已经没有数据了');
       this.setState({
         newsHasMore: false,
@@ -154,7 +154,7 @@ export default class BasicList extends PureComponent {
     }).then(() => {
       this.setState({
         newsLoading: false,
-        newCount: this.state.newCount + 3,
+        newCount: this.state.newCount + this.state.pagination.pageSize,
       });
     });
   }
@@ -169,7 +169,7 @@ export default class BasicList extends PureComponent {
       skip: this.state.needCount + 1,
       count: true,
     };
-    if (this.state.needCount === need.count) {
+    if (this.state.needCount >= need.count) {
       message.warning('已经没有数据了');
       this.setState({
         needHasMore: false,
@@ -188,7 +188,7 @@ export default class BasicList extends PureComponent {
     }).then(() => {
       this.setState({
         needLoading: false,
-        needCount: this.state.needCount + 3,
+        needCount: this.state.needCount + this.state.pagination.pageSize,
       });
     });
   }
@@ -216,7 +216,7 @@ export default class BasicList extends PureComponent {
           <Card>
             <Tabs defaultActiveKey="1">
               <Tabs.TabPane tab="通知" key="1">
-                <div className="demo-infinite-container" style={{ height: '230px', overflow: 'auto', padding: '20px' }}>
+                <div className="demo-infinite-container" style={{ height: '430px', overflow: 'auto', padding: '6px' }}>
                   <InfiniteScroll
                     initialLoad={false}
                     pageStart={0}
@@ -249,7 +249,7 @@ export default class BasicList extends PureComponent {
                 </div>
               </Tabs.TabPane>
               <Tabs.TabPane tab="消息" key="2">
-                <div className="demo-infinite-container" style={{ height: '230px', overflow: 'auto', padding: '20px' }}>
+                <div className="demo-infinite-container" style={{ height: '430px', overflow: 'auto', padding: '6px' }}>
                   <InfiniteScroll
                     initialLoad={false}
                     pageStart={0}
@@ -282,7 +282,7 @@ export default class BasicList extends PureComponent {
                 </div>
               </Tabs.TabPane>
               <Tabs.TabPane tab="待办" key="3">
-                <div className="demo-infinite-container" style={{ height: '230px', overflow: 'auto', padding: '20px' }}>
+                <div className="demo-infinite-container" style={{ height: '430px', overflow: 'auto', padding: '6px' }}>
                   <InfiniteScroll
                     initialLoad={false}
                     pageStart={0}
