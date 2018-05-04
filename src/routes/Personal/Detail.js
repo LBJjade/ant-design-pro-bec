@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Avatar, Tag, Spin, Row, Col } from 'antd';
+import { Link } from 'dva/router';
+import { Avatar, Tag, Spin, Row, Col, Button } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 @connect(({ information, loading }) => ({
@@ -50,7 +51,7 @@ export default class BasicProfile extends Component {
         {
           this.state.loading ? <div style={{ width: '100%', height: '100%' }}><Spin /></div> : (
             <PageHeaderLayout title="信息详情页">
-              <div style={{ height: 'auto', marginLeft: '400px', marginTop: '70px' }}>
+              <div style={{ height: 'auto', marginLeft: '250px', marginTop: '70px' }}>
                 <div style={{ margin: 8 }}>
                   <Row>
                     <Col span={4}>头像:</Col>
@@ -83,6 +84,11 @@ export default class BasicProfile extends Component {
                   <Row>
                     <Col span={4}>时间:</Col>
                     <Col span={12}>{vaule === undefined ? '' : vaule.createdAt}</Col>
+                  </Row>
+                </div>
+                <div style={{ marginTop: 30 }}>
+                  <Row>
+                    <Col span={12} offset={4}><Button type="primary" style={{ marginLeft: 8 }}><Link to="/personal/information">返回</Link></Button></Col>
                   </Row>
                 </div>
               </div>

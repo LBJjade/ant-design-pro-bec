@@ -211,6 +211,9 @@ export const getRouterData = (app) => {
     '/system/user': {
       component: dynamicWrapper(app, ['user'], () => import('../routes/System/User')),
     },
+    '/system/auth': {
+      component: dynamicWrapper(app, ['user'], () => import('../routes/System/Auth')),
+    },
     '/humanresources/employee': {
       component: dynamicWrapper(app, [], () => import('../routes/HumanResources/Employee')),
     },
