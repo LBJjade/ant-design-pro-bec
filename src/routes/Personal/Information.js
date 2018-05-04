@@ -211,12 +211,12 @@ export default class BasicList extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="个人信息">
+      <PageHeaderLayout title="消息中心">
         <div className={styles.standardList}>
           <Card>
             <Tabs defaultActiveKey="1">
               <Tabs.TabPane tab="通知" key="1">
-                <div className="demo-infinite-container" style={{ height: '430px', overflow: 'auto', padding: '6px' }}>
+                <div className="demo-infinite-container" style={{ height: '455px', overflow: 'auto', padding: '6px' }}>
                   <InfiniteScroll
                     initialLoad={false}
                     pageStart={0}
@@ -232,7 +232,7 @@ export default class BasicList extends PureComponent {
                             <List.Item.Meta
                               avatar={<Avatar src={item.avatar} shape="square" size="large" />}
                               title={<Link to={`/personal/detail/${item.objectId}`}>{item.title === undefined ? '暂无' : item.title}</Link>}
-                              description={<span> {item.description === undefined ? '暂无' : item.description} </span>}
+                              description={<span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '340px', height: '24px', display: 'block' }}> {item.description === undefined ? '暂无' : item.description} </span>}
                             />
                             <ListContent data={item} />
                           </List.Item>
@@ -249,7 +249,7 @@ export default class BasicList extends PureComponent {
                 </div>
               </Tabs.TabPane>
               <Tabs.TabPane tab="消息" key="2">
-                <div className="demo-infinite-container" style={{ height: '430px', overflow: 'auto', padding: '6px' }}>
+                <div className="demo-infinite-container" style={{ height: '455px', overflow: 'auto', padding: '6px' }}>
                   <InfiniteScroll
                     initialLoad={false}
                     pageStart={0}
@@ -265,7 +265,7 @@ export default class BasicList extends PureComponent {
                             <List.Item.Meta
                               avatar={<Avatar src={item.avatar} shape="square" size="large" />}
                               title={<Link to={`/personal/detail/${item.objectId}`}>{item.title === undefined ? '暂无' : item.title}</Link>}
-                              description={<span>{item.description === undefined ? '暂无' : item.description} </span>}
+                              description={<span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '340px', height: '24px', display: 'block' }}>{item.description === undefined ? '暂无' : item.description} </span>}
                             />
                             <ListContent data={item} />
                           </List.Item>
@@ -282,7 +282,7 @@ export default class BasicList extends PureComponent {
                 </div>
               </Tabs.TabPane>
               <Tabs.TabPane tab="待办" key="3">
-                <div className="demo-infinite-container" style={{ height: '430px', overflow: 'auto', padding: '6px' }}>
+                <div className="demo-infinite-container" style={{ height: '455px', overflow: 'auto', padding: '6px' }}>
                   <InfiniteScroll
                     initialLoad={false}
                     pageStart={0}
@@ -298,7 +298,7 @@ export default class BasicList extends PureComponent {
                             <List.Item.Meta
                               avatar={<Avatar src={item.avatar} shape="square" size="large" />}
                               title={<Link to={`/personal/detail/${item.objectId}`}>{item.title === undefined ? '暂无' : item.title}</Link>}
-                              description={<span>{item.description === undefined ? '暂无' : item.description} </span>}
+                              description={<span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '340px', height: '24px', display: 'block' }}> {item.description === undefined ? '暂无' : item.description} </span>}
                             />
                             <Tag color={item.status === undefined ? '' : color[`${item.status}`]}>{item.extra}</Tag>
                             <ListContent data={item} />

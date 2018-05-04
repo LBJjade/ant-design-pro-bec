@@ -1,16 +1,26 @@
 import React, { PureComponent } from 'react';
+import moment from 'moment';
 import { connect } from 'dva';
-import { Form, Input, Button, Card } from 'antd';
+import { Form, Input, Button, Card, Tag, Tooltip } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-@connect(({ loading }) => ({
-  submitting: loading.effects['form/submitRegularForm'],
+@connect(({ account }) => ({
+  account,
 }))
 @Form.create()
 export default class BasicForms extends PureComponent {
+  componentDidMount() {
+    // const id = localStorage.getItem('currentUserId');
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'account/fetchCurrent',
+      payload: {
+      },
+    });
+  }
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -23,9 +33,8 @@ export default class BasicForms extends PureComponent {
     });
   }
   render() {
-    const { submitting } = this.props;
+    const { account: { currentUser } } = this.props;
     const { getFieldDecorator } = this.props.form;
-
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -55,14 +64,13 @@ export default class BasicForms extends PureComponent {
           >
             <FormItem
               {...formItemLayout}
-              label="用户名"
+              label="昵称"
             >
-              {getFieldDecorator('title', {
-                rules: [{
-                  required: true, message: '姓名不能为空',
-                }],
+              {getFieldDecorator('username', {
               })(
-                <Input placeholder="请输入认证姓名" />
+                <Tooltip title="prompt text">
+                  <span>{currentUser.username}</span>
+                </Tooltip>
               )}
             </FormItem>
             <FormItem
@@ -70,11 +78,8 @@ export default class BasicForms extends PureComponent {
               label="会员类型"
             >
               {getFieldDecorator('date', {
-                rules: [{
-                  required: true, message: '身份证号不能为空',
-                }],
               })(
-                <Input placeholder="请输入身份证号" />
+                <Tag color="red">未认证</Tag>
               )}
             </FormItem>
             <FormItem
@@ -82,11 +87,10 @@ export default class BasicForms extends PureComponent {
               label="注册时间"
             >
               {getFieldDecorator('goal', {
-                rules: [{
-                  required: true, message: '身份证不能为空',
-                }],
               })(
-                <TextArea style={{ minHeight: 32 }} placeholder="请输入你的阶段性工作目标" rows={4} />
+                <Tooltip title="prompt text">
+                  <span>{moment(currentUser.createdAt).format('YYYY-MM-DD hh:mm')}</span>
+                </Tooltip>
               )}
             </FormItem>
           </Form>
@@ -154,7 +158,7 @@ export default class BasicForms extends PureComponent {
               )}
             </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
-              <Button type="primary" htmlType="submit" loading={submitting}>
+              <Button type="primary" htmlType="submit">
                 提交
               </Button>
             </FormItem>

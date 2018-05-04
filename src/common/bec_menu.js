@@ -148,7 +148,7 @@ const menuData = [{
     path: 'setting',
     // hideInMenu: true,
   }, {
-    name: '个人信息',
+    name: '消息中心',
     path: 'information',
     // children: [{
     //   name: '信息详情页',
