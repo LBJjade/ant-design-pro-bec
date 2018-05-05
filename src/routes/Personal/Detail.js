@@ -72,7 +72,7 @@ export default class BasicProfile extends Component {
                 <div style={{ margin: 8 }}>
                   <Row>
                     <Col span={4}><div style={{ textAlign: 'right' }}>信息详情:</div></Col>
-                    <Col span={12} offset={1}><TextArea style={{ minHeight: 32 }} value={vaule === undefined ? '' : (vaule.description === undefined ? '暂无' : vaule.description)} rows={8} disabled />
+                    <Col span={12} offset={1}><TextArea style={{ minHeight: 32 }} value={vaule === undefined ? '' : (vaule.description === undefined ? '暂无' : vaule.description)} rows={8} readyOnly />
                     </Col>
                   </Row>
                 </div>
