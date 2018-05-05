@@ -1,5 +1,5 @@
 /* eslint-disable no-dupe-keys */
-import { getUsers, getUserLastMount, getUserThisMount, getUserThisWeek, userRequireQuery } from '../services/user';
+import { getUser } from '../services/user';
 
 export default {
   namespace: 'user',
@@ -9,11 +9,15 @@ export default {
       results: [],
       count: 0,
     },
-    mountlist: {
+    dataAll: {
       results: [],
       count: 0,
     },
-    weeklist: {
+    dataCreate: {
+      results: [],
+      count: 0,
+    },
+    dataLogin: {
       results: [],
       count: 0,
     },
@@ -21,69 +25,58 @@ export default {
 
   effects: {
     *fetchUser({ payload }, { call, put }) {
-      const response = yield call(getUsers, payload);
+      const response = yield call(getUser, payload);
       yield put({
-        type: 'changeUsers',
+        type: 'changeUser',
         payload: response,
       });
     },
-    *fetchUserLastMount({ payload }, { call, put }) {
-      const response = yield call(getUserLastMount, payload);
+    *fetchUserByAll({ payload }, { call, put }) {
+      const response = yield call(getUser, payload);
       yield put({
-        type: 'changeLastMountUsers',
+        type: 'changeUserByAll',
         payload: response,
       });
     },
-    *fetchUserThisMount({ payload }, { call, put }) {
-      const response = yield call(getUserThisMount, payload);
+    *fetchUserByCreate({ payload }, { call, put }) {
+      const response = yield call(getUser, payload);
       yield put({
-        type: 'changeThisMountUsers',
+        type: 'changeUserByCreate',
         payload: response,
       });
     },
-    *fetchUserThisWeek({ payload }, { call, put }) {
-      const response = yield call(getUserThisWeek, payload);
+    *fetchUserByLogin({ payload }, { call, put }) {
+      const response = yield call(getUser, payload);
       yield put({
-        type: 'changeThisWeekUsers',
-        payload: response,
-      });
-    },
-    *requireQuery({ payload }, { call, put }) {
-      const response = yield call(userRequireQuery, payload);
-      yield put({
-        type: 'changeLastMountUsers',
+        type: 'changeUserByLogin',
         payload: response,
       });
     },
   },
 
   reducers: {
-    changeUsers(state, action) {
+    changeUser(state, action) {
       return {
         ...state,
         data: action.payload,
       };
     },
-    changeLastMountUsers(state, action) {
+    changeUserByAll(state, action) {
       return {
         ...state,
-        // data: action.payload,
-        data: {
-          results: action.payload.results,
-          count: action.payload.results.length,
-        },
+        dataAll: action.payload,
       };
     },
-    changeThisMountUsers(state, action) {
+    changeUserByCreate(state, action) {
       return {
         ...state,
-        mountlist: action.payload,
+        dataCreate: action.payload,
       };
     },
-    changeThisWeekUsers(state, action) {
+    changeUserByLogin(state, action) {
       return {
         ...state,
-        weeklist: action.payload,
+        dataLogin: action.payload,
       };
     },
   },

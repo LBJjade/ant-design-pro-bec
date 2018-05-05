@@ -10,7 +10,6 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
-// const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 @connect(({ user, loading }) => ({
   user,
@@ -19,14 +18,14 @@ const { Search } = Input;
 export default class User extends PureComponent {
   state = {
     pagination: {
-      pageSize: 3,
+      pageSize: 10,
       current: 1,
       total: 0,
       count: {},
     },
   };
 
-  componentDidMount() {
+  componentWillMount() {
     const { dispatch } = this.props;
     const parsedata = {
       limit: this.state.pagination.pageSize,
@@ -38,13 +37,20 @@ export default class User extends PureComponent {
     const thisMount = now.toISOString();
     const now1 = new Date();
     now1.setDate(now.getDate() - 7);
-    const thisweek = now1.toISOString();
+    const thisWeek = now1.toISOString();
     dispatch({
       type: 'user/fetchUser',
       payload: parsedata,
     });
     dispatch({
-      type: 'user/fetchUserThisMount',
+      type: 'user/fetchUserByAll',
+      payload: {
+        limit: 0,
+        count: true,
+      },
+    });
+    dispatch({
+      type: 'user/fetchUserByCreate',
       payload: {
         where: {
           createdAt: {
@@ -54,20 +60,22 @@ export default class User extends PureComponent {
             },
           },
         },
+        limit: 0,
         count: true,
       },
     });
     dispatch({
-      type: 'user/fetchUserThisWeek',
+      type: 'user/fetchUserByLogin',
       payload: {
         where: {
-          login: {
+          loginDatetime: {
             $gt: {
               __type: 'Date',
-              iso: thisweek,
+              iso: thisWeek,
             },
           },
         },
+        limit: 0,
         count: true,
       },
     });
@@ -90,45 +98,13 @@ export default class User extends PureComponent {
         pageSize: pagesize,
       },
     });
-  }
+  };
 
-  // handleListChange = (pagination, filtersArg, sorter) => {
-  //   const { dispatch } = this.props;
-  //   const { formValues } = this.state;
-  //
-  //   const filters = Object.keys(filtersArg).reduce((obj, key) => {
-  //     const newObj = { ...obj };
-  //     newObj[key] = getValue(filtersArg[key]);
-  //     return newObj;
-  //   }, {});
-  //
-  //   const params = {
-  //     skip: ((pagination.current - 1) * pagination.pageSize),
-  //     limit: pagination.pageSize,
-  //     count: true,
-  //     ...formValues,
-  //     ...filters,
-  //   };
-  //   if (sorter.field) {
-  //     params.sorter = `${sorter.field}_${sorter.order}`;
-  //   }
-  //
-  //   dispatch({
-  //     type: 'user/fetchUser',
-  //     payload: params,
-  //   });
-  //   this.setState({
-  //     pagination: {
-  //       current: pagination.current,
-  //       pageSize: pagination.pageSize,
-  //     },
-  //   });
-  // };
   monthUser = (val) => {
     const { dispatch } = this.props;
     if (val === 0) {
       const parsedata = {
-        limit: 3,
+        limit: 10,
         skip: 0,
         count: true,
       };
@@ -150,7 +126,7 @@ export default class User extends PureComponent {
       now.setMonth(now.getMonth() - val);
       const date = now.toISOString();
       dispatch({
-        type: 'user/fetchUserLastMount',
+        type: 'user/fetchUser',
         payload: {
           where: {
             createdAt: {
@@ -173,13 +149,12 @@ export default class User extends PureComponent {
         });
       });
     }
-  }
-
+  };
 
   handleSearch = (value) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'user/requireQuery',
+      type: 'user/fetchUser',
       payload: {
         where: {
           $or: [{ username: { $regex: `(?i)${value}` } }, { mobile: { $regex: `(?i)${value}` } }],
@@ -199,7 +174,7 @@ export default class User extends PureComponent {
   };
 
   render() {
-    const { user: { data, mountlist, weeklist }, loading } = this.props;
+    const { user: { data, dataAll, dataCreate, dataLogin }, loading } = this.props;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -237,16 +212,16 @@ export default class User extends PureComponent {
     };
 
 
-    const ListContent = ({ data: { createdAt, loginTime, loginIp } }) => (
+    const ListContent = ({ data: { createdAt, loginDatetime, loginIp } }) => (
       <div className={styles.listContent}>
-        {loginTime === undefined ? '' : (
-          <div className={styles.listContentItem} style={{ marginRight: -30, width: 140 }}>
-            <span>登陆时间</span>
-            <p><Icon type="clock-circle-o" /> { loginTime === undefined ? '' : moment(loginTime).format('YYYY-MM-DD hh:mm') }</p>
+        {loginDatetime === undefined ? '' : (
+          <div className={styles.listContentItem} style={{ marginRight: -40, width: 140 }}>
+            <span>最后登录时间</span>
+            <p><Icon type="clock-circle-o" /> { moment(loginDatetime).format('YYYY-MM-DD hh:mm') }</p>
           </div>
         )}
         {loginIp === undefined ? '' : (
-          <div className={styles.listContentItem} style={{ marginRight: -30, width: 140 }}>
+          <div className={styles.listContentItem} style={{ marginRight: -20, width: 140 }}>
             <span>最后登录IP</span>
             <p><Icon type="environment-o" /> {loginIp} </p>
           </div>
@@ -285,13 +260,13 @@ export default class User extends PureComponent {
           <Card bordered={false}>
             <Row>
               <Col sm={8} xs={24}>
-                <Info title="所有用户" value={`${data.count === undefined ? (data.results === undefined ? 0 : data.results.length) : data.count}个用户`} bordered />
+                <Info title="所有用户" value={`${dataAll.count}个用户`} bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="活跃用户（本周登录的用户）" value={`${weeklist.results === undefined ? 0 : weeklist.results.length}个用户`} bordered />
+                <Info title="活跃用户（本周登录的用户）" value={`${dataLogin.count}个用户`} bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="本月新增用户" value={`${mountlist.results === undefined ? 0 : mountlist.results.length}个用户`} />
+                <Info title="本月新增用户" value={`${dataCreate.count}个用户`} />
               </Col>
             </Row>
           </Card>
@@ -309,8 +284,6 @@ export default class User extends PureComponent {
               loading={loading}
               pagination={paginationProps}
               dataSource={data.results}
-              // onChange={this.handleListChange}
-              // onChange={this.handleListChange}
               renderItem={item => (
                 <List.Item
                   actions={[<Link to="/system/auth">认证</Link>, <MoreBtn />]}
@@ -323,7 +296,6 @@ export default class User extends PureComponent {
                   <ListContent data={item} />
                 </List.Item>
               )}
-              // onChange={this.handleListChange}
             />
           </Card>
         </div>

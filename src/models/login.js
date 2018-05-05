@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
 import { Message } from 'antd';
-import { getLogin, changeLogin, getIP } from '../services/account';
+import { getLogin, putUser, getFunctionClientip } from '../services/account';
 import { setAuthority } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
 
@@ -25,8 +25,17 @@ export default {
             localStorage.token = response.sessionToken;
             localStorage.currentUserId = response.objectId;
             reloadAuthorized();
-            const ip = yield call(getIP, localStorage.currentUserId);
-            yield call(changeLogin, localStorage.currentUserId, ip);
+            const ip = yield call(getFunctionClientip);
+            const dataTime = new Date().toISOString();
+            const params = {
+              objectId: response.objectId,
+              loginIp: ip.result,
+              loginDatetime: {
+                __type: 'Date',
+                iso: dataTime,
+              },
+            };
+            yield call(putUser, params);
             yield put(routerRedux.push('/'));
           } else {
             Message.error('登录失败！帐号未验证！', 5);
@@ -58,13 +67,6 @@ export default {
         yield put(routerRedux.push('/account/login'));
       }
     },
-    *changStatue({ data }, { call, put }) {
-      const response = yield call(changeLogin, data);
-      yield put({
-        type: 'changeSta',
-        payload: response,
-      });
-    },
   },
 
   reducers: {
@@ -74,11 +76,6 @@ export default {
         ...state,
         status: payload.status,
         type: payload.type,
-      };
-    },
-    changeSta(state) {
-      return {
-        ...state,
       };
     },
   },

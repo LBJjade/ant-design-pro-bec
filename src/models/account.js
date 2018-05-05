@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { getUsers, getUserMe, getVerifyEmail, putUser } from '../services/account';
+import { getUsers, getUserMe, getVerifyEmail, putUser, getFunctionClientip } from '../services/account';
 import { getNotices, putNotice } from '../services/notice';
 import { deleteFile } from '../services/file';
 import store from '../index';
@@ -44,6 +44,17 @@ export default {
           type: 'saveCurrentUser',
           payload: resUser,
         });
+        const ip = yield call(getFunctionClientip);
+        const dataTime = new Date().toISOString();
+        const params = {
+          objectId: resUser.objectId,
+          loginIp: ip.result,
+          loginDatetime: {
+            __type: 'Date',
+            iso: dataTime,
+          },
+        };
+        yield call(putUser, params);
       } else {
         // 加载当前用户信息失败，重新登陆
         const { dispatch } = store;
