@@ -53,7 +53,7 @@ export default class BasicProfile extends Component {
       <div>
         {
           this.state.loading ? <div style={{ width: '100%', height: '100%' }}><Spin /></div> : (
-            <PageHeaderLayout title="信息详情">
+            <PageHeaderLayout title={`${vaule.type}详情`}>
               <div style={{ height: 'auto', marginLeft: '250px', marginTop: '70px' }}>
                 <div style={{ margin: 8 }}>
                   <Row>
@@ -64,7 +64,7 @@ export default class BasicProfile extends Component {
                 <br />
                 <div style={{ margin: 8 }}>
                   <Row>
-                    <Col span={4}><div style={{ textAlign: 'right' }}>信息标题:</div></Col>
+                    <Col span={4}><div style={{ textAlign: 'right' }}>标题:</div></Col>
                     <Col span={12} offset={1}>{vaule === undefined ? '' : (vaule.title === undefined ? '暂无' : vaule.title)}</Col>
                   </Row>
                 </div>
