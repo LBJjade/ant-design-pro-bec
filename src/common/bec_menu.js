@@ -4,7 +4,7 @@ const menuData = [{
   name: '控制台',
   icon: 'dashboard',
   path: 'dashboard',
-  authority: ['admin'],
+  authority: ['a'],
   children: [{
     name: '工作台',
     path: 'workspace',
@@ -23,7 +23,7 @@ const menuData = [{
   name: '表单页',
   icon: 'form',
   path: 'form',
-  authority: ['admin'],
+  authority: ['a'],
   children: [{
     name: '基础表单',
     path: 'basic-form',
