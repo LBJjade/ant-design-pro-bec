@@ -332,7 +332,7 @@ export default class TableList extends PureComponent {
     const columns = [
       {
         title: '资源ID',
-        dataIndex: 'resourceId',
+        dataIndex: 'resourcesId',
       },
       {
         title: '评论',
